@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: eureka #应用的名称
+server:
+  port: 8700
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8700/eureka/
+    # 通过添加配置我们这里忽略自己
+    register-with-eureka: false #表示是否注册自身到eureka服务器
+    fetch-registry: false #表示是否从eureka服务器获取注册信息
