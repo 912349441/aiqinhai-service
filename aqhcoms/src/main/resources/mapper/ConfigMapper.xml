@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.common.mapper.ConfigMapper">
+  <resultMap id="BaseResultMap" type="com.tor.common.entity.Config">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="k" jdbcType="VARCHAR" property="k" />
+    <result column="v" jdbcType="VARCHAR" property="v" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="kvType" jdbcType="INTEGER" property="kvtype" />
+  </resultMap>
+</mapper>

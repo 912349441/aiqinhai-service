@@ -1,25 +1,32 @@
-package com.tor.common.generator.service.impl;
+package com.tor.common.service.impl;
 
 import com.tor.common.entity.Config;
 import com.tor.common.generator.dao.GeneratorMapper;
-import com.tor.common.generator.service.GeneratorService;
+import com.tor.common.mapper.ConfigMapper;
+import com.tor.common.service.ConfigService;
 import com.tor.common.utils.GenUtils;
+import com.tor.generator.core.AbstractService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
+
 /**
- * <pre>
- * </pre>
- * <small> 2018年3月23日 | Aron</small>
+ * Created by Tzx on 2019/07/11.
  */
 @Service
-public class GeneratorServiceImpl implements GeneratorService {
+@Transactional
+public class ConfigServiceImpl extends AbstractService<Config> implements ConfigService {
+    @Resource
+    private ConfigMapper sysConfigMapper;
+
     @Autowired
     GeneratorMapper generatorMapper;
 
@@ -49,5 +56,4 @@ public class GeneratorServiceImpl implements GeneratorService {
     public List<Config> findListByKvType(int kvType) {
         return generatorMapper.findListByKvType(kvType);
     }
-
 }

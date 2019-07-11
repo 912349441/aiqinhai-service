@@ -3,6 +3,7 @@
  */
 package com.tor.common.generator.service;
 
+import com.tor.common.entity.Config;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface GeneratorService {
 	List<Map<String, Object>> list();
 
 	byte[] generatorCode(String[] tableNames);
+
+    List<Config> findListByKvType(int kvType);
 }

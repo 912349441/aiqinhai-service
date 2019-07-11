@@ -1,5 +1,6 @@
 package com.tor.common.generator.dao;
 
+import com.tor.common.entity.Config;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -17,4 +18,7 @@ public interface GeneratorMapper {
 
     @Select("select column_name columnName, data_type dataType, column_comment columnComment, column_key columnKey, extra from information_schema.columns where table_name = #{tableName} and table_schema = (select database()) order by ordinal_position")
     List<Map<String, String>> listColumns(String tableName);
+
+    @Select("select id,k,v,remark,createTime,kvType from sys_config where kvType = #{kvType}")
+    List<Config> findListByKvType(int kvType);
 }

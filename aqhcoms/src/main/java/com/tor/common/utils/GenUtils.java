@@ -2,11 +2,11 @@ package com.tor.common.utils;
 
 
 import com.tor.common.config.Constant;
+import com.tor.common.entity.Config;
 import com.tor.common.generator.domain.ColumnDO;
 import com.tor.common.generator.domain.TableDO;
+import com.tor.common.generator.service.GeneratorService;
 import com.tor.common.generator.type.EnumGen;
-import com.tor.project.entity.Config;
-import com.tor.project.service.ConfigService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -15,7 +15,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -197,18 +196,14 @@ public class GenUtils {
     /**
      * 获取配置信息
      */
-    @Autowired
-    private ConfigService configService;
 
     public static Map<String, String> getConfig() {
-        ConfigService configService = SpringContextHolder.getBean(ConfigService.class);
-        List<ConfigDO> list = configService.findListByKvType(EnumGen.KvType.base.getValue());
-        list.addAll(configService.findListByKvType(EnumGen.KvType.mapping.getValue()));
-        // 停在这里
         Map<String, String> config = new HashMap<>();
-        list.stream().forEach(kv -> config.put(kv.getK(), kv.getV()));
-        List<Config> all = configService.findAll();
-        return null;
+        GeneratorService generatorService = SpringContextHolder.getBean(GeneratorService.class);
+        List<Config> list = generatorService.findListByKvType(EnumGen.KvType.base.getValue());
+        list.addAll(generatorService.findListByKvType(EnumGen.KvType.mapping.getValue()));
+        list.forEach(kv -> config.put(kv.getK(), kv.getV()));
+        return config;
     }
 
     /**
