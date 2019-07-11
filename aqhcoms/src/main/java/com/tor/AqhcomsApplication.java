@@ -3,19 +3,23 @@ package com.tor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import tk.mybatis.spring.annotation.MapperScan;
 
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@EnableFeignClients
-@EnableEurekaClient
+@MapperScan("com.tor.*.mapper")
+// 以下三个是为了不启动Eureka服务 所以暂时关闭
+//@EnableDiscoveryClient
+//@EnableFeignClients
+//@EnableEurekaClient
 public class AqhcomsApplication{
 
    public static void main(String[] args) {
       SpringApplication.run(AqhcomsApplication.class, args);
+      run();
    }
 
+    public static void run(){
+
+    }
 }
