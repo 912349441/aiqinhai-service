@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="product" version="1.6">
+    <types>
+        <fieldType name="string" class="solr.StrField"
+                   sortMissingLast="true" omitNorms="true" />
+        <fieldType name="boolean" class="solr.BoolField"
+                   sortMissingLast="true" omitNorms="true" />
+        <fieldType name="int" class="solr.TrieIntField" omitNorms="true" />
+        <fieldType name="long" class="solr.TrieLongField" omitNorms="true" />
+        <fieldType name="float" class="solr.TrieFloatField" omitNorms="true" />
+        <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true" />
+        <fieldType name="date" class="solr.TrieDateField" sortMissingLast="true" omitNorms="true" />
+        <!--中文分词器-->
+        <fieldType name="text" class="solr.TextField">
+            <analyzer class="org.wltea.analyzer.lucene.IKAnalyzer" />
+        </fieldType>
+    </types>
+    <fields>
+        <!--indexed：是否被索引，只有设置为true的字段才能进行搜索排序分片(earchable, sortable, facetable)。-->
+        <!--stored：是否存储内容，如果不需要存储字段值，尽量设置为false以提高效率。-->
+        <!--multiValued：是否为多值类型，SOLR允许配置多个数据源字段存储到一个搜索字段中。多个值必须为true，否则有可能抛出异常。-->
+        <field name="_version_" type="long" indexed="true" stored="true"/>
+        <field name="search" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
+
+        <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+        <field name="supplier_id" type="string" indexed="true" stored="true" required="false"/>
+        <field name="supplier_name" type="string" indexed="true" stored="true" required="false"/>
+        <field name="mat_name" type="string" indexed="true" stored="true" required="false"/>
+        <field name="pro_name" type="string" indexed="true" stored="true" required="false"/>
+        <field name="pro_price" type="string" indexed="true" stored="true" required="false"/>
+        <field name="pro_img" type="string" indexed="true" stored="true" required="false"/>
+        <field name="pro_num" type="string" indexed="true" stored="true" required="false"/>
+        <field name="pro_minnum" type="string" indexed="true" stored="true" required="false"/>
+        <field name="create_dt" type="date" indexed="true" stored="true" required="false"/>
+        <field name="push_flag" type="string" indexed="true" stored="true" required="false"/>
+        <field name="parent_product_id" type="string" indexed="true" stored="true" required="false"/>
+        <field name="itemnum" type="double" indexed="true" stored="true" required="false"/>
+
+        <copyField source="supplier_name" dest="search" />
+        <copyField source="mat_name" dest="search" />
+        <copyField source="pro_name" dest="search" />
+        <copyField source="pro_price" dest="search" />
+        <copyField source="item_name" dest="search" />
+
+        <field name="item_name" type="string" indexed="true" stored="true" required="false"/>
+        <field name="product_id" type="string" indexed="true" stored="true" required="false"/>
+        <field name="value_ids" type="string" indexed="true" stored="true" required="false"/>
+        <field name="value_strings" type="string" indexed="true" stored="true" required="false"/>
+        <field name="price" type="string" indexed="true" stored="true" required="false"/>
+        <field name="min_num" type="string" indexed="true" stored="true" required="false"/>
+
+        <!--dynamicField:用通配符定义一个field来存在没有被field定义的漏网之鱼-->
+        <dynamicField name="*_PROP" type="string" indexed="true" stored="true" />
+        <dynamicField name="*_prop" type="string" indexed="true" stored="true" />
+
+    </fields>
+
+    <uniqueKey>id</uniqueKey>
+    <!--defaultSearchField:默认搜索的字段。 由于6.x.x之后的版本不支持defaultSearchField-->
+    <!--需删掉defaultSearchField标签，在solrconfig.xml中把name="df"的标签值改为默认搜索的值。如search-->
+    <!--<defaultSearchField>search</defaultSearchField>
+    <solrQueryParser defaultOperator="AND" />-->
+</schema>
+
+

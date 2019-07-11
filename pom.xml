@@ -10,7 +10,6 @@
 
     <modules>
         <module>eureka</module>
-        <module>cygl</module>
         <module>generator</module>
         <module>myfile</module>
         <module>solr</module>

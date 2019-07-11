@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tor.activity.mapper.ActivityApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.tor.activity.entity.ActivityApply" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+    <result column="PAY_ORDER_ID" property="payOrderId" jdbcType="VARCHAR" />
+    <result column="MEMBER_ID" property="memberId" jdbcType="VARCHAR" />
+    <result column="MEMBER_ACCOUNT" property="memberAccount" jdbcType="VARCHAR" />
+    <result column="WX_ORDER_ID" property="wxOrderId" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="CONTACTS" property="contacts" jdbcType="VARCHAR" />
+    <result column="CONTACT_CARD" property="contactCard" jdbcType="VARCHAR" />
+    <result column="TEL" property="tel" jdbcType="VARCHAR" />
+    <result column="POST" property="post" jdbcType="VARCHAR" />
+    <result column="REALLY_SUM" property="reallySum" jdbcType="REAL" />
+    <result column="INVOICE_FLAG" property="invoiceFlag" jdbcType="VARCHAR" />
+    <result column="ADDR" property="addr" jdbcType="VARCHAR" />
+    <result column="TAX_NO" property="taxNo" jdbcType="VARCHAR" />
+    <result column="BANK_NAME" property="bankName" jdbcType="VARCHAR" />
+    <result column="BANK_NO" property="bankNo" jdbcType="VARCHAR" />
+    <result column="SELLER_NAME" property="sellerName" jdbcType="VARCHAR" />
+    <result column="AUDIT_STATE" property="auditState" jdbcType="VARCHAR" />
+    <result column="JOIN_HANDS_FLAG" property="joinHandsFlag" jdbcType="VARCHAR" />
+    <result column="CREATE_DT" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="UPDATE_DT" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="UPDATOR" property="updator" jdbcType="VARCHAR" />
+    <result column="DELETE_FLAG" property="deleteFlag" jdbcType="VARCHAR" />
+    <result column="VERSION_NO" property="versionNo" jdbcType="INTEGER" />
+    <result column="INDEX_FLAG" property="indexFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ACTIVITY_ID, PAY_ORDER_ID, MEMBER_ID, MEMBER_ACCOUNT, WX_ORDER_ID, NAME, CONTACTS, 
+    CONTACT_CARD, TEL, POST, REALLY_SUM, INVOICE_FLAG, ADDR, TAX_NO, BANK_NAME, BANK_NO, 
+    SELLER_NAME, AUDIT_STATE, JOIN_HANDS_FLAG, CREATE_DT, CREATOR, UPDATE_DT, UPDATOR, 
+    DELETE_FLAG, VERSION_NO, INDEX_FLAG
+  </sql>
+  <!--自定义-->
+  <select id="selectByParams" resultMap="BaseResultMap">
+    SELECT *
+    FROM tcz_activity_apply
+    <where>
+      <if test="params.activityId!=null">
+        activity_id=#{params.activityId}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tcz_activity_apply
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tcz_activity_apply
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.tor.activity.entity.ActivityApply" >
+    insert into tcz_activity_apply (ID, ACTIVITY_ID, PAY_ORDER_ID, 
+      MEMBER_ID, MEMBER_ACCOUNT, WX_ORDER_ID, 
+      NAME, CONTACTS, CONTACT_CARD, 
+      TEL, POST, REALLY_SUM, 
+      INVOICE_FLAG, ADDR, TAX_NO, 
+      BANK_NAME, BANK_NO, SELLER_NAME, 
+      AUDIT_STATE, JOIN_HANDS_FLAG, CREATE_DT, 
+      CREATOR, UPDATE_DT, UPDATOR, 
+      DELETE_FLAG, VERSION_NO, INDEX_FLAG
+      )
+    values (#{id,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{payOrderId,jdbcType=VARCHAR}, 
+      #{memberId,jdbcType=VARCHAR}, #{memberAccount,jdbcType=VARCHAR}, #{wxOrderId,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, #{contactCard,jdbcType=VARCHAR}, 
+      #{tel,jdbcType=VARCHAR}, #{post,jdbcType=VARCHAR}, #{reallySum,jdbcType=REAL}, 
+      #{invoiceFlag,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{taxNo,jdbcType=VARCHAR}, 
+      #{bankName,jdbcType=VARCHAR}, #{bankNo,jdbcType=VARCHAR}, #{sellerName,jdbcType=VARCHAR}, 
+      #{auditState,jdbcType=VARCHAR}, #{joinHandsFlag,jdbcType=VARCHAR}, #{createDt,jdbcType=TIMESTAMP}, 
+      #{creator,jdbcType=VARCHAR}, #{updateDt,jdbcType=TIMESTAMP}, #{updator,jdbcType=VARCHAR}, 
+      #{deleteFlag,jdbcType=VARCHAR}, #{versionNo,jdbcType=INTEGER}, #{indexFlag,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tor.activity.entity.ActivityApply" >
+    insert into tcz_activity_apply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="activityId != null" >
+        ACTIVITY_ID,
+      </if>
+      <if test="payOrderId != null" >
+        PAY_ORDER_ID,
+      </if>
+      <if test="memberId != null" >
+        MEMBER_ID,
+      </if>
+      <if test="memberAccount != null" >
+        MEMBER_ACCOUNT,
+      </if>
+      <if test="wxOrderId != null" >
+        WX_ORDER_ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="contacts != null" >
+        CONTACTS,
+      </if>
+      <if test="contactCard != null" >
+        CONTACT_CARD,
+      </if>
+      <if test="tel != null" >
+        TEL,
+      </if>
+      <if test="post != null" >
+        POST,
+      </if>
+      <if test="reallySum != null" >
+        REALLY_SUM,
+      </if>
+      <if test="invoiceFlag != null" >
+        INVOICE_FLAG,
+      </if>
+      <if test="addr != null" >
+        ADDR,
+      </if>
+      <if test="taxNo != null" >
+        TAX_NO,
+      </if>
+      <if test="bankName != null" >
+        BANK_NAME,
+      </if>
+      <if test="bankNo != null" >
+        BANK_NO,
+      </if>
+      <if test="sellerName != null" >
+        SELLER_NAME,
+      </if>
+      <if test="auditState != null" >
+        AUDIT_STATE,
+      </if>
+      <if test="joinHandsFlag != null" >
+        JOIN_HANDS_FLAG,
+      </if>
+      <if test="createDt != null" >
+        CREATE_DT,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="updateDt != null" >
+        UPDATE_DT,
+      </if>
+      <if test="updator != null" >
+        UPDATOR,
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG,
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO,
+      </if>
+      <if test="indexFlag != null" >
+        INDEX_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="payOrderId != null" >
+        #{payOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberAccount != null" >
+        #{memberAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="wxOrderId != null" >
+        #{wxOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactCard != null" >
+        #{contactCard,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null" >
+        #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="reallySum != null" >
+        #{reallySum,jdbcType=REAL},
+      </if>
+      <if test="invoiceFlag != null" >
+        #{invoiceFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null" >
+        #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNo != null" >
+        #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerName != null" >
+        #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditState != null" >
+        #{auditState,jdbcType=VARCHAR},
+      </if>
+      <if test="joinHandsFlag != null" >
+        #{joinHandsFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="indexFlag != null" >
+        #{indexFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tor.activity.entity.ActivityApply" >
+    update tcz_activity_apply
+    <set >
+      <if test="activityId != null" >
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="payOrderId != null" >
+        PAY_ORDER_ID = #{payOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberAccount != null" >
+        MEMBER_ACCOUNT = #{memberAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="wxOrderId != null" >
+        WX_ORDER_ID = #{wxOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        CONTACTS = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactCard != null" >
+        CONTACT_CARD = #{contactCard,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        TEL = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null" >
+        POST = #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="reallySum != null" >
+        REALLY_SUM = #{reallySum,jdbcType=REAL},
+      </if>
+      <if test="invoiceFlag != null" >
+        INVOICE_FLAG = #{invoiceFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        ADDR = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null" >
+        TAX_NO = #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        BANK_NAME = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNo != null" >
+        BANK_NO = #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerName != null" >
+        SELLER_NAME = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditState != null" >
+        AUDIT_STATE = #{auditState,jdbcType=VARCHAR},
+      </if>
+      <if test="joinHandsFlag != null" >
+        JOIN_HANDS_FLAG = #{joinHandsFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        UPDATOR = #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="indexFlag != null" >
+        INDEX_FLAG = #{indexFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tor.activity.entity.ActivityApply" >
+    update tcz_activity_apply
+    set ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      PAY_ORDER_ID = #{payOrderId,jdbcType=VARCHAR},
+      MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      MEMBER_ACCOUNT = #{memberAccount,jdbcType=VARCHAR},
+      WX_ORDER_ID = #{wxOrderId,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      CONTACTS = #{contacts,jdbcType=VARCHAR},
+      CONTACT_CARD = #{contactCard,jdbcType=VARCHAR},
+      TEL = #{tel,jdbcType=VARCHAR},
+      POST = #{post,jdbcType=VARCHAR},
+      REALLY_SUM = #{reallySum,jdbcType=REAL},
+      INVOICE_FLAG = #{invoiceFlag,jdbcType=VARCHAR},
+      ADDR = #{addr,jdbcType=VARCHAR},
+      TAX_NO = #{taxNo,jdbcType=VARCHAR},
+      BANK_NAME = #{bankName,jdbcType=VARCHAR},
+      BANK_NO = #{bankNo,jdbcType=VARCHAR},
+      SELLER_NAME = #{sellerName,jdbcType=VARCHAR},
+      AUDIT_STATE = #{auditState,jdbcType=VARCHAR},
+      JOIN_HANDS_FLAG = #{joinHandsFlag,jdbcType=VARCHAR},
+      CREATE_DT = #{createDt,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      UPDATE_DT = #{updateDt,jdbcType=TIMESTAMP},
+      UPDATOR = #{updator,jdbcType=VARCHAR},
+      DELETE_FLAG = #{deleteFlag,jdbcType=VARCHAR},
+      VERSION_NO = #{versionNo,jdbcType=INTEGER},
+      INDEX_FLAG = #{indexFlag,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

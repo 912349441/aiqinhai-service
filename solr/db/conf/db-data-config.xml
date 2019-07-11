@@ -1,0 +1,103 @@
+<dataConfig>
+	<dataSource
+			type="JdbcDataSource"
+			driver="com.mysql.jdbc.Driver"
+			url="jdbc:mysql://127.0.0.1:3306/CGPT"
+			user="root"
+			password="root" />
+	<document>
+		<entity name="product" pk="ID"
+				query="SELECT
+					BEAN.ID AS ID,
+					BEAN.MAT_NAME AS MAT_NAME,
+					BEAN.PARENT_NAME AS PARENT_NAME,
+					BEAN.PRO_NAME AS PRO_NAME,
+					BEAN.PRO_IMG AS PRO_IMG,
+					BEAN.PRO_NUM AS PRO_NUM
+					FROM tcz_supplier_product BEAN
+					WHERE 1=1
+					AND BEAN.PRO_IMG IS NOT NULL
+					AND BEAN.PRO_IMG !=''
+		 			limit ${dataimporter.request.start_row},${dataimporter.request.page_size}
+			    "
+				deltaImportQuery="SELECT
+								tsp.ID AS ID,
+								tsp.ZY_ID AS ZY_ID,
+								tsp.ZY_FLAG AS ZY_FLAG,
+								tsp.PUSH_FLAG AS PUSH_FLAG,
+								tsp.PARENT_PRODUCT_ID AS PARENT_PRODUCT_ID,
+								tsp.PRO_NAME AS PRO_NAME,
+								tsp.PRO_PRICE AS PRO_PRICE,
+								tsp.PRO_STANDARD AS PRO_STANDARD,
+								tsp.PRO_UNITS AS PRO_UNITS,
+								tsp.PRO_NUM AS PRO_NUM,
+								tsp.PRO_MINNUM AS PRO_MINNUM,
+								tsp.END_DT AS END_DT,
+								tsp.CREATE_DT AS CREATE_DT,
+								tsp.UPDATE_DT AS UPDATE_DT,
+								tsp.PRO_SCORE AS PRO_SCORE,
+								tsp.PRO_IMG AS PRO_IMG,
+								sp.ID AS SUPPLIER_ID,
+								sp.SUPPLIER_NAME as SUPPLIER_NAME,
+								sp.SYSTEM as SUPPLIER_SYSTEM,
+								sp.CHANNEL_ID AS CHANNEL_ID,
+								concat(
+									sp.ID,
+									'@@',
+									IFNULL(sp.SUPPLIER_NAME,''),
+									'@@',
+									IFNULL(sp.LOGO,'')
+								) AS SUPPLIER_LOGO_FACET,
+								sp.PROVINCE AS PROVINCE,
+								sp.PROVINCE_NAME AS PROVINCE_NAME,
+								CONCAT(
+									sp.PROVINCE,
+									'DD',
+									sp.PROVINCE_NAME
+								) AS PROVINCE_NAME_FACET,
+								sp.CITY AS CITY,
+								sp.CITY_NAME AS CITY_NAME,
+								CONCAT(sp.CITY, 'DD', sp.CITY_NAME) AS CITY_NAME_FACET,
+								IFNULL(tsp.DEMO_FLAG,'N') AS DEMO_FLAG
+							FROM
+								TCZ_SUPPLIER_PRODUCT tsp,
+								SUPPLIER sp
+							WHERE
+								tsp.SUPPLIER_ID = sp.ID
+							AND tsp.PRO_STATUS = '2'
+							AND sp. STATUS = '2'
+							AND tsp.ID = '${dih.delta.ID}'"
+				deltaQuery="SELECT
+							tsp.ID AS ID
+						FROM
+							TCZ_SUPPLIER_PRODUCT tsp,
+							SUPPLIER sp
+						WHERE
+							tsp.SUPPLIER_ID = sp.ID
+						AND tsp.PRO_STATUS = '2'
+						AND sp. STATUS = '2'
+						AND tsp.CREATED_DT = str_to_date(SUBSTRING('${dataimporter.last_index_time}',1,10), '%Y-%m-%d')
+			    		"
+				transformer="RegexTransformer">
+
+			<!--field中存在的column需要与schema.xml中field的name对应-->
+			<field column="ID" name="id" />
+			<field column="PRO_NAME" name="pro_name" />
+			<field column="MAT_NAME" name="mat_name" />
+			<field column="PARENT_NAME" name="parent_name" />
+			<field column="PRO_IMG" name="pro_img" />
+			<field column="PRO_NUM" name="pro_num" />
+
+            <entity name="product_type"
+                    query="SELECT ID,NAME
+                         FROM tcz_supplier_product_type
+                         WHERE NAME IS NOT NULL">
+                <field column="ID" name="pro_id" />
+                <field column="NAME" name="mat_type_name" />
+            </entity>
+		</entity>
+	</document>
+</dataConfig>
+
+
+

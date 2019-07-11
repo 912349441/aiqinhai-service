@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tor.activity.mapper.ActivityMapper" >
+  <resultMap id="BaseResultMap" type="com.tor.activity.entity.Activity" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="activities" property="activities" jdbcType="VARCHAR" />
+    <result column="activities_pic" property="activitiesPic" jdbcType="VARCHAR" />
+    <result column="activity_bak" property="activityBak" jdbcType="VARCHAR" />
+    <result column="activity_end_dt" property="activityEndDt" jdbcType="TIMESTAMP" />
+    <result column="activity_start_dt" property="activityStartDt" jdbcType="TIMESTAMP" />
+    <result column="activity_status" property="activityStatus" jdbcType="VARCHAR" />
+    <result column="activity_sum" property="activitySum" jdbcType="VARCHAR" />
+    <result column="activity_title" property="activityTitle" jdbcType="VARCHAR" />
+    <result column="activity_type" property="activityType" jdbcType="VARCHAR" />
+    <result column="addr" property="addr" jdbcType="VARCHAR" />
+    <result column="apply_qr_code" property="applyQrCode" jdbcType="VARCHAR" />
+    <result column="audit_by" property="auditBy" jdbcType="VARCHAR" />
+    <result column="audit_dt" property="auditDt" jdbcType="TIMESTAMP" />
+    <result column="audit_opinion" property="auditOpinion" jdbcType="VARCHAR" />
+    <result column="audit_state" property="auditState" jdbcType="VARCHAR" />
+    <result column="business_model" property="businessModel" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="contacts" property="contacts" jdbcType="VARCHAR" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="VARCHAR" />
+    <result column="demo_flag" property="demoFlag" jdbcType="VARCHAR" />
+    <result column="free_flag" property="freeFlag" jdbcType="VARCHAR" />
+    <result column="index_flag" property="indexFlag" jdbcType="VARCHAR" />
+    <result column="invoice" property="invoice" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+    <result column="owner_id" property="ownerId" jdbcType="VARCHAR" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="pageviews" property="pageviews" jdbcType="INTEGER" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="registered_fund" property="registeredFund" jdbcType="VARCHAR" />
+    <result column="service_area" property="serviceArea" jdbcType="VARCHAR" />
+    <result column="sign_qr_code" property="signQrCode" jdbcType="VARCHAR" />
+    <result column="site" property="site" jdbcType="VARCHAR" />
+    <result column="system" property="system" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="title_tag" property="titleTag" jdbcType="VARCHAR" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="version_no" property="versionNo" jdbcType="INTEGER" />
+    <result column="website" property="website" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, activities, activities_pic, activity_bak, activity_end_dt, activity_start_dt, 
+    activity_status, activity_sum, activity_title, activity_type, addr, apply_qr_code, 
+    audit_by, audit_dt, audit_opinion, audit_state, business_model, city, contacts, create_dt, 
+    creator, delete_flag, demo_flag, free_flag, index_flag, invoice, member_id, owner_id, 
+    owner_name, pageviews, province, registered_fund, service_area, sign_qr_code, site, 
+    system, tel, title_tag, update_dt, updator, version_no, website
+  </sql>
+
+  <!--自定义-->
+  <select id="getTotalCount" resultType="Integer">
+     SELECT COUNT(*)
+     FROM tcz_activity
+     WHERE 1=1
+    <if test="params.activityTitle != null" >
+      AND activity_title LIKE binary CONCAT(CONCAT('%', #{params.activityTitle}), '%')
+    </if>
+    <if test="params.activityType != null" >
+      AND activity_type = #{params.activityType}
+    </if>
+    <if test="params.list!=null">
+      AND id NOT IN ${params.list}
+    </if>
+  </select>
+
+  <select id="selectByParams" resultMap="BaseResultMap">
+    SELECT *
+    FROM tcz_activity
+    WHERE 1=1
+    <if test="params.activityTitle != null" >
+      AND activity_title LIKE binary CONCAT(CONCAT('%', #{params.activityTitle}), '%')
+    </if>
+    <if test="params.activityType != null" >
+      AND activity_type = #{params.activityType}
+    </if>
+    <if test="pageNo !=null and pageSize!=null">
+      LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </if>
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    SELECT *
+    FROM tcz_activity
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tcz_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from tcz_activity
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.tor.activity.entity.Activity" >
+    insert into tcz_activity (id, activities, activities_pic, 
+      activity_bak, activity_end_dt, activity_start_dt, 
+      activity_status, activity_sum, activity_title, 
+      activity_type, addr, apply_qr_code, 
+      audit_by, audit_dt, audit_opinion, 
+      audit_state, business_model, city, 
+      contacts, create_dt, creator, 
+      delete_flag, demo_flag, free_flag, 
+      index_flag, invoice, member_id, 
+      owner_id, owner_name, pageviews, 
+      province, registered_fund, service_area, 
+      sign_qr_code, site, system, 
+      tel, title_tag, update_dt, 
+      updator, version_no, website
+      )
+    values (#{id,jdbcType=VARCHAR}, #{activities,jdbcType=VARCHAR}, #{activitiesPic,jdbcType=VARCHAR}, 
+      #{activityBak,jdbcType=VARCHAR}, #{activityEndDt,jdbcType=TIMESTAMP}, #{activityStartDt,jdbcType=TIMESTAMP}, 
+      #{activityStatus,jdbcType=VARCHAR}, #{activitySum,jdbcType=VARCHAR}, #{activityTitle,jdbcType=VARCHAR}, 
+      #{activityType,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{applyQrCode,jdbcType=VARCHAR}, 
+      #{auditBy,jdbcType=VARCHAR}, #{auditDt,jdbcType=TIMESTAMP}, #{auditOpinion,jdbcType=VARCHAR}, 
+      #{auditState,jdbcType=VARCHAR}, #{businessModel,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{contacts,jdbcType=VARCHAR}, #{createDt,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
+      #{deleteFlag,jdbcType=VARCHAR}, #{demoFlag,jdbcType=VARCHAR}, #{freeFlag,jdbcType=VARCHAR}, 
+      #{indexFlag,jdbcType=VARCHAR}, #{invoice,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, 
+      #{ownerId,jdbcType=VARCHAR}, #{ownerName,jdbcType=VARCHAR}, #{pageviews,jdbcType=INTEGER}, 
+      #{province,jdbcType=VARCHAR}, #{registeredFund,jdbcType=VARCHAR}, #{serviceArea,jdbcType=VARCHAR}, 
+      #{signQrCode,jdbcType=VARCHAR}, #{site,jdbcType=VARCHAR}, #{system,jdbcType=VARCHAR}, 
+      #{tel,jdbcType=VARCHAR}, #{titleTag,jdbcType=VARCHAR}, #{updateDt,jdbcType=TIMESTAMP}, 
+      #{updator,jdbcType=VARCHAR}, #{versionNo,jdbcType=INTEGER}, #{website,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tor.activity.entity.Activity" >
+    insert into tcz_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activities != null" >
+        activities,
+      </if>
+      <if test="activitiesPic != null" >
+        activities_pic,
+      </if>
+      <if test="activityBak != null" >
+        activity_bak,
+      </if>
+      <if test="activityEndDt != null" >
+        activity_end_dt,
+      </if>
+      <if test="activityStartDt != null" >
+        activity_start_dt,
+      </if>
+      <if test="activityStatus != null" >
+        activity_status,
+      </if>
+      <if test="activitySum != null" >
+        activity_sum,
+      </if>
+      <if test="activityTitle != null" >
+        activity_title,
+      </if>
+      <if test="activityType != null" >
+        activity_type,
+      </if>
+      <if test="addr != null" >
+        addr,
+      </if>
+      <if test="applyQrCode != null" >
+        apply_qr_code,
+      </if>
+      <if test="auditBy != null" >
+        audit_by,
+      </if>
+      <if test="auditDt != null" >
+        audit_dt,
+      </if>
+      <if test="auditOpinion != null" >
+        audit_opinion,
+      </if>
+      <if test="auditState != null" >
+        audit_state,
+      </if>
+      <if test="businessModel != null" >
+        business_model,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="contacts != null" >
+        contacts,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="demoFlag != null" >
+        demo_flag,
+      </if>
+      <if test="freeFlag != null" >
+        free_flag,
+      </if>
+      <if test="indexFlag != null" >
+        index_flag,
+      </if>
+      <if test="invoice != null" >
+        invoice,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="ownerId != null" >
+        owner_id,
+      </if>
+      <if test="ownerName != null" >
+        owner_name,
+      </if>
+      <if test="pageviews != null" >
+        pageviews,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="registeredFund != null" >
+        registered_fund,
+      </if>
+      <if test="serviceArea != null" >
+        service_area,
+      </if>
+      <if test="signQrCode != null" >
+        sign_qr_code,
+      </if>
+      <if test="site != null" >
+        site,
+      </if>
+      <if test="system != null" >
+        system,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="titleTag != null" >
+        title_tag,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+      <if test="updator != null" >
+        updator,
+      </if>
+      <if test="versionNo != null" >
+        version_no,
+      </if>
+      <if test="website != null" >
+        website,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="activities != null" >
+        #{activities,jdbcType=VARCHAR},
+      </if>
+      <if test="activitiesPic != null" >
+        #{activitiesPic,jdbcType=VARCHAR},
+      </if>
+      <if test="activityBak != null" >
+        #{activityBak,jdbcType=VARCHAR},
+      </if>
+      <if test="activityEndDt != null" >
+        #{activityEndDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityStartDt != null" >
+        #{activityStartDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityStatus != null" >
+        #{activityStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySum != null" >
+        #{activitySum,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTitle != null" >
+        #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="activityType != null" >
+        #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="applyQrCode != null" >
+        #{applyQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="auditBy != null" >
+        #{auditBy,jdbcType=VARCHAR},
+      </if>
+      <if test="auditDt != null" >
+        #{auditDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditOpinion != null" >
+        #{auditOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="auditState != null" >
+        #{auditState,jdbcType=VARCHAR},
+      </if>
+      <if test="businessModel != null" >
+        #{businessModel,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="demoFlag != null" >
+        #{demoFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="freeFlag != null" >
+        #{freeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="indexFlag != null" >
+        #{indexFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="invoice != null" >
+        #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="pageviews != null" >
+        #{pageviews,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredFund != null" >
+        #{registeredFund,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceArea != null" >
+        #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="signQrCode != null" >
+        #{signQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null" >
+        #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="system != null" >
+        #{system,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="titleTag != null" >
+        #{titleTag,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="website != null" >
+        #{website,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tor.activity.entity.Activity" >
+    update tcz_activity
+    <set >
+      <if test="activities != null" >
+        activities = #{activities,jdbcType=VARCHAR},
+      </if>
+      <if test="activitiesPic != null" >
+        activities_pic = #{activitiesPic,jdbcType=VARCHAR},
+      </if>
+      <if test="activityBak != null" >
+        activity_bak = #{activityBak,jdbcType=VARCHAR},
+      </if>
+      <if test="activityEndDt != null" >
+        activity_end_dt = #{activityEndDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityStartDt != null" >
+        activity_start_dt = #{activityStartDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="activityStatus != null" >
+        activity_status = #{activityStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="activitySum != null" >
+        activity_sum = #{activitySum,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTitle != null" >
+        activity_title = #{activityTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="activityType != null" >
+        activity_type = #{activityType,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="applyQrCode != null" >
+        apply_qr_code = #{applyQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="auditBy != null" >
+        audit_by = #{auditBy,jdbcType=VARCHAR},
+      </if>
+      <if test="auditDt != null" >
+        audit_dt = #{auditDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditOpinion != null" >
+        audit_opinion = #{auditOpinion,jdbcType=VARCHAR},
+      </if>
+      <if test="auditState != null" >
+        audit_state = #{auditState,jdbcType=VARCHAR},
+      </if>
+      <if test="businessModel != null" >
+        business_model = #{businessModel,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        contacts = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="demoFlag != null" >
+        demo_flag = #{demoFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="freeFlag != null" >
+        free_flag = #{freeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="indexFlag != null" >
+        index_flag = #{indexFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="invoice != null" >
+        invoice = #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerId != null" >
+        owner_id = #{ownerId,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        owner_name = #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="pageviews != null" >
+        pageviews = #{pageviews,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="registeredFund != null" >
+        registered_fund = #{registeredFund,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceArea != null" >
+        service_area = #{serviceArea,jdbcType=VARCHAR},
+      </if>
+      <if test="signQrCode != null" >
+        sign_qr_code = #{signQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="site != null" >
+        site = #{site,jdbcType=VARCHAR},
+      </if>
+      <if test="system != null" >
+        system = #{system,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="titleTag != null" >
+        title_tag = #{titleTag,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        updator = #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        version_no = #{versionNo,jdbcType=INTEGER},
+      </if>
+      <if test="website != null" >
+        website = #{website,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tor.activity.entity.Activity" >
+    update tcz_activity
+    set activities = #{activities,jdbcType=VARCHAR},
+      activities_pic = #{activitiesPic,jdbcType=VARCHAR},
+      activity_bak = #{activityBak,jdbcType=VARCHAR},
+      activity_end_dt = #{activityEndDt,jdbcType=TIMESTAMP},
+      activity_start_dt = #{activityStartDt,jdbcType=TIMESTAMP},
+      activity_status = #{activityStatus,jdbcType=VARCHAR},
+      activity_sum = #{activitySum,jdbcType=VARCHAR},
+      activity_title = #{activityTitle,jdbcType=VARCHAR},
+      activity_type = #{activityType,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      apply_qr_code = #{applyQrCode,jdbcType=VARCHAR},
+      audit_by = #{auditBy,jdbcType=VARCHAR},
+      audit_dt = #{auditDt,jdbcType=TIMESTAMP},
+      audit_opinion = #{auditOpinion,jdbcType=VARCHAR},
+      audit_state = #{auditState,jdbcType=VARCHAR},
+      business_model = #{businessModel,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      create_dt = #{createDt,jdbcType=TIMESTAMP},
+      creator = #{creator,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=VARCHAR},
+      demo_flag = #{demoFlag,jdbcType=VARCHAR},
+      free_flag = #{freeFlag,jdbcType=VARCHAR},
+      index_flag = #{indexFlag,jdbcType=VARCHAR},
+      invoice = #{invoice,jdbcType=VARCHAR},
+      member_id = #{memberId,jdbcType=VARCHAR},
+      owner_id = #{ownerId,jdbcType=VARCHAR},
+      owner_name = #{ownerName,jdbcType=VARCHAR},
+      pageviews = #{pageviews,jdbcType=INTEGER},
+      province = #{province,jdbcType=VARCHAR},
+      registered_fund = #{registeredFund,jdbcType=VARCHAR},
+      service_area = #{serviceArea,jdbcType=VARCHAR},
+      sign_qr_code = #{signQrCode,jdbcType=VARCHAR},
+      site = #{site,jdbcType=VARCHAR},
+      system = #{system,jdbcType=VARCHAR},
+      tel = #{tel,jdbcType=VARCHAR},
+      title_tag = #{titleTag,jdbcType=VARCHAR},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      updator = #{updator,jdbcType=VARCHAR},
+      version_no = #{versionNo,jdbcType=INTEGER},
+      website = #{website,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

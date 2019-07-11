@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="example-DIH-db" version="1.6">
+	<!-- 保留字段，不能删除，否则报错 -->
+	<field name="_version_" type="long" indexed="true" stored="true"/>
+	<!-- 保留字段，整合字段,包含其他可搜索的字段 （通过copyField实现） -->
+	<field name="text" type="string" indexed="true" stored="false" multiValued="true"/>
+	<!-- fields各个属性说明:
+     name: 必须属性 - 字段名
+     type: 必须属性 - <types>中定义的字段类型
+     indexed: 如果字段需要被索引（用于搜索或排序），属性值设置为true
+     stored: 如果字段内容需要被返回，值设置为true
+     docValues: 如果这个字段应该有文档值（doc values），设置为true。文档值在门
+           面搜索，分组，排序和函数查询中会非常有用。虽然不是必须的，而且会导致生成
+           索引变大变慢，但这样设置会使索引加载更快，更加NRT友好，更高的内存使用效率。
+           然而也有一些使用限制：目前仅支持StrField, UUIDField和所有 Trie*Fields,
+           并且依赖字段类型, 可能要求字段为单值（single-valued）的,必须的或者有默认值。
+     multiValued: 如果这个字段在每个文档中可能包含多个值，设置为true
+     termVectors: [false] 设置为true后，会保存所给字段的相关向量（vector）
+           当使用MoreLikeThis时, 用于相似度判断的字段需要设置为stored来达到最佳性能.
+     termPositions: 保存和向量相关的位置信息，会增加存储开销
+     termOffsets: 保存 offset 和向量相关的信息，会增加存储开销
+     required: 字段必须有值，否则会抛异常
+     default: 在增加文档时，可以根据需要为字段设置一个默认值，防止为空
+   -->
+	<!-- 字段名由字母数字下划线组成，且不能以数字开头。两端为下划线的字段为保留字段，
+       如(_version_)。
+     -->
+	<!-- 注意:如果为主键,indexed="true"一定要为true,为false会报异常 -->
+	<field name="id" type="string" indexed="true" stored="true"  required="true" multiValued="false" />
+
+	<!-- 文档的唯一标识，可理解为主键，除非标识为required="false", 否则值不能为空-->
+	<!-- 注意:如果为主键,indexed="true"一定要为true,为false会报异常 -->
+	<uniqueKey>id</uniqueKey>
+
+	<!-- 字段类型定义 -->
+	<types>
+		<fieldType name="long" class="solr.TrieLongField" precisionStep="0"
+				   positionIncrementGap="0"/>
+		<fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+		<fieldType name="double" class="solr.TrieDoubleField" precisionStep="0"
+				   positionIncrementGap="0"/>
+	</types>
+
+	<types>
+		<fieldType name="text_ik" class="solr.TextField">
+			<analyzer type="index">
+				<tokenizer class="org.wltea.analyzer.util.IKTokenizerFactory" useSmart="true"/>
+			</analyzer>
+		</fieldType>
+	</types>
+
+	<field name="activity_title"  type="text_ik" indexed="true" stored="true"/>
+	<field name="activity_type"  type="text_ik" indexed="true" stored="true"/>
+	<field name="activity_sum"  type="text_ik" indexed="true" stored="true"/>
+	<field name="createDt"  type="text_ik" indexed="true" stored="true"/>
+
+	<field name="copyText" type="string" indexed="true" stored="false" multiValued="true"/>
+	<copyField source="activity_title" dest="copyText" />
+	<copyField source="activity_type" dest="copyText" />
+	<copyField source="activity_sum" dest="copyText" />
+</schema>

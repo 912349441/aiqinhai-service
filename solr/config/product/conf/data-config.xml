@@ -1,0 +1,75 @@
+<dataConfig>
+    <dataSource
+            type="JdbcDataSource"
+            driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://127.0.0.1:3306/CGPT"
+            user="root"
+            password="root" />
+    <document>
+        <entity name="product"
+                query="select
+                    bean.id as id,
+                    bean.supplier_id as supplier_id,
+                    (select supplier.supplier_name from supplier supplier where supplier.id=bean.supplier_id) as supplier_name,
+                    bean.mat_name mat_name,
+                    bean.push_flag push_flag,
+                    bean.parent_product_id parent_product_id,
+                    bean.pro_name pro_name,
+                    bean.pro_img pro_img,
+                    bean.create_dt create_dt,
+                    bean.pro_price pro_price,
+                    bean.pro_num pro_num,
+                    bean.pro_minnum pro_minnum,
+                    (select count(*) from tcz_supplier_product_sku_item as item where bean.id=item.product_id) itemnum
+                    from tcz_supplier_product as bean
+		 			limit ${dataimporter.request.start_row},${dataimporter.request.page_size}
+			    "
+                deltaImportQuery=""
+                deltaQuery=""
+                transformer="RegexTransformer">
+
+            <!--field中存在的column需要与schema.xml中field的name对应-->
+            <field column="id" name="id" />
+            <field column="supplier_id" name="supplier_id" />
+            <field column="supplier_name" name="supplier_name" />
+            <field column="mat_name" name="mat_name" />
+            <field column="pro_name" name="pro_name" />
+            <field column="pro_price" name="pro_price" />
+            <field column="pro_img" name="pro_img" />
+            <field column="pro_num" name="pro_num" />
+            <field column="pro_minnum" name="pro_minnum" />
+            <field column="create_dt" name="create_dt" />
+            <field column="push_flag" name="push_flag" />
+            <field column="parent_product_id" name="parent_product_id" />
+            <field column="itemnum" name="itemnum" />
+
+        </entity>
+
+        <entity name="product_item"
+                query="select
+                        item.id id,
+                        item.item_name item_name,
+                        item.product_id product_id,
+                        item.value_ids value_ids,
+                        item.value_strings value_strings,
+                        item.price price,
+                        item.num num,
+                        item.min_num min_num,
+                        item.create_dt create_dt
+                        from tcz_supplier_product_sku_item item
+                        ">
+            <field column="id" name="id" />
+            <field column="item_name" name="item_name" />
+            <field column="product_id" name="product_id" />
+            <field column="value_ids" name="value_ids" />
+            <field column="value_strings" name="value_strings" />
+            <field column="price" name="price" />
+            <field column="min_num" name="min_num" />
+            <field column="create_dt" name="create_dt" />
+
+        </entity>
+    </document>
+</dataConfig>
+
+
+
