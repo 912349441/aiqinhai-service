@@ -7,7 +7,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 
 @SpringBootApplication
-@MapperScan("com.tor.*.mapper")
+@MapperScan({"com.tor.*.mapper","com.tor.*.*.dao"})
 // 以下三个是为了不启动Eureka服务 所以暂时关闭
 //@EnableDiscoveryClient
 //@EnableFeignClients

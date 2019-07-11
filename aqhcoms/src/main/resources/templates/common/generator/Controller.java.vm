@@ -1,0 +1,128 @@
+package ${package}.controller;
+
+
+import java.util.Arrays;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.ifast.common.annotation.Log;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import com.ifast.common.base.BaseController;
+import ${package}.domain.${className}DO;
+import ${package}.service.${className}Service;
+import com.ifast.common.utils.Result;
+
+/**
+ * 
+ * <pre>
+ * ${comments}
+ * </pre>
+ * <small> ${datetime} | ${author}</small>
+ */
+@Controller
+@Api(tags="${comments}")
+@RequestMapping("/${pathName}/${classname}")
+public class ${className}Controller extends BaseController {
+	@Autowired
+	private ${className}Service ${classname}Service;
+	
+	@GetMapping()
+	@RequiresPermissions("${pathName}:${classname}:${classname}")
+	String ${className}(){
+	    return "${pathName}/${classname}/${classname}";
+	}
+	
+	@ResponseBody
+	@GetMapping("/list")
+//	@RequiresPermissions("${pathName}:${classname}:${classname}")
+    @ApiOperation(value="列表",notes="${comments}列表")
+	public Result<Page<${className}DO>> list(${className}DO ${classname}DTO){
+        Wrapper<${className}DO> wrapper = new EntityWrapper<>(${classname}DTO).orderBy("updateAt", false);
+        Page<${className}DO> page = ${classname}Service.selectPage(getPage(${className}DO.class), wrapper);
+        return Result.ok(page);
+	}
+	
+	@GetMapping("/add")
+	@RequiresPermissions("${pathName}:${classname}:add")
+	String add(Model model){
+        model.addAttribute("${classname}", new ${className}DO());
+	    return "${pathName}/${classname}/edit";
+	}
+
+	@GetMapping("/edit/{${pk.attrname}}")
+	@RequiresPermissions("${pathName}:${classname}:edit")
+	String edit(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname},Model model){
+		${className}DO ${classname} = ${classname}Service.selectById(${pk.attrname});
+		model.addAttribute("${classname}", ${classname});
+	    return "${pathName}/${classname}/edit";
+	}
+
+    @ResponseBody
+    @GetMapping("/view/{id}")
+    @ApiOperation(value = "详情",notes = "${comments}详情")
+    public Result<${className}DO> view(@PathVariable("id") Long id){
+        ${className}DO ${classname} = ${classname}Service.selectById(id);
+        return Result.ok(${classname});
+    }
+
+	@Log("添加${comments}")
+	@ResponseBody
+	@PostMapping("/save")
+//	@RequiresPermissions("${pathName}:${classname}:add")
+    @ApiOperation(value="保存",notes="${comments}保存")
+	public Result<String> save( ${className}DO ${classname}){
+        baseInfo(${classname});
+		${classname}Service.insert(${classname});
+        return Result.ok();
+	}
+	
+	@Log("修改${comments}")
+	@ResponseBody
+	@PostMapping("/update")
+//	@RequiresPermissions("${pathName}:${classname}:edit")
+    @ApiOperation(value="更新",notes="${comments}更新")
+	public Result<String>  update( ${className}DO ${classname}){
+		boolean update;
+        baseInfo(${classname});
+		if(${classname}.getId() != null){
+		    update = ${classname}Service.updateById(${classname});
+        }else{
+            update = ${classname}Service.insert(${classname});
+        }
+		return update ? Result.ok() : Result.fail();
+	}
+	
+	@Log("删除${comments}")
+	@PostMapping( "/remove")
+	@ResponseBody
+//	@RequiresPermissions("${pathName}:${classname}:remove")
+    @ApiOperation(value="删除",notes="${comments}删除")
+	public Result<String>  remove( ${pk.attrType} ${pk.attrname}){
+		${classname}Service.deleteById(${pk.attrname});
+        return Result.ok();
+	}
+	
+	@Log("批量删除${comments}")
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+//	@RequiresPermissions("${pathName}:${classname}:batchRemove")
+    @ApiOperation(value="批量删除",notes="${comments}批量删除")
+	public Result<String>  remove(@RequestParam("ids[]") ${pk.attrType}[] ${pk.attrname}s){
+		${classname}Service.deleteBatchIds(Arrays.asList(${pk.attrname}s));
+		return Result.ok();
+	}
+	
+}
