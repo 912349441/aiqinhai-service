@@ -1,0 +1,23 @@
+server:
+  port: 7901
+
+spring:
+    datasource:
+        url: jdbc:mysql://127.0.0.1:3306/cgpt?autoReconnect=true&useUnicode=true&characterEncoding=utf8
+        username: root
+        password: root
+        driver-class-name: com.mysql.jdbc.Driver
+    # 404 交给异常处理器处理
+    mvc:
+      throw-exception-if-no-handler-found: true
+    resources:
+      add-mappings: false
+# mybatis配置
+# mapper-locations 扫描 *Mapper.xml的路径，多个时用" ，"隔开
+mybatis:
+  mapper-locations: classpath:mapper/**/*Mapper.xml,com/tor/*/mapper/xml/*Mapper.xml
+  type-aliases-package: com.tor.*
+
+logging:
+  level:
+    com.tor: debug

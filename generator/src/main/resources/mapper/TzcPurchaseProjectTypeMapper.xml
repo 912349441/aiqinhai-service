@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.TzcPurchaseProjectTypeMapper">
+  <resultMap id="BaseResultMap" type="com.tor.project.entity.TzcPurchaseProjectType">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PURCHASE_PROJECT_ID" jdbcType="VARCHAR" property="purchaseProjectId" />
+    <result column="TYPE_NAME" jdbcType="VARCHAR" property="typeName" />
+    <result column="TYPE_CODE" jdbcType="VARCHAR" property="typeCode" />
+    <result column="PURCHASE_ORDER_ID" jdbcType="VARCHAR" property="purchaseOrderId" />
+    <result column="CHANNEL_CODE" jdbcType="VARCHAR" property="channelCode" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="PRIORITY" jdbcType="INTEGER" property="priority" />
+    <result column="PURCHASE_ORDER_PRIORITY" jdbcType="INTEGER" property="purchaseOrderPriority" />
+  </resultMap>
+</mapper>

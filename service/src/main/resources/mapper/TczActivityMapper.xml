@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.TczActivityMapper">
+  <resultMap id="BaseResultMap" type="com.tor.project.entity.TczActivity">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="MEMBER_ID" jdbcType="VARCHAR" property="memberId" />
+    <result column="OWNER_ID" jdbcType="VARCHAR" property="ownerId" />
+    <result column="OWNER_NAME" jdbcType="VARCHAR" property="ownerName" />
+    <result column="CHANNEL_CODE" jdbcType="VARCHAR" property="channelCode" />
+    <result column="SYSTEM" jdbcType="VARCHAR" property="system" />
+    <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType" />
+    <result column="ACTIVITY_TITLE" jdbcType="VARCHAR" property="activityTitle" />
+    <result column="TITLE_TAG" jdbcType="VARCHAR" property="titleTag" />
+    <result column="ACTIVITY_SUM" jdbcType="VARCHAR" property="activitySum" />
+    <result column="ACTIVITIES" jdbcType="VARCHAR" property="activities" />
+    <result column="ACTIVITY_STATUS" jdbcType="VARCHAR" property="activityStatus" />
+    <result column="ACTIVITY_START_DT" jdbcType="TIMESTAMP" property="activityStartDt" />
+    <result column="ACTIVITY_END_DT" jdbcType="TIMESTAMP" property="activityEndDt" />
+    <result column="ACTIVITIES_PIC" jdbcType="VARCHAR" property="activitiesPic" />
+    <result column="FREE_FLAG" jdbcType="VARCHAR" property="freeFlag" />
+    <result column="CONTACTS" jdbcType="VARCHAR" property="contacts" />
+    <result column="PROVINCE" jdbcType="VARCHAR" property="province" />
+    <result column="CITY" jdbcType="VARCHAR" property="city" />
+    <result column="SITE" jdbcType="VARCHAR" property="site" />
+    <result column="ADDR" jdbcType="VARCHAR" property="addr" />
+    <result column="WEBSITE" jdbcType="VARCHAR" property="website" />
+    <result column="TEL" jdbcType="VARCHAR" property="tel" />
+    <result column="INVOICE" jdbcType="VARCHAR" property="invoice" />
+    <result column="BUSINESS_MODEL" jdbcType="VARCHAR" property="businessModel" />
+    <result column="SERVICE_AREA" jdbcType="VARCHAR" property="serviceArea" />
+    <result column="REGISTERED_FUND" jdbcType="VARCHAR" property="registeredFund" />
+    <result column="APPLY_QR_CODE" jdbcType="VARCHAR" property="applyQrCode" />
+    <result column="SIGN_QR_CODE" jdbcType="VARCHAR" property="signQrCode" />
+    <result column="PAGEVIEWS" jdbcType="INTEGER" property="pageviews" />
+    <result column="AUDIT_STATE" jdbcType="VARCHAR" property="auditState" />
+    <result column="AUDIT_BY" jdbcType="VARCHAR" property="auditBy" />
+    <result column="AUDIT_DT" jdbcType="TIMESTAMP" property="auditDt" />
+    <result column="AUDIT_OPINION" jdbcType="VARCHAR" property="auditOpinion" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="UPDATOR" jdbcType="VARCHAR" property="updator" />
+    <result column="DELETE_FLAG" jdbcType="VARCHAR" property="deleteFlag" />
+    <result column="VERSION_NO" jdbcType="INTEGER" property="versionNo" />
+    <result column="INDEX_FLAG" jdbcType="VARCHAR" property="indexFlag" />
+    <result column="DEMO_FLAG" jdbcType="VARCHAR" property="demoFlag" />
+    <result column="ACTIVITY_BAK" jdbcType="LONGVARCHAR" property="activityBak" />
+  </resultMap>
+</mapper>
