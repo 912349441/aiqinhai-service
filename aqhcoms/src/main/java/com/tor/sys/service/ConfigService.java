@@ -1,7 +1,7 @@
 package com.tor.sys.service;
 
-import com.tor.sys.entity.Config;
 import com.tor.generator.core.Service;
+import com.tor.sys.entity.Config;
 
 
 /**

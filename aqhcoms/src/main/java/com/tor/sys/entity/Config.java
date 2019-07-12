@@ -1,7 +1,7 @@
 package com.tor.sys.entity;
 
-import java.util.Date;
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "sys_config")
 public class Config {
