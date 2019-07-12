@@ -1,7 +1,7 @@
 package com.tor;
 
-import com.tor.common.entity.Config;
-import com.tor.common.service.ConfigService;
+import com.tor.sys.entity.Config;
+import com.tor.sys.service.ConfigService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

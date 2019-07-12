@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tor.common.mapper.ConfigMapper">
-  <resultMap id="BaseResultMap" type="com.tor.common.entity.Config">
+<mapper namespace="com.tor.sys.mapper.ConfigMapper">
+  <resultMap id="BaseResultMap" type="com.tor.sys.entity.Config">
     <!--
       WARNING - @mbg.generated
     -->

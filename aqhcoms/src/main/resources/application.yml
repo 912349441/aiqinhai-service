@@ -27,7 +27,7 @@ spring:
       prefix: classpath:/templates/
       suffix: .html
       encoding: UTF-8
-      mode: HTML5
+      mode: LEGACYHTML5
       content-type: text/html
     application:
         name: project-aqhcoms

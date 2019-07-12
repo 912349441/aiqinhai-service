@@ -2,7 +2,7 @@ package com.tor.common.utils;
 
 
 import com.tor.common.config.Constant;
-import com.tor.common.entity.Config;
+import com.tor.sys.entity.Config;
 import com.tor.common.generator.domain.ColumnDO;
 import com.tor.common.generator.domain.TableDO;
 import com.tor.common.generator.service.GeneratorService;

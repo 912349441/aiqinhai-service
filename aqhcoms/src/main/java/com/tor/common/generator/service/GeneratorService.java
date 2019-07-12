@@ -3,7 +3,7 @@
  */
 package com.tor.common.generator.service;
 
-import com.tor.common.entity.Config;
+import com.tor.sys.entity.Config;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.tor.common.generator.service.impl;
 
-import com.tor.common.entity.Config;
+import com.tor.sys.entity.Config;
 import com.tor.common.generator.dao.GeneratorMapper;
 import com.tor.common.generator.service.GeneratorService;
 import com.tor.common.utils.GenUtils;

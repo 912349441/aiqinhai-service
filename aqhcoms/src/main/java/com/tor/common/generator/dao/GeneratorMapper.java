@@ -1,6 +1,6 @@
 package com.tor.common.generator.dao;
 
-import com.tor.common.entity.Config;
+import com.tor.sys.entity.Config;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
