@@ -74,5 +74,4 @@ public class ConfigController {
         return ResultGenerator.genSuccessResult();
     }
 
-
 }

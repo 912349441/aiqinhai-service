@@ -150,8 +150,8 @@ public class GenUtils {
 
             try {
                 // 添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, tableDO.getClassname(), tableDO.getClassName(),
-                        pack.substring(pack.lastIndexOf(".") + 1))));
+                zip.putNextEntry(new ZipEntry(Objects.requireNonNull(getFileName(template, tableDO.getClassname(), tableDO.getClassName(),
+                        pack.substring(pack.lastIndexOf(".") + 1)))));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
