@@ -13,11 +13,8 @@ server:
     uri-encoding: utf-8
 
 spring:
-  datasource:
-    url: jdbc:mysql://120.78.154.0:3306/aiqinhai?autoReconnect=true&useUnicode=true&characterEncoding=utf8
-    username: root
-    password: root
-    driver-class-name: com.mysql.jdbc.Driver
+  profiles:
+    active: dev
   mvc:
     view:
       prefix: /

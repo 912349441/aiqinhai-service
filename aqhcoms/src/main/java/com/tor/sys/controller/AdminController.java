@@ -1,9 +1,23 @@
 package com.tor.sys.controller;
 
+import com.tor.project.entity.User;
+import com.tor.project.service.UserService;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <pre>
@@ -14,57 +28,64 @@ import org.springframework.web.bind.annotation.GetMapping;
 @AllArgsConstructor
 public class AdminController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping({ "/", "" })
     String welcome(Model model) {
-        return "redirect:/login";
-    }
-
-    @GetMapping({ "include"})
-    String inde(Model model) {
-        return "include";
+        return "redirect:/index";
     }
 
     @GetMapping({ "/index" })
     String index(Model model) {
-//        List<Tree<MenuDO>> menus = menuService.listMenuTree(getUserId());
-//        model.addAttribute("menus", menus);
-//        model.addAttribute("name", getUser().getName());
-//        model.addAttribute("username", getUser().getUsername());
-//        FileDO fileDO = fileService.selectById(getUser().getPicId());
-//        model.addAttribute("picUrl", fileDO == null ? "/img/photo_s.jpg" : fileDO.getUrl());
-//        List<MpConfigDO> mpList = mpConfigService.selectList(null);
-//        model.addAttribute("mpList", mpList);
+        System.out.println("进入index");
         return "index";
     }
 
-    @GetMapping("/login")
-    String login() {
+    @RequestMapping(value="/login",method= RequestMethod.GET)
+    public String login(){
+        System.out.println("进入login");
         return "login";
     }
 
-//    @Log("登录")
-//    @PostMapping("/login")
-//    @ResponseBody
-//    Result<String> ajaxLogin(String username, String password) {
-//        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-////        token.setRememberMe(true);//记住我是可选项，但只有会话缓存到redis等持久存储才能真正记住
-//        Subject subject = SecurityUtils.getSubject();
-//        try {
-//            subject.login(token);
-//            return Result.ok();
-//        } catch (AuthenticationException e) {
-//            return Result.build(EnumErrorCode.userLoginFail.getCode(), EnumErrorCode.userLoginFail.getMsg());
-//        }
-//    }
-
-    @GetMapping("/main")
-    String main() {
-        return "main";
+    @PostMapping(value="/login")
+    public String login(HttpServletRequest request, User user){
+        if (StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getPassword())) {
+            request.setAttribute("msg", "用户名或密码不能为空！");
+            return "login";
+        }
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token=new UsernamePasswordToken(user.getUsername(),user.getPassword());
+        try {
+            subject.login(token);
+            return "redirect:index";
+        }catch (LockedAccountException lae) {
+            token.clear();
+            request.setAttribute("msg", "用户已经被锁定不能登录，请与管理员联系！");
+            return "login";
+        } catch (AuthenticationException e) {
+            token.clear();
+            request.setAttribute("msg", "用户或密码不正确！");
+            return "login";
+        }
+    }
+    @RequestMapping(value={"/usersPage",""})
+    public String usersPage(){
+        return "user/users";
     }
 
-    @GetMapping("/403")
-    String error403() {
+    @RequestMapping("/rolesPage")
+    public String rolesPage(){
+        return "role/roles";
+    }
+
+    @RequestMapping("/resourcesPage")
+    public String resourcesPage(){
+        return "resources/resources";
+    }
+
+    @RequestMapping("/403")
+    public String forbidden(){
         return "403";
     }
-
 }
