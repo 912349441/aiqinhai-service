@@ -76,11 +76,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!--以下两个是支持jsp 好像打包还要位war-->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -103,6 +98,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional> <!-- 表示依赖不会传递 -->
+            <scope>true</scope>
         </dependency>
 
         <dependency>

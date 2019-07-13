@@ -16,7 +16,12 @@ public class AdminController {
 
     @GetMapping({ "/", "" })
     String welcome(Model model) {
-        return "redirect:/index";
+        return "redirect:/login";
+    }
+
+    @GetMapping({ "include"})
+    String inde(Model model) {
+        return "include";
     }
 
     @GetMapping({ "/index" })
