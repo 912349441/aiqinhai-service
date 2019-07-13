@@ -27,13 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @AllArgsConstructor
 public class AdminController {
-
+//    private Logger log = Logger.getLogger(AdminController.class);
     @Autowired
     private UserService userService;
 
     @GetMapping({ "/", "" })
-    String welcome(Model model) {
-        return "redirect:/index";
+    String welcome() {
+        return "redirect:/login";
     }
 
     @GetMapping({ "/index" })
