@@ -1,3 +1,5 @@
+ty:
+  vendorPath: D:/static/vendor/
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver

@@ -5,6 +5,7 @@ import com.github.pagehelper.util.StringUtil;
 import com.tor.common.shiro.MyShiroRealm;
 import com.tor.project.entity.Resources;
 import com.tor.project.service.ResourcesService;
+import org.apache.log4j.Logger;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -29,6 +30,8 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+    private Logger log = Logger.getLogger(ShiroConfig.class);
+
     @Autowired(required = false)
     private ResourcesService resourcesService;
 
@@ -68,7 +71,7 @@ public class ShiroConfig {
      */
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager){
-        System.out.println("ShiroConfiguration.shirFilter()");
+        log.info("配置shiroConfiguration.shirFilter()");
         ShiroFilterFactoryBean shiroFilterFactoryBean  = new ShiroFilterFactoryBean();
 
         // 必须设置 SecurityManager
@@ -85,6 +88,7 @@ public class ShiroConfig {
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/logout", "logout");
+        filterChainDefinitionMap.put("/vendor/**","anon");
         filterChainDefinitionMap.put("/css/**","anon");
         filterChainDefinitionMap.put("/js/**","anon");
         filterChainDefinitionMap.put("/img/**","anon");

@@ -1,8 +1,9 @@
 package com.tor.sys.controller;
 
+import com.tor.common.base.BaseController;
 import com.tor.project.entity.User;
 import com.tor.project.service.UserService;
-import lombok.AllArgsConstructor;
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
@@ -25,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
  * <small> 2018年3月23日 | Aron</small>
  */
 @Controller
-@AllArgsConstructor
-public class AdminController {
-//    private Logger log = Logger.getLogger(AdminController.class);
+public class AdminController extends BaseController {
+    private Logger log = Logger.getLogger(AdminController.class);
+
     @Autowired
     private UserService userService;
 
@@ -38,13 +39,13 @@ public class AdminController {
 
     @GetMapping({ "/index" })
     String index(Model model) {
-        System.out.println("进入index");
+        log.info("============================= 欢迎进入index =============================");
         return "index";
     }
 
     @RequestMapping(value="/login",method= RequestMethod.GET)
     public String login(){
-        System.out.println("进入login");
+        log.info("============================= 欢迎登录login =============================");
         return "login";
     }
 
@@ -55,7 +56,7 @@ public class AdminController {
             return "login";
         }
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token=new UsernamePasswordToken(user.getUsername(),user.getPassword());
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),user.getPassword());
         try {
             subject.login(token);
             return "redirect:index";
@@ -68,6 +69,12 @@ public class AdminController {
             request.setAttribute("msg", "用户或密码不正确！");
             return "login";
         }
+    }
+
+    @GetMapping(value = "/logout")
+    public String logout(){
+        log.info("============================= 退出logout =============================");
+        return "login";
     }
     @RequestMapping(value={"/usersPage",""})
     public String usersPage(){
