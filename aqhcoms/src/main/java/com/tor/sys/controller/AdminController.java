@@ -3,12 +3,13 @@ package com.tor.sys.controller;
 import com.tor.common.base.BaseController;
 import com.tor.project.entity.User;
 import com.tor.project.service.UserService;
-import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 public class AdminController extends BaseController {
-    private Logger log = Logger.getLogger(AdminController.class);
+    private Logger log = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private UserService userService;

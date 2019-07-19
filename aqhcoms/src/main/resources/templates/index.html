@@ -49,6 +49,22 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
+         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#generator" aria-expanded="true"
+            aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Generator</span>
+         </a>
+         <div id="generator" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+               <h6 class="collapse-header">Custom Components:</h6>
+               <a class="collapse-item iframe" th:href="@{/common/generator}" href="buttons.html">Generator</a>
+               <a class="collapse-item" href="cards.html">Cards</a>
+            </div>
+         </div>
+      </li>
+
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
             aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
@@ -347,7 +363,7 @@
          </nav>
       </div>
       <!-- End of Content Wrapper -->
-      <iframe th:src="@{/include}" data-id="include.html" frameborder="0" height="100%" name="iframe0" seamless
+      <iframe id="iframe" th:src="@{/include}" data-id="include.html" frameborder="0" height="100%" name="iframe0" seamless
               width="100%"></iframe>
    </div>
    <a class="scroll-to-top rounded" href="#page-top">
@@ -378,6 +394,12 @@
    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
    <!--   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
    <script src="js/sb-admin-2.min.js"></script>
+   <script>
+      $(".iframe").click(function(){
+         var href = $(this).attr("href");
+         $("#iframe").attr("src",href);
+      })
+   </script>
 </div>
 </body>
 </html>
