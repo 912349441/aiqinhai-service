@@ -72,6 +72,10 @@ public class AdminController extends BaseController {
         }
     }
 
+    @GetMapping(value="/main")
+    public String main(){
+        return "main";
+    }
     @GetMapping(value = "/logout")
     public String logout(){
         log.info("============================= 退出logout =============================");
