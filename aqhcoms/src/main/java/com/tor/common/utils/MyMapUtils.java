@@ -15,15 +15,17 @@ public class MyMapUtils {
      */
     public Map<String,Object> columnUpperCaseToMap(Map<String, Object> stringObjectMap){
         Map<String, Object> map = new HashMap<>();
-        Set<String> keySet = stringObjectMap.keySet();
-        for (String key : keySet) {
-            Object value = stringObjectMap.get(key);
-            if (value instanceof Date) {
+        // 选用entrySet是因为比keySet效率要高
+        Set<Map.Entry<String, Object>> entrySet = stringObjectMap.entrySet();
+        for (Map.Entry<String, Object> stringObjectEntry : entrySet) {
+            String key = stringObjectEntry.getKey();
+            Object value = stringObjectEntry.getValue();
+            if(value instanceof Date){
                 value = ((Date) value).getTime();
             }
-            String newKey = WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "");
-            String s = newKey.substring(0, 1).toLowerCase() + newKey.substring(1);
-            map.put(s, value);
+            String replace = WordUtils.capitalizeFully(key, new char[]{'_'}).replace("_", "");
+            String newKey = replace.substring(0, 1).toLowerCase() + replace.substring(1);
+            map.put(newKey, value);
         }
         return map;
     }
