@@ -11312,19 +11312,19 @@ a:focus {
     font-size: 0.85rem;
     display: inline;
   }
-  .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
-    width: 1rem;
-    text-align: center;
-    float: right;
-    vertical-align: 0;
-    border: 0;
-    font-weight: 900;
-    content: '\f107';
-    font-family: 'Font Awesome 5 Free';
-  }
-  .sidebar .nav-item .nav-link[data-toggle="collapse"].collapsed::after {
-    content: '\f105';
-  }
+  /*.sidebar .nav-item .nav-link[data-toggle="collapse"]::after {*/
+  /*  width: 1rem;*/
+  /*  text-align: center;*/
+  /*  float: right;*/
+  /*  vertical-align: 0;*/
+  /*  border: 0;*/
+  /*  font-weight: 900;*/
+  /*  content: "\f054";*/
+  /*  font-family: 'Font Awesome 5 Free';*/
+  /*}*/
+  /*.sidebar .nav-item .nav-link[data-toggle="collapse"].collapsed::after {*/
+  /*  content: "\f105";*/
+  /*}*/
   .sidebar .sidebar-brand .sidebar-brand-icon i {
     font-size: 2rem;
   }
