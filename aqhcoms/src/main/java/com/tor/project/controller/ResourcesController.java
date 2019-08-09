@@ -31,7 +31,7 @@ public class ResourcesController {
           @ApiImplicitParam(name="pageNo",value="页码",paramType="query",dataType="String")
        })
     @GetMapping(value = "/v1/resources/list")
-    public Result list(
+    public Result<PageInfo<Resources>> list(
         @RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
         @RequestParam(value = "pageSize",defaultValue = "0") Integer pageSize) {
         Condition condition = new Condition(Resources.class,false,false);
@@ -39,14 +39,14 @@ public class ResourcesController {
         criteria.orEqualTo("", "");
         PageHelper.startPage(pageNo, pageSize);
         List<Resources> list = resourcesService.findByCondition(condition);
-        PageInfo pageInfo = new PageInfo(list);
+        PageInfo<Resources> pageInfo = new PageInfo<>(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
     @ApiOperation( value = "根据ID查找实例",notes = "通过id查找详情" )
     @ApiImplicitParam( name="id" , value="id" , paramType = "path",dataType = "String",required = true)
     @GetMapping(value = "/v1/resources/{id}")
-    public Result detail(
+    public Result<Resources> detail(
        @PathVariable @NotNull(message = "id不能为空") String id) {
        Resources resources = resourcesService.findById(id);
        return ResultGenerator.genSuccessResult(resources);
@@ -73,6 +73,4 @@ public class ResourcesController {
         resourcesService.update(resources);
         return ResultGenerator.genSuccessResult();
     }
-
-
 }

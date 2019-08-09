@@ -862,10 +862,10 @@ where id in
         </if>
 ```
 
- ## Mybatis传参查询为null
+## Mybatis传参查询为null
 
 ```javascript
-// 当xml中sq没问题时，传回来的数据为null，可能是因为编码的问题 只需要在url上加上一下代码
+// 当xml中sql没问题时，传回来的数据为null，可能是因为编码的问题 只需要在url上加上一下代码
 ?autoReconnect=true&useUnicode=true&characterEncoding=utf8
 ```
 
