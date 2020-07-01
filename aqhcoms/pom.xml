@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <mysql.version>5.1.6</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <lombok.version>1.16.14</lombok.version>
         <mybatisplus.version>2.1.6</mybatisplus.version>
         <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
