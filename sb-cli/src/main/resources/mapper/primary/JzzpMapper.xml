@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.primary.JzzpMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.Jzzp">
+        <id column="ZPID" property="zpid" />
+        <result column="SFZH" property="sfzh" />
+        <result column="XM" property="xm" />
+        <result column="SBKH" property="sbkh" />
+        <result column="ZPLJ" property="zplj" />
+        <result column="TJSJ" property="tjsj" />
+        <result column="SFYX" property="sfyx" />
+        <result column="SFYGXR" property="sfygxr" />
+        <result column="BZ" property="bz" />
+        <result column="GXZPLJ" property="gxzplj" />
+        <result column="GXSJ" property="gxsj" />
+        <result column="TZZZT" property="tzzzt" />
+        <result column="CBDQ" property="cbdq" />
+        <result column="LSZPLJ" property="lszplj" />
+        <result column="LSZPSCORE" property="lszpscore" />
+        <result column="REASONOFPHOTOMISSING" property="reasonofphotomissing" />
+        <result column="PHOTOSOURCETYPE" property="photosourcetype" />
+        <result column="FZZD" property="fzzd" />
+        <result column="TZZZT_TEMP" property="tzzztTemp" />
+        <result column="MSG" property="msg" />
+        <result column="PERSONALNUMBER" property="personalnumber" />
+        <result column="NOTONESELF" property="notoneself" />
+        <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime" />
+        <result column="MODELING_STATE" property="modelingState" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE
+    </sql>
+
+</mapper>
