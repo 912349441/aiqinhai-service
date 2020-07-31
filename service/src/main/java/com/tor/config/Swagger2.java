@@ -1,4 +1,4 @@
-package com.tor;
+package com.tor.config;
  
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

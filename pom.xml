@@ -8,6 +8,22 @@
     <packaging>pom</packaging>
     <name>aiqinhai</name>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>${springboot.version}</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <encoding>UTF-8</encoding>
+        <java.version>1.8</java.version>
+        <hutool.version>5.0.0</hutool.version>
+        <lombok.version>1.16.16</lombok.version>
+        <fastjson.version>1.2.45</fastjson.version>
+        <springboot.version>1.4.6.RELEASE</springboot.version>
+    </properties>
+
     <modules>
         <module>eureka</module>
         <module>generator</module>
@@ -15,5 +31,31 @@
         <module>solr</module>
         <module>aqhcoms</module>
         <module>service</module>
+        <module>sb-cli</module>
     </modules>
+
+    <dependencies>
+        <!-- hutool dependency start -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <!-- hutool dependency start -->
+        <!-- fastjson dependency start -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- fastjson dependency end -->
+        <!-- Lombok dependency start -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <!-- Lombok dependency end -->
+    </dependencies>
+
 </project>
