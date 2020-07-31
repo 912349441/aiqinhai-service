@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    primary:
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@172.16.80.176:1521:ORCL
+      username: spzpjkdba_hangzhou
+      password: spzpjkdba_hangzhou
+    second:
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@172.16.68.31:1521:ybdg2
+      username: usr_hl
+      password: usrhl_dbpwd

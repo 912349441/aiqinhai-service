@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.primary.YsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.Ys">
+        <id column="YSID" property="ysid" />
+        <result column="XM" property="xm" />
+        <result column="SFZH" property="sfzh" />
+        <result column="GH" property="gh" />
+        <result column="BZZPLJ" property="bzzplj" />
+        <result column="SFYX" property="sfyx" />
+        <result column="TJSJ" property="tjsj" />
+        <result column="ZPID" property="zpid" />
+        <result column="XXBBH" property="xxbbh" />
+        <result column="ZPBBH" property="zpbbh" />
+        <result column="VERSION" property="version" />
+        <result column="YSZCID" property="yszcid" />
+        <result column="JKZBH" property="jkzbh" />
+        <result column="ZYZH" property="zyzh" />
+        <result column="TZZZT" property="tzzzt" />
+        <result column="MSG" property="msg" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        YSID, XM, SFZH, GH, BZZPLJ, SFYX, TJSJ, ZPID, XXBBH, ZPBBH, VERSION, YSZCID, JKZBH, ZYZH, TZZZT, MSG
+    </sql>
+
+</mapper>
