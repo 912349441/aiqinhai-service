@@ -3,10 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.6.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <artifactId>aiqinhai</artifactId>
+        <groupId>com.tor</groupId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.tor</groupId>
@@ -14,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>service</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Service for Spring Boot</description>
 
     <dependencies>
         <dependency>
@@ -101,23 +100,13 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
-
-        <!-- solr客户端 -->
-        <!--<dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>4.0.0</version>
-        </dependency>-->
-
+        <!-- fastjson dependency start -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.29</version>
+            <version>${fastjson.version}</version>
         </dependency>
+        <!-- fastjson dependency end -->
         <!--swagger-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -189,16 +178,47 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <build>
+        <finalName>service</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <mainClass>com.tor.ServiceApplication</mainClass>
+                    <layout>ZIP</layout>
+                    <!--依赖包外置配置-->
+                    <includes>
+                        <include>
+                            <groupId>nothing</groupId>
+                            <artifactId>nothing</artifactId>
+                        </include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
+        <!-- 定义包含这些资源文件，能在jar包中获取这些文件 -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.yml</include>
+                </includes>
+                <!--是否替换资源中的属性-->
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <!--是否替换资源中的属性-->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
+
 </project>
