@@ -16,7 +16,13 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
  * @author Tzx
  */
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        DruidDataSourceAutoConfigure.class,
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        JpaRepositoriesAutoConfiguration.class
+})
 public class SbCliApplication {
 
     public static void main(String[] args) {
