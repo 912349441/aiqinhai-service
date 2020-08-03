@@ -1,12 +1,13 @@
 spring:
   datasource:
-    primary:
-      driver-class-name: oracle.jdbc.driver.OracleDriver
-      url: jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB
-      username: spzpjkdba_hangzhou
-      password: spzpjkdba_hangzhou
-    second:
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://47.103.194.192:3306/ifast-new2?autoReconnect=true&useUnicode=true&characterEncoding=utf8
-      username: root
-      password: 123456
+    druid:
+     primary:
+       driver-class-name: oracle.jdbc.driver.OracleDriver
+       jdbc-url: jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB
+       username: spzpjkdba_hangzhou
+       password: spzpjkdba_hangzhou
+     second:
+       driver-class-name: com.mysql.jdbc.Driver
+       jdbc-url: jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+       username: root
+       password: root
