@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<alive.sec>30</alive.sec>
+	<!--<server>
+		<id>1</id>
+		<addr host='192.168.1.6' port='5101'></addr>
+		<type>tracker</type>
+		<protocol>tcp</protocol>
+		<alias>hlfaceapi</alias> &lt;!&ndash; public key alias &ndash;&gt;
+	</server>-->
+	<server>
+		<id>2</id>
+		<addr host='192.168.1.4' port='5102'></addr>
+		<type>tracker</type>
+		<protocol>tcp</protocol>
+		<alias>hlfaceapi</alias> <!-- public key alias -->
+	</server>
+</root>

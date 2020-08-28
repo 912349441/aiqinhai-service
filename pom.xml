@@ -31,7 +31,7 @@
         <module>solr</module>
         <module>aqhcoms</module>
         <module>service</module>
-        <module>sb-cli</module>
+        <module>springBootCli</module>
     </modules>
 
     <dependencies>

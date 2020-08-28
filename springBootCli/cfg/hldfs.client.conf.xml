@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <tracker.server.list.xml>./tracker.server.list.xml</tracker.server.list.xml> <!-- 相对于当前配置文件的路径 -->
+	<db.root.path>D:\dbroot\springbootCli</db.root.path> <!-- 绝对路径 -->
+	<db.path.server>server.define</db.path.server> <!-- db.root.path目录下 -->
+	<db.path.system.config>system.config</db.path.system.config> <!-- db.root.path目录下 -->
+	<db.xml>bdb.cache.conf.xml</db.xml>  <!-- 相对于当前配置文件的路径 -->
+	<public.key>hlfaceapi_public.key</public.key>  <!-- 相对于当前配置文件的路径 -->
+	<file.machineId>client.machine.id</file.machineId> <!-- 此客户端的唯一序号，如果文件不存在，会自动创建，相对路径，在db.root.path根目录下，默认文件名client.machine.dat-->
+	<connect.cfg>
+		<cnt.pkg.wait>-1</cnt.pkg.wait>
+		<addr.idx>1</addr.idx>
+		<cipher.mode>NONE</cipher.mode>
+		<compress.method>gzip1</compress.method>
+		<auto.reconnect>1</auto.reconnect>
+		<core.connect.cnt>50</core.connect.cnt>
+		<max.conn.cnt>100</max.conn.cnt>
+		<core.concurrent.exec>80</core.concurrent.exec>
+		<max.concurrent.exec>100</max.concurrent.exec>
+		<sec.connect.timeout>10</sec.connect.timeout>
+		<keep.alive>1</keep.alive>
+	</connect.cfg>
+</root>
