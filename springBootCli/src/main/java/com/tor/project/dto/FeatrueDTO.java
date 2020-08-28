@@ -1,4 +1,4 @@
-package com.tor.utils;
+package com.tor.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;

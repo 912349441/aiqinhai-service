@@ -2,8 +2,8 @@ package com.tor.config;
 
 import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
 import cn.com.itsea.hldfs.server.utils.EncryptUtil;
-import com.tor.utils.FileStorager;
-import com.tor.utils.ServiceUtils;
+import com.tor.project.utils.FileStorager;
+import com.tor.project.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

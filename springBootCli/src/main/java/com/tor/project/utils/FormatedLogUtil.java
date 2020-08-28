@@ -1,4 +1,4 @@
-package com.tor.utils;
+package com.tor.project.utils;
 
 import cn.com.itsea.util.FormatedLogAppender;
 import cn.com.itsea.util.TimeOfSystem;

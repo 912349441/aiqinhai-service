@@ -1,7 +1,7 @@
 /**
  * 生物特征平台人脸别对结果类
  */
-package com.tor.utils;
+package com.tor.project.dto;
 
 import lombok.Getter;
 import lombok.Setter;

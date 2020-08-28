@@ -1,4 +1,4 @@
-package com.tor.utils;
+package com.tor.project.utils;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;

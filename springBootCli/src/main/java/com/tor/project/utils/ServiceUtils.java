@@ -1,7 +1,7 @@
 /**
  * 生物特征平台工具类
  */
-package com.tor.utils;
+package com.tor.project.utils;
 
 import cn.com.itsea.face.FaceAndFeatureStringExtracted;
 import cn.com.itsea.face.ImageVerifyParam;
@@ -19,6 +19,8 @@ import cn.com.itsea.util.FormatedLogAppender;
 import cn.com.itsea.util.SafeStringFormater;
 import cn.com.itsea.util.XmlHelper;
 import com.alibaba.fastjson.JSONObject;
+import com.tor.project.dto.CompareFeatureDTO;
+import com.tor.project.dto.FeatrueDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.slf4j.LoggerFactory;

@@ -7,7 +7,7 @@
  * @date:   2018年7月20日 下午3:59:07   
  * @version V1.0     
  */
-package com.tor.utils;
+package com.tor.project.utils;
 
 import cn.com.itsea.util.TimeOfSystem;
 import lombok.extern.slf4j.Slf4j;
