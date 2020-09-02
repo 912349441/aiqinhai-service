@@ -11,3 +11,12 @@ spring:
         jdbc-url: jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
         username: root
         password: root
+
+# 定时任务
+# 0/60 * * * * ?
+# 0 0 1 * * ?
+myJob:
+  jobs-schedule: 0 0 1 * * ?
+
+# 金华照片物理地址根目录
+migrate_jzpp_photo_path: /home/jinhua/photos/

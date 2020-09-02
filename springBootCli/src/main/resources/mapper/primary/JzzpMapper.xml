@@ -4,30 +4,30 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.tor.project.entity.Jzzp">
-        <id column="ZPID" property="zpid" />
-        <result column="SFZH" property="sfzh" />
-        <result column="XM" property="xm" />
-        <result column="SBKH" property="sbkh" />
-        <result column="ZPLJ" property="zplj" />
-        <result column="TJSJ" property="tjsj" />
-        <result column="SFYX" property="sfyx" />
-        <result column="SFYGXR" property="sfygxr" />
-        <result column="BZ" property="bz" />
-        <result column="GXZPLJ" property="gxzplj" />
-        <result column="GXSJ" property="gxsj" />
-        <result column="TZZZT" property="tzzzt" />
-        <result column="CBDQ" property="cbdq" />
-        <result column="LSZPLJ" property="lszplj" />
-        <result column="LSZPSCORE" property="lszpscore" />
-        <result column="REASONOFPHOTOMISSING" property="reasonofphotomissing" />
-        <result column="PHOTOSOURCETYPE" property="photosourcetype" />
-        <result column="FZZD" property="fzzd" />
-        <result column="TZZZT_TEMP" property="tzzztTemp" />
-        <result column="MSG" property="msg" />
-        <result column="PERSONALNUMBER" property="personalnumber" />
-        <result column="NOTONESELF" property="notoneself" />
-        <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime" />
-        <result column="MODELING_STATE" property="modelingState" />
+        <id column="ZPID" property="zpid"/>
+        <result column="SFZH" property="sfzh"/>
+        <result column="XM" property="xm"/>
+        <result column="SBKH" property="sbkh"/>
+        <result column="ZPLJ" property="zplj"/>
+        <result column="TJSJ" property="tjsj"/>
+        <result column="SFYX" property="sfyx"/>
+        <result column="SFYGXR" property="sfygxr"/>
+        <result column="BZ" property="bz"/>
+        <result column="GXZPLJ" property="gxzplj"/>
+        <result column="GXSJ" property="gxsj"/>
+        <result column="TZZZT" property="tzzzt"/>
+        <result column="CBDQ" property="cbdq"/>
+        <result column="LSZPLJ" property="lszplj"/>
+        <result column="LSZPSCORE" property="lszpscore"/>
+        <result column="REASONOFPHOTOMISSING" property="reasonofphotomissing"/>
+        <result column="PHOTOSOURCETYPE" property="photosourcetype"/>
+        <result column="FZZD" property="fzzd"/>
+        <result column="TZZZT_TEMP" property="tzzztTemp"/>
+        <result column="MSG" property="msg"/>
+        <result column="PERSONALNUMBER" property="personalnumber"/>
+        <result column="NOTONESELF" property="notoneself"/>
+        <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime"/>
+        <result column="MODELING_STATE" property="modelingState"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -35,4 +35,30 @@
         ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE
     </sql>
 
+    <select id="getHyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.HyJzzpPhoto">
+        SELECT sfz,xm,zp
+        FROM YW_HY_JZZP_PHOTO
+         <where>
+            <if test="sfz != null and sfz != ''">
+                AND sfz = #{sfz,jdbcType=VARCHAR}
+            </if>
+            <if test="xm != null and xm != ''">
+                AND xm = #{xm,jdbcType=VARCHAR}
+            </if>
+            AND zp is not null
+        </where>
+
+        <!--SELECT sfz,xm,zp
+        FROM v_hl_photo@hy_photo
+        <where>
+            <if test="sfz != null and sfz != ''">
+                AND sfz = #{sfz,jdbcType=VARCHAR}
+            </if>
+            <if test="xm != null and xm != ''">
+                AND xm = #{xm,jdbcType=VARCHAR}
+            </if>
+            AND zp is not null
+        </where>-->
+
+    </select>
 </mapper>

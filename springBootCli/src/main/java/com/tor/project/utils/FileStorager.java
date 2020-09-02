@@ -80,7 +80,7 @@ public class FileStorager {
             return null;
         }
         // 信息中心分布式存储（正式环境） 需要把.s1.改成.s0.
-        uriPath = uriPath.replaceAll("s1", "s0");
+        /*uriPath = uriPath.replaceAll("s1", "s0");*/
         FormatedLogAppender logger = new FormatedLogAppender();
         boolean procFail = false;
         try {

@@ -1,4 +1,4 @@
-package com.tor.config;
+package com.tor.project.config;
 
 import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
 import cn.com.itsea.hldfs.server.utils.EncryptUtil;
@@ -28,6 +28,7 @@ public class HlServiceConfig implements CommandLineRunner {
             try {
                 //项目根路径
                 String path = System.getProperty("user.dir");
+                /*String path = Thread.currentThread().getContextClassLoader().getResource("cfg").getPath();*/
                 // 注册服务
                 File fileConfigXml = new File(path + "/cfg/hldfs.client.conf.xml");
                 FactoryOfTrackerServerClientSide.getInstance().InitialContext(fileConfigXml);
@@ -37,7 +38,7 @@ public class HlServiceConfig implements CommandLineRunner {
                 // 存储服务初始化
                 FileStorager.init();
                 // app服务初始化
-                ServiceUtils.InitialContext();
+                ServiceUtils.initialContext();
                 isSuccStart = !isSuccStart;
             } catch (Exception e) {
                 log.error(e.getMessage());

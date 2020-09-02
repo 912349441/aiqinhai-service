@@ -22,6 +22,7 @@
         <swagger.version>2.9.2</swagger.version>
         <ojdbc8.version>12.2.0.1</ojdbc8.version>
         <fastjson.version>1.2.45</fastjson.version>
+        <unit-sync.version>1.0.0</unit-sync.version>
         <commons-io.version>2.2</commons-io.version>
         <commons-codec.version>1.9</commons-codec.version>
         <mybatis.plus.version>3.0.5</mybatis.plus.version>
@@ -32,56 +33,62 @@
     <dependencies>
         <!-- hl dependency start -->
         <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-face</artifactId>
-            <version>${hl-face.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ServerOfHlDfsV2</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-HLFaceServerSDKImpl</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ClientAPIOfHLDFS2</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ClientSocketCommonAPI</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-FaceAPIV2Common</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-HldfsApacheMinia</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-berkeleyDBLib</artifactId>
-            <version>${hl-dfs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-SocketServerCommonLib</artifactId>
-            <version>${hl-dfs.version}</version>
+            <groupId>cn.com.itsea.huzhou</groupId>
+            <artifactId>hl-huzhou-unit-sync</artifactId>
+            <version>${unit-sync.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.com.itsea</groupId>
             <artifactId>hl-dfs-je</artifactId>
             <version>7.5.11</version>
         </dependency>
-         <!--hl dependency end-->
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-face</artifactId>
+            <version>${hl-face.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-berkeleyDBLib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-ServerOfHlDfsV2</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-HLFaceServerSDKImpl</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-ClientAPIOfHLDFS2</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-ClientSocketCommonAPI</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-FaceAPIV2Common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-HldfsApacheMinia</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>hl-dfs-SocketServerCommonLib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- hl dependency end -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -247,7 +254,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.tor.SbCliApplication</mainClass>
+                    <mainClass>com.tor.SpringBootCliApplication</mainClass>
                     <layout>ZIP</layout>
                     <!--依赖包外置配置-->
                     <includes>

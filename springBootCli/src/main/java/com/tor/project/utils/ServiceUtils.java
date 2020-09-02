@@ -7,8 +7,11 @@ import cn.com.itsea.face.FaceAndFeatureStringExtracted;
 import cn.com.itsea.face.ImageVerifyParam;
 import cn.com.itsea.face.SDKAPIType;
 import cn.com.itsea.faceservice.api.HldfsFaceApiService;
+import cn.com.itsea.faceservice.api.HldfsLivenessDetectApiService;
 import cn.com.itsea.faceservice.api.helper.HelperOfImageService;
 import cn.com.itsea.faceservice.hldfs.impl.HldfsFaceApiServiceImpl;
+import cn.com.itsea.faceservice.api.*;
+import cn.com.itsea.faceservice.hldfs.impl.HldfsLivenessDetectApiServiceImpl;
 import cn.com.itsea.hldfs.api.CallResultOfHlDfs;
 import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
 import cn.com.itsea.hldfs.api.client.ProxyOfHldfsAppServerAccess;
@@ -18,7 +21,11 @@ import cn.com.itsea.socket.client.HelperOfProcResultDocument;
 import cn.com.itsea.util.FormatedLogAppender;
 import cn.com.itsea.util.SafeStringFormater;
 import cn.com.itsea.util.XmlHelper;
+import cn.hutool.core.lang.Console;
 import com.alibaba.fastjson.JSONObject;
+import com.tor.common.utils.SpringContextHolder;
+import com.tor.project.config.HlServiceConfig;
+import com.tor.project.dto.BioAssayDTO;
 import com.tor.project.dto.CompareFeatureDTO;
 import com.tor.project.dto.FeatrueDTO;
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +35,8 @@ import org.springframework.util.Assert;
 import sun.misc.BASE64Decoder;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
@@ -38,14 +44,24 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ServiceUtils {
 
-    private static Integer TIME_OUT = 5;
+    private static int TIME_OUT = 60;
+    private static int WAIT_APP_TIME_OUT = 60;
     private static ServiceUtils SERVICE_UTILS;
-    // 省卡管获取照片
-    private final static String ACTION_CODE_1 = "supervision.v2.photosofpeoplebyidandnameproc";
-    // 医保视图获取参保人员视图
-    private final static String ACTION_CODE_2 = "supervision.v2.synchronizeviewdataproc";
     private static String FACE_API_TZZBBH = "2.1.0";
-    private static Lock initLock = new ReentrantLock();
+    private final static Lock initLock = new ReentrantLock();
+
+    /**
+     * 省卡管获取照片
+     */
+    private final static String ACTION_CODE_1 = "supervision.v2.photosofpeoplebyidandnameproc";
+    /**
+     * 医保视图获取参保人员视图
+     */
+    private final static String ACTION_CODE_2 = "supervision.v2.synchronizeviewdataproc";
+    /**
+     * 获取照片特征值code
+     */
+    private final static String WAIT_ACTION_CODE = "engine.image.feature.extract";
 
     private ServiceUtils() {
     }
@@ -88,6 +104,7 @@ public class ServiceUtils {
 
     /**
      * 根据身份证号和姓名去省卡管接口获取照片
+     * 只限杭州版本
      *
      * @param idCard 身份证号
      * @param xm     姓名
@@ -96,7 +113,7 @@ public class ServiceUtils {
     public byte[] getPhotosByteByIdCardAndName(String idCard, String xm) {
         Assert.notNull(xm);
         Assert.notNull(idCard);
-        Map<String, String> params = new HashMap<>(2);
+        Map<String, String> params = new HashMap<>(4);
         params.put("name", xm);
         params.put("idCard", idCard);
         try {
@@ -112,15 +129,17 @@ public class ServiceUtils {
         return null;
     }
 
+
     /**
      * 获取医保视图参保人员信息
+     * 只限制杭州版本
      *
      * @param grbh
      * @return
      */
     public JSONObject getJzzpViewByGrbh(String grbh) {
         Assert.notNull(grbh);
-        Map<String, String> params = new HashMap<>(1);
+        Map<String, String> params = new HashMap<>(3);
         params.put("grbh", grbh);
         JSONObject jsonObject = commonRequest(ACTION_CODE_2, params);
         try {
@@ -133,6 +152,57 @@ public class ServiceUtils {
             return null;
         }
         return null;
+    }
+
+    /**
+     * 活体检测
+     *
+     * @return
+     */
+    public BioAssayDTO biologicalAssay(byte[] faceImageBytes) {
+        if (null == faceImageBytes || faceImageBytes.length < 1) {
+            throw new IllegalArgumentException("param's image byte[] is not null or empty");
+        }
+        AtomicBoolean liveRef = new AtomicBoolean(false);
+        AtomicReference<Float> scoreRef = new AtomicReference<>();
+        FormatedLogUtil logUtil = new FormatedLogUtil();
+        BioAssayDTO dto = new BioAssayDTO();
+        try {
+            /*HldfsLivenessDetectApiService apiService =
+                    new HldfsLivenessDetectApiServiceImpl(false, FactoryOfTrackerServerClientSide.getInstance().getPublicKeyLocalStore(),
+                            FactoryOfTrackerServerClientSide.getInstance().getMachineId(),
+                            FactoryOfTrackerServerClientSide.getInstance().getTrackerListPreConfiged(),
+                            FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null);
+            CallResultOfHlDfs callResultOfHlDfs = apiService.detectSilent(faceImageBytes,liveRef,scoreRef,logUtil,null,TIME_OUT);*/
+
+            CallResultOfHlDfs callResultOfHlDfs = null;
+            // TODO 测试环境 测试
+            if (true) {
+                dto.setSucc(true);
+                dto.setLive(Math.random() > 0.5 ? false : true);
+                dto.setScore(Math.random() > 0.5 ? 0.81f : 0.70f);
+                return dto;
+            }
+            // TODO 结束
+            if (callResultOfHlDfs.isSucc()) {
+                dto.setSucc(true);
+                dto.setLive(liveRef.get());
+                dto.setScore(scoreRef.get());
+            } else {
+                logUtil.setSucc(false).append("detectSilent.errMsg=" + callResultOfHlDfs.getErrStr());
+            }
+            return dto;
+        } catch (Exception e) {
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            return dto;
+        } finally {
+            // 日志处理
+            if (logUtil.isSucc()) {
+                LoggerFactory.getLogger("root").info(logUtil.getLogString());
+            } else {
+                LoggerFactory.getLogger("error").error(logUtil.getLogString());
+            }
+        }
     }
 
     /**
@@ -154,9 +224,9 @@ public class ServiceUtils {
         FormatedLogUtil logUtil = new FormatedLogUtil();
         FeatrueDTO featrueDTO = new FeatrueDTO();
         try {
-            CallResultOfHlDfs resultOfHlDfs = hldfsFaceApiService.extractImageFeature(faceImageBytes,
-                    SDKAPIType.HL, false, listResultFacesExtract, 3, logUtil, null);
-            if (resultOfHlDfs.isSucc()) {
+            CallResultOfHlDfs callResultOfHlDfs = hldfsFaceApiService.extractImageFeature(faceImageBytes,
+                    SDKAPIType.HL, false, listResultFacesExtract, TIME_OUT, logUtil, null);
+            if (callResultOfHlDfs.isSucc()) {
                 FaceAndFeatureStringExtracted faceAndFeatureStringExtracted = listResultFacesExtract.get()[0];
                 String featureStr = faceAndFeatureStringExtracted.getFeatureStr();
                 if (StringUtils.isNotBlank(featureStr)) {
@@ -165,7 +235,7 @@ public class ServiceUtils {
                     featrueDTO.setFeatureStr(featureStr);
                 }
             } else {
-                logUtil.setSucc(false).append("faceEngine.errMsg=" + resultOfHlDfs.getErrStr());
+                logUtil.setSucc(false).append("faceEngine.errMsg=" + callResultOfHlDfs.getErrStr());
             }
             return featrueDTO;
         } catch (Exception e) {
@@ -189,8 +259,7 @@ public class ServiceUtils {
      * @return
      */
     private JSONObject commonRequest(String actionCode, Map<String, String> params) {
-        JSONObject result = null;
-        ByteArrayOutputStream outArray = new ByteArrayOutputStream(40960);
+        JSONObject result = new JSONObject();
         FormatedLogUtil logUtil = new FormatedLogUtil();
         AtomicReference<byte[]> resultAttach = new AtomicReference();
         AtomicReference<Document> resultDocument = new AtomicReference();
@@ -215,14 +284,15 @@ public class ServiceUtils {
             if (callResultOfHlDfs.isSucc()) {
                 AtomicReference<Float> refScore = new AtomicReference<>();
                 AtomicInteger refIndex = new AtomicInteger();
-                CallResultOfHlDfs resultOfFaceServiceSDK = null;
-                resultOfFaceServiceSDK = HelperOfImageService.parseResultFromCompareFeature((Document) resultDocument.get(), logUtil, (byte[]) resultAttach.get(), refScore, refIndex);
-                if (null != resultOfFaceServiceSDK && resultOfFaceServiceSDK.isSucc()) {
+                CallResultOfHlDfs resultOfHlDfs = HelperOfImageService.parseResultFromCompareFeature((Document) resultDocument.get(), logUtil, (byte[]) resultAttach.get(), refScore, refIndex);
+                if (null != resultOfHlDfs && resultOfHlDfs.isSucc()) {
                     String outputResult = resultDocument.get().getRootElement().getChildren("outputResult").get(0).getTextTrim();
                     String unparse = new SafeStringFormater().unparse(outputResult);
                     result = JSONObject.parseObject(unparse);
                 } else {
-                    logUtil.setSucc(false).append(resultOfFaceServiceSDK.getErrCode()).append(resultOfFaceServiceSDK.getErrStr());
+                    if (null != resultOfHlDfs) {
+                        logUtil.setSucc(false).append(resultOfHlDfs.getErrCode()).append(resultOfHlDfs.getErrStr());
+                    }
                 }
             } else {
                 logUtil.setSucc(false).append("commonRequest failed: " + callResultOfHlDfs.getErrStr());
@@ -263,11 +333,13 @@ public class ServiceUtils {
         FormatedLogAppender loggerAppender = new FormatedLogAppender();
         CompareFeatureDTO featureDTO = new CompareFeatureDTO();
         try {
-            CallResultOfHlDfs resultOfHlDfs = hldfsFaceApiService.compareFeature(image1, image2, true, SDKAPIType.HL, refScore, refIndex, sectimeout >= 0 ? sectimeout : TIME_OUT, loggerAppender, null);
-            if (resultOfHlDfs.isSucc()) {
+            CallResultOfHlDfs callResultOfHlDfs = hldfsFaceApiService.compareFeature(image1, image2, true, SDKAPIType.HL, refScore, refIndex, sectimeout >= 0 ? sectimeout : TIME_OUT, loggerAppender, null);
+            if (callResultOfHlDfs.isSucc()) {
                 featureDTO.setSucc(true);
                 featureDTO.setScore(refScore.get());
                 featureDTO.setFaceIndex(refIndex.get());
+            } else {
+                LoggerFactory.getLogger("error").error(callResultOfHlDfs.getErrCnStr());
             }
             return featureDTO;
         } catch (Exception e) {
@@ -300,7 +372,14 @@ public class ServiceUtils {
      */
     public static ServiceUtils getInstance() {
         if (null == SERVICE_UTILS) {
-            throw new IllegalArgumentException(" ServiceUtils uninitialized ");
+            initLock.lock();
+            try {
+                if(null == SERVICE_UTILS){
+                    throw new IllegalArgumentException(" ServiceUtils uninitialized ");
+                }
+            }finally {
+                initLock.unlock();
+            }
         }
         return SERVICE_UTILS;
     }
@@ -308,32 +387,43 @@ public class ServiceUtils {
     /**
      * 初始化生物特征平台服务工具类
      */
-    public static void InitialContext() {
-        initLock.lock();
+    public static void initialContext() throws Exception {
         FormatedLogUtil logUtil = new FormatedLogUtil();
+        initLock.lock();
         try {
             if (null == SERVICE_UTILS) {
                 boolean isSucc = false;
-                logUtil.append("start waitAppServerAvaible [").append(ACTION_CODE_1).append("]");
-                isSucc = FactoryOfTrackerServerClientSide.getInstance().waitAppServerAvaible(ServiceUtils.ACTION_CODE_1, 60, logUtil);
+                logUtil.append("start waitAppServerAvaible [").append(WAIT_ACTION_CODE).append("]");
+                isSucc = FactoryOfTrackerServerClientSide.getInstance()
+                        .waitAppServerAvaible(ServiceUtils.WAIT_ACTION_CODE, WAIT_APP_TIME_OUT, logUtil);
                 if (!isSucc) {
-                    logUtil.setSucc(false).append("ServiceUtils InitialContext failed");
+                    logUtil.setSucc(false).append("ServiceUtils initialContext failed");
+                    throw new IllegalArgumentException("ServiceUtils initialContext failed");
                 } else {
                     SERVICE_UTILS = new ServiceUtils();
-                    logUtil.append("ServiceUtils InitialContext Success");
+                    logUtil.append("ServiceUtils initialContext Success");
                 }
             }
-        } catch (Exception e) {
-            logUtil.setSucc(false).append(LogUtils.getTrace(e));
         } finally {
+            initLock.unlock();
             if (logUtil.isSucc()) {
                 LoggerFactory.getLogger("monitor").info(logUtil.getLogString());
             } else {
                 LoggerFactory.getLogger("monitor").error(logUtil.getLogString());
-                throw new RuntimeException("ServiceUtils InitialContext failed");
             }
-            initLock.unlock();
         }
     }
 
+    public static void main(String[] args) {
+        new HlServiceConfig().init();
+        String path = "hldfs.v100.s101.20200828.10000016e072aac2d.dat";
+        byte[] bytes = FileStorager.download(path);
+        if(null != bytes){
+            BioAssayDTO bioAssayDTO = ServiceUtils.getInstance().biologicalAssay(bytes);
+            if(bioAssayDTO.isSucc()){
+                Console.log(bioAssayDTO.toString());
+                System.exit(1);
+            }
+        }
+    }
 }

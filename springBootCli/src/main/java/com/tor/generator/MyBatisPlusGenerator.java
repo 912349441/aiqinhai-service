@@ -24,33 +24,33 @@ public class MyBatisPlusGenerator {
 
     /*ORACLE*/
 
-    /*private final static DbType DBTYPE = DbType.ORACLE;
+    private final static DbType DBTYPE = DbType.ORACLE;
     private final static String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
     private final static String URL = "jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB";
-    private final static String USER_NAME = "spzpjkdba_jinhua";
-    private final static String PASSWORD = "spzpjkdba_jinhua";*/
+    private final static String USER_NAME = "spzpjkdba_hangzhou";
+    private final static String PASSWORD = "spzpjkdba_hangzhou";
 
     /*MYSQL*/
 
-    private final static DbType DBTYPE = DbType.MYSQL;
+    /*private final static DbType DBTYPE = DbType.MYSQL;
     private final static String DRIVER_NAME = "com.mysql.jdbc.Driver";
     private final static String URL = "jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true";
     private final static String USER_NAME = "root";
-    private final static String PASSWORD = "root";
-
-    /*要生成的表*/
-    /*private final static String TABLE_NAME = "YW_YS";*/
+    private final static String PASSWORD = "root";*/
 
     public static void main(String[] args) throws SQLException {
         while (true){
-            generate();
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请输入要生成的表名:");
+            String tableName = sc.next();
+            if("0".equals(tableName)){
+                System.exit(0);
+            }
+            generate(tableName);
         }
     }
 
-    public static void generate(){
-        Scanner sc = new Scanner(System.in);
-        System.out.println("请输入要生成的表名:");
-        String tableName = sc.next();
+    public static void generate(String tableName){
         //1. 全局配置
         GlobalConfig config = new GlobalConfig();
         config.setActiveRecord(true) // 是否支持AR模式
@@ -75,9 +75,13 @@ public class MyBatisPlusGenerator {
         StrategyConfig stConfig = new StrategyConfig();
         stConfig.setCapitalMode(true) //全局大写命名
                 .setNaming(NamingStrategy.underline_to_camel) // 数据库表映射到实体的命名策略
-                .setTablePrefix("YW_")
                 .setInclude(tableName);  // 生成的表
-
+        if(tableName.contains("YW_")){
+            stConfig.setTablePrefix("YW_");
+        }
+        if(tableName.contains("JC_")){
+            stConfig.setTablePrefix("JC_");
+        }
         //4. 包名策略配置
         PackageConfig pkConfig = new PackageConfig();
         pkConfig.setParent(PAGE)

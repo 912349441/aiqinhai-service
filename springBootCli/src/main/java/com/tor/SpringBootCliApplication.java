@@ -30,8 +30,7 @@ public class SpringBootCliApplication {
     }
 
     private static void printProjectConfigs() {
-        ServerProperties serverProperties = SpringContextHolder.getApplicationContext().getBean(ServerProperties.class);
-        String contextPath = serverProperties.getServlet().getContextPath();
+        ServerProperties serverProperties = SpringContextHolder.getBean(ServerProperties.class);
         log.info("==================> run at http://127.0.0.1:{}/swagger-ui.html  <==================", serverProperties.getPort());
     }
 }
