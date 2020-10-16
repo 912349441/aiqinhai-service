@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.tor</groupId>
-    <artifactId>SpringBootCli</artifactId>
+    <artifactId>springBootCli</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SpringBootCli</name>
+    <name>springBootCli</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -248,7 +248,7 @@
     </dependencies>
 
     <build>
-        <finalName>SpringBootCli</finalName>
+        <finalName>springBootCli</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

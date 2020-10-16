@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.second.JyJzzpOldMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.JyJzzpOld">
+        <id column="ZPID" property="zpid"/>
+        <result column="SFZH" property="sfzh"/>
+        <result column="XM" property="xm"/>
+        <result column="SBKH" property="sbkh"/>
+        <result column="ZPLJ" property="zplj"/>
+        <result column="LSZPLJ" property="lszplj"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ZPID, SFZH, XM, SBKH, ZPLJ, LSZPLJ
+    </sql>
+
+    <select id="getJyJzzpBySfzhAndXm" resultType="com.tor.project.entity.JyJzzpOld">
+        SELECT ZPID, SFZH, XM, SBKH, ZPLJ
+        FROM YW_JZZP
+         <where>
+            <if test="sfzh != null and sfzh != ''">
+                AND sfzh = #{sfzh,jdbcType=VARCHAR}
+            </if>
+            <if test="xm != null and xm != ''">
+                AND xm = #{xm,jdbcType=VARCHAR}
+            </if>
+            AND ZPLJ IS NOT NULL
+        </where>
+
+    </select>
+</mapper>

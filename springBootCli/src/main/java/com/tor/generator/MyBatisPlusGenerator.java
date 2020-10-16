@@ -74,6 +74,7 @@ public class MyBatisPlusGenerator {
         //3. 策略配置globalConfiguration中
         StrategyConfig stConfig = new StrategyConfig();
         stConfig.setCapitalMode(true) //全局大写命名
+                .setEntityLombokModel(true)
                 .setNaming(NamingStrategy.underline_to_camel) // 数据库表映射到实体的命名策略
                 .setInclude(tableName);  // 生成的表
         if(tableName.contains("YW_")){

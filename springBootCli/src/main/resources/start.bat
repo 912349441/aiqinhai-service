@@ -1,0 +1,1 @@
+nohup java -Dloader.path=\lib -jar springBootCli.jar > /dev/null 2>&1 &

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.primary.JzzptzzMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.Jzzptzz">
+        <id column="ZPID" property="zpid" />
+        <result column="ZPTZZ" property="zptzz" />
+        <result column="GXZPTZZ" property="gxzptzz" />
+        <result column="BBH" property="bbh" />
+        <result column="TZZSEQ" property="tzzseq" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ZPID, ZPTZZ, GXZPTZZ, BBH, TZZSEQ
+    </sql>
+
+</mapper>

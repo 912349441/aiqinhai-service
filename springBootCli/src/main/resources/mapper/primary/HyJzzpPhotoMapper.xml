@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.primary.HyJzzpPhotoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.HyJzzpPhoto">
+        <id column="ID" property="id" />
+        <result column="SFZ" property="sfz" />
+        <result column="XM" property="xm" />
+        <result column="ZP" property="zp" jdbcType="BLOB"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, SFZ, XM, ZP
+    </sql>
+
+    <insert id="saveJzzpPhoto" parameterType="com.tor.project.entity.HyJzzpPhoto">
+        INSERT INTO YW_HY_JZZP_PHOTO
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="sfz != null">
+                SFZ,
+            </if>
+            <if test="xm != null">
+                XM,
+            </if>
+            <if test="zp != null">
+                zp,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="sfz != null">
+                #{sfz,jdbcType=VARCHAR},
+            </if>
+            <if test="xm != null">
+                #{xm,jdbcType=VARCHAR},
+            </if>
+            <if test="zp != null">
+                #{zp,jdbcType=BLOB},
+            </if>
+        </trim>
+        </insert>
+</mapper>

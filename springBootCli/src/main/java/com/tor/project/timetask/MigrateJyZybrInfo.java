@@ -1,6 +1,3 @@
-/**
- * 定时任务
- */
 package com.tor.project.timetask;
 
 import cn.hutool.core.thread.ThreadUtil;
@@ -10,19 +7,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 @Component
 @PropertySource("classpath:application.yml")
-public class MyJob {
-
+public class MigrateJyZybrInfo {
     @Autowired
     private JzzpService jzzpService;
 
-    @Scheduled(cron = "${myJob.jobs-schedule}")
+    @Scheduled(cron = "${JyJob.MigrateJyZybrInfo}")
     public void execute() throws Exception {
-        /*ThreadUtil.execute(()->jzzpService.migrateJzppHyPhotosJob());
-        ThreadUtil.execute(()->jzzpService.migrateJzppJhPhotosJob());*/
+        ThreadUtil.execute(()->jzzpService.migrateJyJzppInfo());
     }
-
 }

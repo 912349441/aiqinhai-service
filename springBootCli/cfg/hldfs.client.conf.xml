@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <tracker.server.list.xml>./tracker.server.list.xml</tracker.server.list.xml> <!-- 相对于当前配置文件的路径 -->
-	<db.root.path>D:\dbroot\springbootCli</db.root.path> <!-- 绝对路径 -->
+	<db.root.path>D:\dbroot\springBootCli</db.root.path> <!-- 绝对路径 -->
 	<db.path.server>server.define</db.path.server> <!-- db.root.path目录下 -->
 	<db.path.system.config>system.config</db.path.system.config> <!-- db.root.path目录下 -->
 	<db.xml>bdb.cache.conf.xml</db.xml>  <!-- 相对于当前配置文件的路径 -->

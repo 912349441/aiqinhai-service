@@ -28,4 +28,12 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
      */
     List<HyJzzpPhoto> getHyJzzpZpBlobBySfzhAndXm(@Param("sfz") String sfz, @Param("xm") String xm);
 
+    /**
+     * 同步江阴参保人员、两定机构、住院病人信息
+     */
+    void migrateJyJzppInfo();
+    void migrateJyLdjgInfo();
+    void migrateJyZybrkSInfo();
+    void migrateJyZybrInfo();
+    void migrateJyZybrCyInfo();
 }

@@ -14,9 +14,22 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface JzzpService extends IService<Jzzp> {
 
     /**
-     * 迁移参保人员照片作业
+     * 迁移金华参保人员照片作业
      */
     public void migrateJzppJhPhotosJob();
 
+    /**
+     * 迁移海盐参保人员照片作业
+     */
     public void migrateJzppHyPhotosJob();
+
+    /**
+     * 迁移江阴参保人员照片作业
+     */
+    public void migrateJzppJyPhotosJob();
+
+    /**
+     * 迁移江阴参保人员信息
+     */
+    public void migrateJyJzppInfo();
 }

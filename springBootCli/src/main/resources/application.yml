@@ -1,5 +1,3 @@
-banner:
-  location: /config/banner.txt
 spring:
   profiles:
     active: dev

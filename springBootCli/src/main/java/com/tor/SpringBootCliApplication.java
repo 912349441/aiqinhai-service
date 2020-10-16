@@ -1,5 +1,6 @@
 package com.tor;
 
+import cn.hutool.core.net.NetUtil;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.tor.common.utils.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,6 @@ public class SpringBootCliApplication {
     }
 
     private static void printProjectConfigs() {
-        ServerProperties serverProperties = SpringContextHolder.getBean(ServerProperties.class);
-        log.info("==================> run at http://127.0.0.1:{}/swagger-ui.html  <==================", serverProperties.getPort());
+        log.info("==> run at http://{}:{} <==", NetUtil.getLocalhostStr(),SpringContextHolder.getBean(ServerProperties.class).getPort());
     }
 }

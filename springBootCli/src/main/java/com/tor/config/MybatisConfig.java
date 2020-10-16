@@ -28,6 +28,7 @@ public class MybatisConfig {
             sqlSessionTemplateRef = "sqlSessionTemplatePrimary")
     public static class DataSourcePrimary{
         @Autowired
+        @Qualifier("dataSourcePrimary")
         DataSource dataSource;
 
         @Bean
@@ -63,6 +64,7 @@ public class MybatisConfig {
             sqlSessionTemplateRef ="sqlSessionTemplateSecond" )
     public static class DataSourceSecond{
         @Autowired
+        @Qualifier("dataSourceSecond")
         DataSource dataSource;
 
         @Bean

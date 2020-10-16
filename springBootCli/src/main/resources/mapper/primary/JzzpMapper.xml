@@ -38,18 +38,6 @@
     <select id="getHyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.HyJzzpPhoto">
         SELECT sfz,xm,zp
         FROM YW_HY_JZZP_PHOTO
-         <where>
-            <if test="sfz != null and sfz != ''">
-                AND sfz = #{sfz,jdbcType=VARCHAR}
-            </if>
-            <if test="xm != null and xm != ''">
-                AND xm = #{xm,jdbcType=VARCHAR}
-            </if>
-            AND zp is not null
-        </where>
-
-        <!--SELECT sfz,xm,zp
-        FROM v_hl_photo@hy_photo
         <where>
             <if test="sfz != null and sfz != ''">
                 AND sfz = #{sfz,jdbcType=VARCHAR}
@@ -58,7 +46,103 @@
                 AND xm = #{xm,jdbcType=VARCHAR}
             </if>
             AND zp is not null
-        </where>-->
+        </where>
+    </select>
 
+    <select id="migrateJyJzppInfo">
+        declare
+        begin
+            for i in (select * from jysi.jgxt_cbry@to_dr left join YW_JZZP on AAC001 = PERSONALNUMBER where 18 >= length(AAE135) and AAC001 is not null and PERSONALNUMBER is null )
+                loop
+                    insert into yw_jzzp(ZPID, PERSONALNUMBER,SBKH,SFZH, XM, TJSJ,THREAD_NUMBER)
+                    VALUES (SYS_GUID(), i.AAC001,i.AAE135, i.AAE135,i.AAC003, sysdate,(select floor(dbms_random.value(1, 5)) from dual));
+                    commit;
+                end loop;
+        end;
+    </select>
+
+    <select id="migrateJyLdjgInfo">
+        declare
+        begin
+            for i in (
+                select v.AKB020,MIN(v.AKB021) AKB021, MIN(v.AAE006) AAE006, MIN(v.AAE004) AAE004, MIN(v.AAE005) AAE005, MIN(v.AKB022) AKB022
+                from jysi.jgxt_ldxx@to_dr v
+                left join JC_LDJG on v.AKB020 = JGDM
+                where v.AKB020 IS NOT NULL
+                      AND JGDM IS NULL
+                GROUP BY v.AKB020
+                )
+                loop
+                    insert into JC_LDJG(ID,QXDM ,JGDM,INSTITUTION_NO,JGMC,LXDZ,LXR,LXDH,JGLX,JGLBDM,
+                                        SUPERVISE,OPENING_TIME,BUYING_MEDICINE,PHYSIOTHERAPY,INPATIENT,REGULATORY_MODEL,
+                                        ADDTIME)
+                    VALUES (SYS_GUID(),'100001', i.AKB020,i.AKB020, i.AKB021,i.AAE006,i.AAE004,i.AAE005,
+                            decode(i.AKB022,'医疗机构','1','2'),
+                            decode(i.AKB022,'医疗机构','A1','E1'),
+                            '1',sysdate,'1','1','1','0',
+                            sysdate);
+                    commit;
+                end loop;
+        end;
+    </select>
+
+    <select id="migrateJyZybrkSInfo">
+        declare
+        begin
+            for i in (
+                select replace(substr(v.AKF002,16,50),' ','') ksmc,l.ID yldwid
+                from jysi.jgxt_zyryjbxx@to_dr v,JC_LDJG l
+                where v.BKC194 is null and l.jgdm = v.AKB020
+                      group by replace(substr(v.AKF002,16,50),' ',''),v.AKB020,l.ID
+                        having replace(substr(v.AKF002,16,50),' ','') is not null
+                               and not exists(select 1 from JC_YLDWKS where KSMC = replace(substr(v.AKF002,16,50),' ',''))
+                )
+                loop
+                    insert into JC_YLDWKS(ksid, ksmc, yldwid, isllks, specialdepartment, beds, ksdm)
+                    values (sys_guid(),i.ksmc,i.yldwid,0,0,null,
+                            (select decode(max(to_number(KSDM)),null,0,max(to_number(KSDM))) + 1 from JC_YLDWKS where trim(translate(KSDM, '0123456789', ' ')) is null)
+                            );
+                    Commit;
+                end loop;
+        end;
+    </select>
+
+    <select id="migrateJyZybrInfo">
+        declare
+        begin
+            for i in (select l.ID,j.ZPID,v.AAE135 SFZH,v.AAC003 XM,v.BKC192 RZSJ,v.AKA130 ZYLB,v.AKF002 AKF002,
+                             v.BKC231 DISEASE_DIAGNOSIS,v.AKC021 NATURE_PERSONNEL,v.AAB001 INSURED_UNIT
+                        from jysi.jgxt_zyryjbxx@to_dr v
+                        left join JC_LDJG l on v.AKB020 = JGDM
+                        left join YW_JZZP j on v.AAC001 = j.PERSONALNUMBER
+                        left join YW_ZYBR z on z.YLDWID = l.ID AND z.ZPID = j.ZPID
+                        where v.AKB020 IS NOT NULL AND v.BKC194 IS NULL AND ZYBRID IS NULL AND l.ID IS NOT NULL)
+                loop
+                    insert into YW_ZYBR(ZYBRID, YLDWID,ZPID,SBKH,SFZH,XM,RZSJ,KSID,HOSPITALCATEGORY,DISEASE_DIAGNOSIS,NATURE_PERSONNEL,INSURED_UNIT)
+                    VALUES (SYS_GUID(), i.ID,i.ZPID,i.SFZH, i.SFZH,i.XM,i.RZSJ,
+                            (select KSID from JC_YLDWKS S where S.YLDWID = i.ID AND replace(substr(i.AKF002,16,50),' ','') = KSMC),
+                            decode(i.ZYLB,'普通','1','外伤','2','生育','3','护理康复','5','4'),i.DISEASE_DIAGNOSIS,i.NATURE_PERSONNEL,i.INSURED_UNIT);
+                    commit;
+                end loop;
+        end;
+    </select>
+
+    <select id="migrateJyZybrCyInfo">
+        declare
+        begin
+            for i in (
+                select BKC192,BKC194,ZYBRID
+                from jysi.jgxt_zyryjbxx@to_dr, JC_LDJG,YW_JZZP,YW_ZYBR
+                where AKB020 = JGDM
+                and  ID = YLDWID
+                and  AAC001 = PERSONALNUMBER
+                and YW_JZZP.ZPID = YW_ZYBR.ZPID
+                and BKC194 is not null
+                and SFCY = 0 )
+                loop
+                    update YW_ZYBR set SFCY = 1,CYSJ = i.BKC194 where ZYBRID = i.ZYBRID AND RZSJ = i.BKC192;
+                    commit;
+                end loop;
+        end;
     </select>
 </mapper>
