@@ -153,18 +153,19 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         if (!featrueDTO.isSucc()) {
                             logUtil.append("无法提取特征值");
                         } else {
-                            JzzpTemplateZptzz jzzpTemplateZptzz = new JzzpTemplateZptzz();
-                            jzzpTemplateZptzz.setZpid(jzzp.getZpid());
-                            jzzpTemplateZptzz.setZptzz(featrueDTO.getFeatureStr());
-                            jzzpTemplateZptzz.setBbh(featrueDTO.getBbh());
                             String newZpljPaht = FileStorager.upload(bytes);
-                            if (StringUtils.isBlank(newZpljPaht)) {
-                                logUtil.append("upload failed");
-                            } else {
-                                status = 1;
+                            logUtil.append(StrUtil.format("newZpljPaht={}",newZpljPaht));
+                            if(StringUtils.isNotBlank(newZpljPaht)){
+                                JzzpTemplateZptzz jzzpTemplateZptzz = new JzzpTemplateZptzz();
+                                jzzpTemplateZptzz.setZpid(jzzp.getZpid());
+                                jzzpTemplateZptzz.setZptzz(featrueDTO.getFeatureStr());
+                                jzzpTemplateZptzz.setBbh(featrueDTO.getBbh());
                                 jzzp.setLszplj(newZpljPaht);
+                                jzzpTemplateZptzzService.saveOrUpdate(jzzpTemplateZptzz);
+                                status = 1;
+                            }else{
+                                logUtil.append("upload failed");
                             }
-                            jzzpTemplateZptzzService.saveOrUpdate(jzzpTemplateZptzz);
                         }
                     }
                 }
@@ -214,6 +215,30 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         return null;
     }
 
+    @Override
+    public void migrateJzppHyInfoJob() {
+        lock.lock();
+        FormatedLogUtil logUtil = new FormatedLogUtil("同步海盐参保人员信息及照片==>");
+        Stopwatch started = Stopwatch.createStarted();
+        try {
+            log.info("开始同步海盐参保人员照片信息");
+            baseMapper.migrateJzppHyPhotoJob();
+            log.info("开始同步海盐参保人员信息");
+            baseMapper.migrateJzppHyInfoJob();
+            log.info("参保人员信息同步完成cost.ms={}",started.elapsed(TimeUnit.MILLISECONDS));
+            logUtil.append("同步完成");
+        }catch (Exception e){
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+        }finally {
+            lock.unlock();
+            logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+            if (logUtil.isSucc()) {
+                log.info(logUtil.getLogString());
+            } else {
+                log.error(logUtil.getLogString());
+            }
+        }
+    }
 
     /**
      * 海盐迁移照片
@@ -229,8 +254,8 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
             QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
                     .select("THREAD_NUMBER")
-                    .isNotNull("THREAD_NUMBER")
-                    .isNull("FZZD")
+                    /*.isNotNull("THREAD_NUMBER")
+                    .isNull("FZZD")*/
                     .groupBy("THREAD_NUMBER");
             List<Jzzp> list = list(wrapper);
             log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
@@ -254,7 +279,8 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
                 .select("ZPID,SFZH,XM")
                 .eq("THREAD_NUMBER", num)
-                .isNull("FZZD");
+                .isNull("ZPLJ")
+                /*.isNull("FZZD")*/;
         List<Jzzp> list = list(wrapper);
         log.info(new FormatedLogUtil(StrUtil.format("thread_number:{} list_size:{}", num, list.size())).getLogString());
         for (Jzzp jzzp : list) {

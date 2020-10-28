@@ -28,7 +28,10 @@ public class JobHyController {
     @GetMapping("/migrateJzppPhotos")
     @ApiModelProperty("海盐 - 照片同步到生物特征平台")
     public void migrateJzppPhotos() {
-        ThreadUtil.execute(() -> jzzpService.migrateJzppHyPhotosJob());
+        ThreadUtil.execute(() -> {
+            jzzpService.migrateJzppHyInfoJob();
+            jzzpService.migrateJzppHyPhotosJob();
+        });
     }
 
 }

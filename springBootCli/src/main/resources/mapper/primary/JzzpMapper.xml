@@ -35,6 +35,23 @@
         ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE
     </sql>
 
+    <select id="migrateJzppHyInfoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
+        declare
+            begin
+            for i in (select GRBH,SFZH,XM,SMKH,to_date(JBRQ,'yyyy-mm-dd hh24:mi:ss') TJSJ from v_hy_人员信息@hy_person where not exists(select 1 from YW_JZZP where PERSONALNUMBER = GRBH))
+                loop
+                insert into yw_jzzp(ZPID,PERSONALNUMBER,sfzh,XM,SBKH,THREAD_NUMBER,TJSJ) VALUES(SYS_GUID(),i.GRBH,i.SFZH,i.XM,i.SMKH,(select floor(dbms_random.value(1, 5)) from dual),DECODE(i.TJSJ,null,sysdate,i.TJSJ));
+                commit;
+                end loop;
+        end;
+    </select>
+
+    <select id="migrateJzppHyPhotoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
+        insert into yw_hy_jzzp_photo(id,sfz,xm,zp)
+        select sys_guid(),sfz,xm,zp from v_hl_photo@hy_photo v
+        where not exists(select 1 from yw_hy_jzzp_photo hy where hy.sfz = v.sfz and hy.xm = v.xm);
+    </select>
+
     <select id="getHyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.HyJzzpPhoto">
         SELECT sfz,xm,zp
         FROM YW_HY_JZZP_PHOTO

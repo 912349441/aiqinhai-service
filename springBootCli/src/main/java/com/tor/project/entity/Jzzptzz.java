@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
@@ -82,11 +83,11 @@ public class Jzzptzz extends Model<Jzzptzz> {
     @Override
     public String toString() {
         return "Jzzptzz{" +
-        "zpid=" + zpid +
-        ", zptzz=" + zptzz +
-        ", gxzptzz=" + gxzptzz +
-        ", bbh=" + bbh +
-        ", tzzseq=" + tzzseq +
-        "}";
+                "zpid=" + zpid +
+                ", zptzz=" + zptzz +
+                ", gxzptzz=" + gxzptzz +
+                ", bbh=" + bbh +
+                ", tzzseq=" + tzzseq +
+                "}";
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 
 /**
@@ -21,10 +22,9 @@ public class JzzpTemplateZptzz extends Model<JzzpTemplateZptzz> {
 
     /**
      * 参保人员(持卡人)编号
-YW_JZZP.ZPID
-
+     * YW_JZZP.ZPID
      */
-    @TableId(value = "ZPID", type = IdType.AUTO)
+    @TableId(value = "ZPID", type = IdType.INPUT)
     private String zpid;
 
     /**
@@ -70,9 +70,9 @@ YW_JZZP.ZPID
     @Override
     public String toString() {
         return "JzzpTemplateZptzz{" +
-        "zpid=" + zpid +
-        ", bbh=" + bbh +
-        ", zptzz=" + zptzz +
-        "}";
+                "zpid=" + zpid +
+                ", bbh=" + bbh +
+                ", zptzz=" + zptzz +
+                "}";
     }
 }

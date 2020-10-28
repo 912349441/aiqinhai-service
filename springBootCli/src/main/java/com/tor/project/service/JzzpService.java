@@ -19,6 +19,10 @@ public interface JzzpService extends IService<Jzzp> {
     public void migrateJzppJhPhotosJob();
 
     /**
+     * 定时同步海盐参保人员信息
+     */
+    public void migrateJzppHyInfoJob();
+    /**
      * 迁移海盐参保人员照片作业
      */
     public void migrateJzppHyPhotosJob();

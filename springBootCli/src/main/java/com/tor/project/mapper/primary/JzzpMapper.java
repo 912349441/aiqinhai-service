@@ -21,6 +21,17 @@ import java.util.Map;
 public interface JzzpMapper extends BaseMapper<Jzzp> {
 
     /**
+     * 同步海盐参保人员信息
+     * @return
+     */
+    List<HyJzzpPhoto> migrateJzppHyInfoJob();
+
+    /**
+     * 同步海盐照片到我们库
+     * @return
+     */
+    List<HyJzzpPhoto> migrateJzppHyPhotoJob();
+    /**
      * 获取海盐的照片
      * @param sfzh
      * @param xm
