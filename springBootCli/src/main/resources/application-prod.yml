@@ -1,3 +1,4 @@
+regVer: QingHai
 spring:
   datasource:
     druid:

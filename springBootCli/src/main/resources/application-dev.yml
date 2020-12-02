@@ -1,3 +1,4 @@
+regVer: QingHai
 spring:
   datasource:
     druid:
@@ -8,18 +9,24 @@ spring:
         username: spzpjkdba_jinhua
         password: spzpjkdba_jinhua
       # （从）如果不需要配置双数据源,配置跟主数据源一致即可
+#      second:
+#        driver-class-name: com.mysql.jdbc.Driver
+#        jdbc-url: jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+#        username: root
+#        password: root
+      # （从）如果不需要配置双数据源,配置跟主数据源一致即可
       second:
         driver-class-name: com.mysql.jdbc.Driver
-        jdbc-url: jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
-        username: root
-        password: root
+        jdbc-url: jdbc:mysql://223.93.147.251:63306/yhbiology?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+        username: yhbiology
+        password: biology~！2020
 
 # 定时任务
 # 0 0 1 * * ?
 # 0 */5 * * * ?
 # 0/60 * * * * ?
 JyJob:
-  MigrateJyZybrInfo: 0 */5 * * * ?
+  MigrateJyZybrInfo: 0/10 * * * * ?
   MigrateJzppJyPhotosJob: 0 0 1 * * ?
 HyJob:
   MigrateJzppHyInfoAndPhotosJob: 0 0 1 * * ?

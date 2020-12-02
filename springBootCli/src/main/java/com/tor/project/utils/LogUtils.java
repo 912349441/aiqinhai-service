@@ -10,6 +10,7 @@
 package com.tor.project.utils;
 
 import cn.com.itsea.util.TimeOfSystem;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.PrintWriter;
@@ -18,19 +19,35 @@ import java.util.TimeZone;
 
 @Slf4j
 public class LogUtils {
-	public static String getTrace(Throwable t) {
-		StringWriter stringWriter= new StringWriter();
-		PrintWriter writer= new PrintWriter(stringWriter);
-		t.printStackTrace(writer);
-		StringBuffer buffer= stringWriter.getBuffer();
-		return buffer.toString();
+	public static String getTrace(Exception ex) {
+		return buildErrorMessage(ex);
 	}
 
-    /**
-     * 获取一个唯一标识码
-     * @return
-     */
-    public static String getLogKey(){
-        return new TimeOfSystem(System.currentTimeMillis()).getMiscFormatString(TimeZone.getDefault());
-    }
+	//构造异常堆栈信息
+	private static String buildErrorMessage(Exception ex) {
+		StringBuilder errorMsg = new StringBuilder();
+		ExceptionUtil.getThrowableList(ex).forEach(throwable -> errorMsg.append(throwable.getClass().getSimpleName()).append(":").append(throwable.getMessage()).append(";"));
+		errorMsg.append(getStackTraceString(ex));
+		return errorMsg.toString();
+	}
+
+	//打印异常堆栈信息
+	private static String getStackTraceString(Throwable ex){
+		StringBuilder traceBuilder = new StringBuilder();
+		StackTraceElement[] traceElements = ex.getStackTrace();
+		if (traceElements != null && traceElements.length > 0) {
+			for (StackTraceElement traceElement : traceElements) {
+				traceBuilder.append("\n\tat ").append(traceElement.toString());
+			}
+		}
+		return traceBuilder.toString();
+	}
+
+	/**
+	 * 获取一个唯一标识码
+	 * @return
+	 */
+	public static String getLogKey(){
+		return new TimeOfSystem(System.currentTimeMillis()).getMiscFormatString(TimeZone.getDefault());
+	}
 }

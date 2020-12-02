@@ -1,9 +1,7 @@
 package com.tor.project.mapper.second;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.tor.project.entity.HyJzzpPhoto;
-import com.tor.project.entity.JyJzzpOld;
-import com.tor.project.entity.Jzzp;
+import com.tor.project.entity.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -21,10 +19,16 @@ import java.util.List;
 public interface JyJzzpOldMapper extends BaseMapper<JyJzzpOld> {
 
     /**
-     * 获取江阴的照片
-     * @param sfzh
-     * @param xm
+     * 同步江阴参保人员照片视图
+     */
+    void migrateJzppJyPhotoJob();
+    List<JyJzzpPhoto> getJyJzzpZpBlobBySfzhAndXm(@Param("cert_no") String cert_no, @Param("name") String name);
+
+    /**
+     * 青海参保人员信息
+     * @param mykey
+     * @param maxSize
      * @return
      */
-    List<JyJzzpOld> getJyJzzpBySfzhAndXm(@Param("sfzh") String sfzh, @Param("xm") String xm);
+    List<QhJzzpInfo> getQhJzzpInfoByMykeyStart(@Param("mykey") Integer mykey,@Param("maxSize") Integer maxSize);
 }

@@ -1,53 +1,85 @@
 package com.tor.project.config;
 
+import cn.com.itsea.faceservice.api.HlFaceWebserviceApiService;
+import cn.com.itsea.faceservice.hldfs.impl.HlFaceWevserviceApiServiceImpl;
+import cn.com.itsea.hldfs.api.HlDfsArchiveService;
+import cn.com.itsea.hldfs.api.HlDfsTrackerService;
 import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
+import cn.com.itsea.hldfs.api.client.HldfsArchiveServiceImpl;
+import cn.com.itsea.hldfs.api.client.HldfsTrackerServiceImpl;
 import cn.com.itsea.hldfs.server.utils.EncryptUtil;
-import com.tor.project.utils.FileStorager;
 import com.tor.project.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 
 /**
- * @author Tzx
+ * @author zhuhs
+ * @date 2020/9/27 8:28
  */
+@Configuration
 @Slf4j
-@Component
-public class HlServiceConfig implements CommandLineRunner {
+public class HlServiceConfig {
 
-    @Override
-    public void run(String... strings) throws Exception {
-        this.init();
-    }
-
-    public void init(){
-        boolean isSuccStart = true;
-        while (isSuccStart) {
-            try {
-                //项目根路径
-                String path = System.getProperty("user.dir");
-                /*String path = Thread.currentThread().getContextClassLoader().getResource("cfg").getPath();*/
-                // 注册服务
-                File fileConfigXml = new File(path + "/cfg/hldfs.client.conf.xml");
-                FactoryOfTrackerServerClientSide.getInstance().InitialContext(fileConfigXml);
-                // 初始化加密工具
-                fileConfigXml = new File(path + "/cfg/cert.key.server.xml");
-                EncryptUtil.getInstance().InitialContext(fileConfigXml);
-                // 存储服务初始化
-                FileStorager.init();
-                // app服务初始化
-                ServiceUtils.initialContext();
-                isSuccStart = !isSuccStart;
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException ex) {
-                    log.error(ex.getMessage());
+    @Bean
+    public FactoryOfTrackerServerClientSide factoryOfTrackerServerClientSide() {
+        FactoryOfTrackerServerClientSide instance = FactoryOfTrackerServerClientSide.getInstance();
+        try {
+            while (true){
+                String userDir = System.getProperty("user.dir");
+                File file = new File(userDir + "/cfg/hldfs.client.conf.xml");
+                if(!file.exists()){
+                    log.warn("file not found ",file.getPath());
                 }
+                instance.InitialContext(new File(userDir + "/cfg/hldfs.client.conf.xml"));
+                file = new File(userDir + "/cfg/cert.key.server.xml");
+                if(!file.exists()){
+                    log.warn("file not found ",file.getPath());
+                }
+                EncryptUtil.getInstance().InitialContext(new File(userDir + "/cfg/cert.key.server.xml"));
+                ServiceUtils.initialContext();
+                break;
             }
+        } catch (Exception e) {
+            throw new RuntimeException("HlServiceConfig initialization failed\n\tat ", e);
         }
+        return instance;
     }
+
+    @Bean
+    public HlDfsTrackerService hlDfsTrackerService() {
+        FactoryOfTrackerServerClientSide trackerServer = factoryOfTrackerServerClientSide();
+        return new HldfsTrackerServiceImpl(
+                trackerServer.getPublicKeyLocalStore(),
+                trackerServer.getMachineId(),
+                trackerServer.getTrackerListPreConfiged(),
+                trackerServer.createConfigOfServerAccess(),
+                null
+        );
+    }
+
+    @Bean
+    public HlDfsArchiveService hlDfsArchiveService() {
+        FactoryOfTrackerServerClientSide trackerServer = factoryOfTrackerServerClientSide();
+        return new HldfsArchiveServiceImpl(false,
+                trackerServer.getPublicKeyLocalStore(),
+                trackerServer.getMachineId(),
+                trackerServer.getTrackerListPreConfiged(),
+                trackerServer.createConfigOfServerAccess(),
+                null);
+    }
+
+    @Bean
+    public HlFaceWebserviceApiService hlFaceWebserviceApiService() {
+        FactoryOfTrackerServerClientSide trackerServer = factoryOfTrackerServerClientSide();
+        return new HlFaceWevserviceApiServiceImpl(false,
+                trackerServer.getPublicKeyLocalStore(),
+                trackerServer.getMachineId(),
+                trackerServer.getTrackerListPreConfiged(),
+                trackerServer.createConfigOfServerAccess(), null);
+    }
+
 }

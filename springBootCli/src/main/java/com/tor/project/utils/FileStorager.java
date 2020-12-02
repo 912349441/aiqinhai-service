@@ -8,36 +8,26 @@ import cn.com.itsea.hldfs.api.client.HldfsArchiveServiceImpl;
 import cn.com.itsea.hldfs.api.client.request.archive.ResponseResultOfArchiveDownload;
 import cn.com.itsea.hldfs.define.ArchivePathOfHlDfs;
 import cn.com.itsea.util.FormatedLogAppender;
+import com.tor.common.utils.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @Slf4j
 public class FileStorager {
 
-    private static HlDfsArchiveService archiveService = null;
-
-    public static synchronized void init() {
-        if (archiveService == null) {
-            archiveService =
-                    new HldfsArchiveServiceImpl(false, FactoryOfTrackerServerClientSide.getInstance().getPublicKeyLocalStore(),
-                            FactoryOfTrackerServerClientSide.getInstance().getMachineId(),
-                            FactoryOfTrackerServerClientSide.getInstance().getTrackerListPreConfiged(),
-                            FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null);
-        }
-    }
+    private static HlDfsArchiveService archiveService = SpringContextHolder.getBean(HlDfsArchiveService.class);
 
     public static String upload(byte[] bytes) {
         FormatedLogAppender logger = new FormatedLogAppender();
         boolean procFail = false;
         try {
-            if (archiveService == null) {
-                init();
-            }
             AtomicReference<ArchiveInfoData> atomicReference = new AtomicReference<>();
             CallResultOfHlDfs callResultOfHlDfs = archiveService.saveArchive(bytes, "dat", logger, 60, atomicReference, false, new AtomicReference<Long>());
             if (callResultOfHlDfs.isSucc() && null != atomicReference.get()) {
@@ -73,14 +63,9 @@ public class FileStorager {
     }
 
     public static byte[] download(String uriPath) {
-        if (archiveService == null) {
-            init();
-        }
         if (checkPath(uriPath)) {
             return null;
         }
-        // 信息中心分布式存储（正式环境） 需要把.s1.改成.s0.
-        /*uriPath = uriPath.replaceAll("s1", "s0");*/
         FormatedLogAppender logger = new FormatedLogAppender();
         boolean procFail = false;
         try {
@@ -107,9 +92,6 @@ public class FileStorager {
     }
 
     public static int delete(String path) {
-        if (archiveService == null) {
-            init();
-        }
         if (checkPath(path)) {
             return -1;
         }

@@ -8,6 +8,8 @@ import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,8 +18,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Stopwatch;
 import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 import com.tor.project.dto.FeatrueDTO;
+import com.tor.project.dto.Fn35DTO;
 import com.tor.project.entity.*;
 import com.tor.project.mapper.primary.JzzpMapper;
+import com.tor.project.mapper.primary.JzzptzzMapper;
 import com.tor.project.mapper.second.JyJzzpOldMapper;
 import com.tor.project.service.JzzpService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,7 +29,9 @@ import com.tor.project.service.JzzpTemplateZptzzService;
 import com.tor.project.service.JzzptzzService;
 import com.tor.project.utils.*;
 import io.swagger.models.auth.In;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,13 +68,16 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     private String MIGRATE_JZPP_PHOTO_PATH;
 
     @Autowired
+    private JzzpMapper jzzpMapper;
+    @Autowired
     private JzzptzzService jzzptzzService;
     @Autowired
     private JyJzzpOldMapper jyJzzpOldMapper;
     @Autowired
     private JzzpTemplateZptzzService jzzpTemplateZptzzService;
 
-    private final static Lock lock = new ReentrantLock();
+    private final static Lock INFO_LOCK = new ReentrantLock();
+    private final static Lock PHOTO_LOCK = new ReentrantLock();
 
     /**
      * 金华迁移照片
@@ -77,7 +86,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     public void migrateJzppJhPhotosJob() {
         FormatedLogUtil logUtil = new FormatedLogUtil();
         Stopwatch started = null;
-        lock.lock();
+        PHOTO_LOCK.lock();
         try {
 
             started = Stopwatch.createStarted();
@@ -99,9 +108,13 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            lock.unlock();
+            PHOTO_LOCK.unlock();
             logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-            log.info(logUtil.getLogString());
+            if (logUtil.isSucc()) {
+                log.info(logUtil.getLogString());
+            } else {
+                log.error(logUtil.getLogString());
+            }
         }
     }
 
@@ -154,8 +167,8 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                             logUtil.append("无法提取特征值");
                         } else {
                             String newZpljPaht = FileStorager.upload(bytes);
-                            logUtil.append(StrUtil.format("newZpljPaht={}",newZpljPaht));
-                            if(StringUtils.isNotBlank(newZpljPaht)){
+                            logUtil.append(StrUtil.format("newZpljPaht={}", newZpljPaht));
+                            if (StringUtils.isNotBlank(newZpljPaht)) {
                                 JzzpTemplateZptzz jzzpTemplateZptzz = new JzzpTemplateZptzz();
                                 jzzpTemplateZptzz.setZpid(jzzp.getZpid());
                                 jzzpTemplateZptzz.setZptzz(featrueDTO.getFeatureStr());
@@ -163,7 +176,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                                 jzzp.setLszplj(newZpljPaht);
                                 jzzpTemplateZptzzService.saveOrUpdate(jzzpTemplateZptzz);
                                 status = 1;
-                            }else{
+                            } else {
                                 logUtil.append("upload failed");
                             }
                         }
@@ -217,7 +230,11 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateJzppHyInfoJob() {
-        lock.lock();
+        if(!RegVerUtils.isHy()){
+            log.info("非海盐版本");
+            return;
+        }
+        INFO_LOCK.lock();
         FormatedLogUtil logUtil = new FormatedLogUtil("同步海盐参保人员信息及照片==>");
         Stopwatch started = Stopwatch.createStarted();
         try {
@@ -225,12 +242,12 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             baseMapper.migrateJzppHyPhotoJob();
             log.info("开始同步海盐参保人员信息");
             baseMapper.migrateJzppHyInfoJob();
-            log.info("参保人员信息同步完成cost.ms={}",started.elapsed(TimeUnit.MILLISECONDS));
+            log.info("参保人员信息同步完成cost.ms={}", started.elapsed(TimeUnit.MILLISECONDS));
             logUtil.append("同步完成");
-        }catch (Exception e){
+        } catch (Exception e) {
             logUtil.setSucc(false).append(LogUtils.getTrace(e));
-        }finally {
-            lock.unlock();
+        } finally {
+            INFO_LOCK.unlock();
             logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
             if (logUtil.isSucc()) {
                 log.info(logUtil.getLogString());
@@ -245,9 +262,13 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      */
     @Override
     public void migrateJzppHyPhotosJob() {
+        if(!RegVerUtils.isHy()){
+            log.info("非海盐版本");
+            return;
+        }
         FormatedLogUtil logUtil = new FormatedLogUtil();
         Stopwatch started = null;
-        lock.lock();
+        PHOTO_LOCK.lock();
         try {
 
             started = Stopwatch.createStarted();
@@ -269,9 +290,13 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            lock.unlock();
+            PHOTO_LOCK.unlock();
             logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-            log.info(logUtil.getLogString());
+            if (logUtil.isSucc()) {
+                log.info(logUtil.getLogString());
+            } else {
+                log.error(logUtil.getLogString());
+            }
         }
     }
 
@@ -338,16 +363,39 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      */
     @Override
     public void migrateJzppJyPhotosJob() {
+        if(!RegVerUtils.isJy()){
+            log.info("非江阴版本");
+            return;
+        }
+        log.info(new FormatedLogUtil().append("=============start migrateJzppJyPhotosJob==============").getLogString());
+        /*if (!PHOTO_LOCK.tryLock()) {
+            log.info(new FormatedLogUtil().append("migrateJzppJyPhotosJob Lock not acquired;exit the current thread").getLogString());
+            return;
+        }*/
+        /*PHOTO_LOCK.lock();*/
         FormatedLogUtil logUtil = new FormatedLogUtil();
         Stopwatch started = Stopwatch.createStarted();
-        ;
-        if (!lock.tryLock()) {
-            logUtil.append("migrateJzppJyPhotosJob Lock not acquired;exit the current thread");
-        }
-        lock.lock();
         try {
-
             started = Stopwatch.createStarted();
+            try {
+                baseMapper.migrateJyLdjgInfo();
+                logUtil.append("migrateJyLdjgInfo success");
+                log.info(logUtil.getLogString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                logUtil.append("migrateJyLdjgInfo failed");
+                logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            }
+            log.info(logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS))).getLogString());
+            try {
+                baseMapper.migrateJyJzppInfo();
+                logUtil.append("migrateJyJzppInfo success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                logUtil.append("migrateJyJzppInfo failed");
+                logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            }
+            log.info(logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS))).getLogString());
             logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
             QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
                     .select("THREAD_NUMBER")
@@ -362,20 +410,24 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 countDownLatch.countDown();
             }));
             countDownLatch.await();
-
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
         } finally {
-            lock.unlock();
+            /*PHOTO_LOCK.unlock();*/
             logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-            log.info(logUtil.getLogString());
+            if (logUtil.isSucc()) {
+                log.info(logUtil.getLogString());
+            } else {
+                log.error(logUtil.getLogString());
+            }
         }
     }
 
     private void migrateJzppJyPhotos(int num) {
         QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
-                .select("ZPID,SFZH,XM,ZPLJ")
+                .select("ZPID,SFZH,XM")
                 .eq("THREAD_NUMBER", num)
+                .isNull("ZPLJ")
                 .isNull("FZZD");
         List<Jzzp> list = list(wrapper);
         log.info(new FormatedLogUtil(StrUtil.format("thread_number:{} list_size:{}", num, list.size())).getLogString());
@@ -385,29 +437,20 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             Stopwatch started = Stopwatch.createStarted();
             try {
                 if (StringUtils.isBlank(jzzp.getSfzh()) && StringUtils.isBlank(jzzp.getXm())) {
-                    logUtil.append("身份证号和姓名不能全为空");
                     continue;
                 }
-                List<JyJzzpOld> jzzpPhotos = jyJzzpOldMapper.getJyJzzpBySfzhAndXm(jzzp.getSfzh(), jzzp.getXm());
+                List<JyJzzpPhoto> jzzpPhotos = jyJzzpOldMapper.getJyJzzpZpBlobBySfzhAndXm(jzzp.getSfzh(), jzzp.getXm());
                 if (CollectionUtil.isEmpty(jzzpPhotos)) {
-                    logUtil.append("未找到该人员照片");
+                    logUtil.append("jzzpPhotos is empty");
                     continue;
                 }
-                JyJzzpOld jzzpPhoto = jzzpPhotos.get(0);
-                String zplj = jzzpPhoto.getZplj();
-                if (StringUtils.isBlank(zplj)) {
-                    logUtil.append("该人员无照片");
-                    continue;
-                }
-                logUtil.append(StrUtil.format("zplj path [{}]", zplj));
-                byte[] bytes = FileUtil.readBytes("/home/physicalPath" + zplj);
-                if (null == bytes || bytes.length < 1) {
-                    logUtil.append("not found file");
+                JyJzzpPhoto jzzpPhoto = jzzpPhotos.get(0);
+                if (null == jzzpPhoto.getPhoto() || jzzpPhoto.getPhoto().length < 1) {
                     continue;
                 }
                 logUtil.append(StrUtil.format("found jzzpPhoto"));
-                FeatrueDTO featrueDTO = ServiceUtils.getInstance().extractImageFeature(bytes);
-                logUtil.append(StrUtil.format("featrueDTO isSucc:{}", featrueDTO.isSucc()));
+                FeatrueDTO featrueDTO = ServiceUtils.getInstance().extractImageFeature(jzzpPhoto.getPhoto());
+                logUtil.append(StrUtil.format("featrueDTO.isSucc:{}", featrueDTO.isSucc()));
                 if (!featrueDTO.isSucc()) {
                     continue;
                 }
@@ -415,9 +458,9 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 jzzptzz.setZpid(jzzp.getZpid());
                 jzzptzz.setZptzz(featrueDTO.getFeatureStr());
                 jzzptzz.setBbh(featrueDTO.getBbh());
-                String jzzpPhotoPath = FileStorager.upload(bytes);
+                String jzzpPhotoPath = FileStorager.upload(jzzpPhoto.getPhoto());
+                logUtil.append(StrUtil.format("jzzpPhotoPathIsExist:{}", StringUtils.isNotBlank(jzzpPhotoPath)));
                 if (StringUtils.isBlank(jzzpPhotoPath)) {
-                    logUtil.append(StrUtil.format("upload photo failed", jzzpPhotoPath));
                     continue;
                 }
                 jzzp.setFzzd(1);
@@ -441,39 +484,31 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateJyJzppInfo() {
-        FormatedLogUtil logUtil = new FormatedLogUtil();
-        Stopwatch started = Stopwatch.createStarted();
-        if (!lock.tryLock()) {
-            logUtil.append("migrateJyJzppInfo Lock not acquired;exit the current thread");
+        if(!RegVerUtils.isJy()){
+            log.info("非江阴版本");
+            return;
         }
-        lock.lock();
+        log.info(new FormatedLogUtil().append("=============start migrateJyJzppInfo==============").getLogString());
+        /*if (!INFO_LOCK.tryLock()) {
+            log.info(new FormatedLogUtil().append("migrateJyJzppInfo Lock not acquired;exit the current thread").getLogString());
+            return;
+        }*/
+        /*INFO_LOCK.lock();*/
+        FormatedLogUtil logUtil = new FormatedLogUtil("migrateJyJzppInfo==>获取到INFO_LOCK锁");
+        Stopwatch started = Stopwatch.createStarted();
+        log.info(logUtil.getLogString());
         try {
             started = Stopwatch.createStarted();
             try {
-                baseMapper.migrateJyLdjgInfo();
-                logUtil.append("migrateJyLdjgInfo success");
-            } catch (Exception e) {
-                e.printStackTrace();
-                logUtil.append("migrateJyLdjgInfo failed");
-                logUtil.setSucc(false).append(LogUtils.getTrace(e));
-            }
-            try {
-                baseMapper.migrateJyJzppInfo();
-                logUtil.append("migrateJyJzppInfo success");
-            } catch (Exception e) {
-                e.printStackTrace();
-                logUtil.append("migrateJyLdjgInfo failed");
-                logUtil.setSucc(false).append(LogUtils.getTrace(e));
-            }
-            try {
                 baseMapper.migrateJyZybrkSInfo();
                 baseMapper.migrateJyZybrInfo();
-                logUtil.append("migrateJyZybrInfo success");
+                logUtil.append("migrateJyZybrkSInfo success");
             } catch (Exception e) {
                 e.printStackTrace();
-                logUtil.append("migrateJyZybrInfo failed");
+                logUtil.append("migrateJyZybrkSInfo failed");
                 logUtil.setSucc(false).append(LogUtils.getTrace(e));
             }
+            log.info(logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS))).getLogString());
             try {
                 baseMapper.migrateJyZybrCyInfo();
                 logUtil.append("migrateJyZybrCyInfo success");
@@ -482,11 +517,13 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 logUtil.append("migrateJyZybrCyInfo failed");
                 logUtil.setSucc(false).append(LogUtils.getTrace(e));
             }
+            log.info(logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS))).getLogString());
         } catch (Exception e) {
-            e.printStackTrace();
             logUtil.setSucc(false).append(LogUtils.getTrace(e));
         } finally {
-            lock.unlock();
+            /*INFO_LOCK.unlock();*/
+            logUtil.append("migrateJyJzppInfo==>释放INFO_LOCK锁");
+            log.info(logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS))).getLogString());
             logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
             if (logUtil.isSucc()) {
                 log.info(logUtil.getLogString());
@@ -496,4 +533,175 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         }
     }
 
+    @Override
+    public void migrateQhJzppInfo() {
+        /*String sfzh = "150102196006020159", xm = "魏兴修";
+        Fn35DTO fn35 = ServiceUtils.getInstance().getFn35(sfzh, xm);
+        int imgIdx = fn35.latest().getImgIdx();
+        FeatrueDTO fn36 = ServiceUtils.getInstance().getFn36(sfzh, xm,imgIdx);
+        Console.log(fn35.latest().getArchiveKey());
+        Console.log(fn36.getFeatureStr());
+        if (true) {
+            return;
+        }*/
+        if(!RegVerUtils.isQingHai()){
+            log.info("非青海版本");
+            return;
+        }
+        log.info(new FormatedLogUtil().append("=============start migrateQhJzppInfo==============").getLogString());
+        if (!INFO_LOCK.tryLock()) {
+            log.info(new FormatedLogUtil().append("migrateQhJzppInfo Lock not acquired;exit the current thread").getLogString());
+            return;
+        }
+        INFO_LOCK.lock();
+        FormatedLogUtil startLogUtil = new FormatedLogUtil();
+        Stopwatch startStarted = Stopwatch.createStarted();
+        try {
+            while (true){
+                Integer mykey = jzzpMapper.getQhMaxMykey();
+                mykey = ObjectUtil.isNotNull(mykey) ? mykey : 0;
+                log.info(StrUtil.format("=============mykey:{}============",mykey));
+                List<QhJzzpInfo> jzzpInfoList = jyJzzpOldMapper.getQhJzzpInfoByMykeyStart(mykey, 10000);
+                log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}",jzzpInfoList.size())).getLogString());
+                if(jzzpInfoList.size() < 1){
+                    break;
+                }
+                for (QhJzzpInfo jzzpInfo : jzzpInfoList) {
+                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("mykey={},sfzh={},xm={}", jzzpInfo.getMykey(),jzzpInfo.getPersonIdCardNumber(), jzzpInfo.getPersonName()));
+                    Stopwatch started = Stopwatch.createStarted();
+                    try {
+                        Integer count = count(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getMykey()));
+                        if(count > 0){
+                            logUtil.append("个人编号已存在");
+                            continue;
+                        }
+                        Jzzp jzzp = new Jzzp();
+                        jzzp.setPersonalnumber(jzzpInfo.getMykey().toString());
+                        jzzp.setSfzh(jzzpInfo.getPersonIdCardNumber());
+                        jzzp.setXm(jzzpInfo.getPersonName());
+                        jzzp.setSbkh(jzzpInfo.getMykey().toString());
+                        jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0,5,1))[0]);
+                        jzzpMapper.saveJzzp(jzzp);
+                        logUtil.append("保存成功");
+                    } catch (Exception e) {
+                        logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                    } finally {
+                        logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                        if (logUtil.isSucc()) {
+                            log.info(logUtil.getLogString());
+                        } else {
+                            log.error(logUtil.getLogString());
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
+        } finally {
+            INFO_LOCK.unlock();
+            startLogUtil.append("migrateQhJzppInfo==>释放INFO_LOCK锁");
+            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+            if (startLogUtil.isSucc()) {
+                log.info(startLogUtil.getLogString());
+            } else {
+                log.error(startLogUtil.getLogString());
+            }
+        }
+    }
+
+    @Override
+    public void migrateQhJzppPhotos() {
+        if(!RegVerUtils.isQingHai()){
+            log.info("非青海版本");
+            return;
+        }
+        log.info(new FormatedLogUtil().append("=============start migrateQhJzppPhotos==============").getLogString());
+        if (!PHOTO_LOCK.tryLock()) {
+            log.info(new FormatedLogUtil().append("migrateQhJzppPhotos Lock not acquired;exit the current thread").getLogString());
+            return;
+        }
+        PHOTO_LOCK.lock();
+        FormatedLogUtil logUtil = new FormatedLogUtil();
+        Stopwatch started = Stopwatch.createStarted();
+        try {
+            started = Stopwatch.createStarted();
+            logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
+            QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
+                    .select("THREAD_NUMBER")
+                    .isNotNull("THREAD_NUMBER")
+                    .isNull("FZZD")
+                    .groupBy("THREAD_NUMBER");
+            List<Jzzp> list = list(wrapper);
+            log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
+            CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(list.size());
+            list.forEach(jzzp -> ThreadUtil.execute(() -> {
+                migrateJzppQhPhotos(jzzp.getThreadNumber());
+                countDownLatch.countDown();
+            }));
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+        } finally {
+            PHOTO_LOCK.unlock();
+            logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+            if (logUtil.isSucc()) {
+                log.info(logUtil.getLogString());
+            } else {
+                log.error(logUtil.getLogString());
+            }
+        }
+    }
+
+    /**
+     * 青海
+     * @param num
+     */
+    private void migrateJzppQhPhotos(int num) {
+        QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
+                .select("ZPID,SFZH,XM")
+                .eq("THREAD_NUMBER", num)
+                .isNull("ZPLJ")
+                .isNull("FZZD");
+        List<Jzzp> list = list(wrapper);
+        log.info(new FormatedLogUtil(StrUtil.format("thread_number:{} list_size:{}", num, list.size())).getLogString());
+        for (Jzzp jzzp : list) {
+            FormatedLogUtil logUtil = new FormatedLogUtil();
+            logUtil.append(StrUtil.format("sfzh={} xm={}", jzzp.getSfzh(), jzzp.getXm()));
+            Stopwatch started = Stopwatch.createStarted();
+            try {
+                if (StringUtils.isBlank(jzzp.getSfzh()) && StringUtils.isBlank(jzzp.getXm())) {
+                    continue;
+                }
+                Fn35DTO fn35 = ServiceUtils.getInstance().getFn35(jzzp.getSfzh(), jzzp.getXm());
+                logUtil.append(StrUtil.format("fn35.isSucc:{}", fn35.isSucc()));
+                if (!fn35.isSucc()) {
+                    continue;
+                }
+                FeatrueDTO fn36 = ServiceUtils.getInstance().getFn36(jzzp.getSfzh(), jzzp.getXm(),fn35.latest().getImgIdx());
+                logUtil.append(StrUtil.format("fn36.isSucc:{}", fn35.isSucc()));
+                if(!fn36.isSucc()){
+                    continue;
+                }
+                Jzzptzz jzzptzz = new Jzzptzz();
+                jzzptzz.setZpid(jzzp.getZpid());
+                jzzptzz.setZptzz(fn36.getFeatureStr());
+                jzzptzz.setBbh(fn36.getBbh());
+                jzzp.setFzzd(1);
+                jzzp.setZplj(fn35.latest().getArchiveKey());
+                this.updateById(jzzp);
+                jzzptzzService.saveOrUpdate(jzzptzz);
+                logUtil.append(StrUtil.format("upload photo success"));
+            } catch (Exception e) {
+                logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            } finally {
+                logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                if (logUtil.isSucc()) {
+                    log.info(logUtil.getLogString());
+                } else {
+                    log.error(logUtil.getLogString());
+                }
+            }
+        }
+    }
 }

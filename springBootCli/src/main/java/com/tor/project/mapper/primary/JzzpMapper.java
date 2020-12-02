@@ -1,6 +1,7 @@
 package com.tor.project.mapper.primary;
 
 import com.tor.project.entity.HyJzzpPhoto;
+import com.tor.project.entity.JyJzzpPhoto;
 import com.tor.project.entity.Jzzp;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -47,4 +48,9 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
     void migrateJyZybrkSInfo();
     void migrateJyZybrInfo();
     void migrateJyZybrCyInfo();
+
+
+    Integer getQhMaxMykey();
+
+    void saveJzzp(Jzzp jzzp);
 }

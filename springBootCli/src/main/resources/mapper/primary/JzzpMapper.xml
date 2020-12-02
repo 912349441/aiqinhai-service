@@ -28,6 +28,7 @@
         <result column="NOTONESELF" property="notoneself"/>
         <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime"/>
         <result column="MODELING_STATE" property="modelingState"/>
+        <result column="THREAD_NUMBER" property="threadNumber"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -49,7 +50,7 @@
     <select id="migrateJzppHyPhotoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
         insert into yw_hy_jzzp_photo(id,sfz,xm,zp)
         select sys_guid(),sfz,xm,zp from v_hl_photo@hy_photo v
-        where not exists(select 1 from yw_hy_jzzp_photo hy where hy.sfz = v.sfz and hy.xm = v.xm);
+        where not exists(select 1 from yw_hy_jzzp_photo hy where hy.sfz = v.sfz and hy.xm = v.xm)
     </select>
 
     <select id="getHyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.HyJzzpPhoto">
@@ -69,7 +70,7 @@
     <select id="migrateJyJzppInfo">
         declare
         begin
-            for i in (select * from jysi.jgxt_cbry@to_dr left join YW_JZZP on AAC001 = PERSONALNUMBER where 18 >= length(AAE135) and AAC001 is not null and PERSONALNUMBER is null )
+            for i in (select * from jysi.jgxt_cbry@to_dr left join YW_JZZP on AAC001 = PERSONALNUMBER where 18 >= length(AAE135) and FN_CHECKIDCARD(UPPER(AAE135)) = 1 and AAC001 is not null and PERSONALNUMBER is null )
                 loop
                     insert into yw_jzzp(ZPID, PERSONALNUMBER,SBKH,SFZH, XM, TJSJ,THREAD_NUMBER)
                     VALUES (SYS_GUID(), i.AAC001,i.AAE135, i.AAE135,i.AAC003, sysdate,(select floor(dbms_random.value(1, 5)) from dual));
@@ -148,18 +149,31 @@
         declare
         begin
             for i in (
-                select BKC192,BKC194,ZYBRID
-                from jysi.jgxt_zyryjbxx@to_dr, JC_LDJG,YW_JZZP,YW_ZYBR
-                where AKB020 = JGDM
-                and  ID = YLDWID
-                and  AAC001 = PERSONALNUMBER
-                and YW_JZZP.ZPID = YW_ZYBR.ZPID
-                and BKC194 is not null
-                and SFCY = 0 )
+                select ZYBRID
+                from (select ZYBRID, PERSONALNUMBER, JGDM, RZSJ
+                      from JC_LDJG l,
+                           YW_ZYBR z,
+                           YW_JZZP j
+                      where l.ID = z.YLDWID
+                        and j.ZPID = z.ZPID
+                        and z.SFCY = 0) b
+                         left join jysi.jgxt_zyryjbxx@to_dr v
+                                   on b.PERSONALNUMBER = v.AAC001 and b.JGDM = v.AKB020 and b.RZSJ = v.BKC192
+                where v.AAC001 is null)
                 loop
-                    update YW_ZYBR set SFCY = 1,CYSJ = i.BKC194 where ZYBRID = i.ZYBRID AND RZSJ = i.BKC192;
+                    update YW_ZYBR set SFCY = 1, CYSJ = sysdate where ZYBRID = i.ZYBRID;
+                    commit;
                     commit;
                 end loop;
         end;
     </select>
+
+    <select id="getQhMaxMykey" resultType="java.lang.Integer">
+        select MAX(TO_NUMBER(PERSONALNUMBER)) as mykey from YW_JZZP where regexp_like(PERSONALNUMBER,'^[0-9]+[0-9]$')
+    </select>
+
+    <insert id="saveJzzp">
+        INSERT INTO YW_JZZP (sfzh, xm, sbkh, personalnumber, thread_number)
+        VALUES (#{sfzh}, #{xm}, #{sbkh}, #{personalnumber}, #{threadNumber})
+    </insert>
 </mapper>

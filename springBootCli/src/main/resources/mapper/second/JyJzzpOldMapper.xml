@@ -17,18 +17,61 @@
         ZPID, SFZH, XM, SBKH, ZPLJ, LSZPLJ
     </sql>
 
-    <select id="getJyJzzpBySfzhAndXm" resultType="com.tor.project.entity.JyJzzpOld">
-        SELECT ZPID, SFZH, XM, SBKH, ZPLJ
-        FROM YW_JZZP
-         <where>
-            <if test="sfzh != null and sfzh != ''">
-                AND sfzh = #{sfzh,jdbcType=VARCHAR}
-            </if>
-            <if test="xm != null and xm != ''">
-                AND xm = #{xm,jdbcType=VARCHAR}
-            </if>
-            AND ZPLJ IS NOT NULL
-        </where>
-
+    <select id="migrateJzppJyPhotoJob">
+        insert into YW_JY_PHOTO_VIEW(id,cert_no,name,photo,update_time)
+        select sys_guid(),cert_no,name,photo,update_time from jysmk_kg.person_photo_view v
+        where not exists(select 1 from YW_JY_PHOTO_VIEW jy where jy.cert_no = v.cert_no and hy.name = v.name and jy.update_time = v.update_time)
     </select>
+
+    <!--<select id="getJyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.JyJzzpPhoto">
+        SELECT cert_no,name,photo,update_time
+        FROM YW_JY_PHOTO_VIEW
+        <where>
+            <if test="cert_no != null and cert_no != ''">
+                AND cert_no = #{cert_no,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name != ''">
+                AND name = #{name,jdbcType=VARCHAR}
+            </if>
+            &lt;!&ndash;<if test="update_time != null and update_time != ''">
+                AND update_time = #{update_time,jdbcType=VARCHAR}
+            </if>&ndash;&gt;
+            AND photo is not null
+        </where>
+    </select>-->
+
+    <select id="getJyJzzpZpBlobBySfzhAndXm" resultType="com.tor.project.entity.JyJzzpPhoto">
+        SELECT cert_no,name,photo,update_time
+        FROM jysmk_kg.person_photo_view
+        <where>
+            <if test="cert_no != null and cert_no != ''">
+                AND cert_no = #{cert_no,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null and name != ''">
+                AND name = #{name,jdbcType=VARCHAR}
+            </if>
+            <!--<if test="update_time != null and update_time != ''">
+                AND update_time = #{update_time,jdbcType=VARCHAR}
+            </if>-->
+            AND photo is not null
+        </where>
+    </select>
+
+    <select id="getQhJzzpInfoByMykeyStart" resultType="com.tor.project.entity.QhJzzpInfo">
+        SELECT
+            p.mykey,
+            p.personIdCardNumber,
+            p.personName
+        FROM
+            biz_person p
+        WHERE
+            p.mykey > #{mykey,jdbcType=BIGINT}
+            and p.personIdCardNumber is not null
+            and p.personName is not null
+        ORDER BY
+            mykey ASC
+            LIMIT #{maxSize,jdbcType=BIGINT}
+    </select>
+
+
 </mapper>

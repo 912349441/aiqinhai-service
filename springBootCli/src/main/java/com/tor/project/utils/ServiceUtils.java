@@ -6,12 +6,13 @@ package com.tor.project.utils;
 import cn.com.itsea.face.FaceAndFeatureStringExtracted;
 import cn.com.itsea.face.ImageVerifyParam;
 import cn.com.itsea.face.SDKAPIType;
+import cn.com.itsea.face.v2.bdb.entity.BiologyFingerNum;
+import cn.com.itsea.face.v2.client.entity.FaceApiBusiCommonParam;
+import cn.com.itsea.face.v2.client.entity.PersonImageCollected;
 import cn.com.itsea.faceservice.api.HldfsFaceApiService;
-import cn.com.itsea.faceservice.api.HldfsLivenessDetectApiService;
 import cn.com.itsea.faceservice.api.helper.HelperOfImageService;
 import cn.com.itsea.faceservice.hldfs.impl.HldfsFaceApiServiceImpl;
 import cn.com.itsea.faceservice.api.*;
-import cn.com.itsea.faceservice.hldfs.impl.HldfsLivenessDetectApiServiceImpl;
 import cn.com.itsea.hldfs.api.CallResultOfHlDfs;
 import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
 import cn.com.itsea.hldfs.api.client.ProxyOfHldfsAppServerAccess;
@@ -21,17 +22,21 @@ import cn.com.itsea.socket.client.HelperOfProcResultDocument;
 import cn.com.itsea.util.FormatedLogAppender;
 import cn.com.itsea.util.SafeStringFormater;
 import cn.com.itsea.util.XmlHelper;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Console;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.tor.common.utils.SpringContextHolder;
 import com.tor.project.config.HlServiceConfig;
 import com.tor.project.dto.BioAssayDTO;
 import com.tor.project.dto.CompareFeatureDTO;
 import com.tor.project.dto.FeatrueDTO;
+import com.tor.project.dto.Fn35DTO;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import sun.misc.BASE64Decoder;
 
 import java.io.ByteArrayOutputStream;
@@ -49,6 +54,8 @@ public class ServiceUtils {
     private static ServiceUtils SERVICE_UTILS;
     private static String FACE_API_TZZBBH = "2.1.0";
     private final static Lock initLock = new ReentrantLock();
+
+    private static HlFaceWebserviceApiService apiService = SpringContextHolder.getBean(HlFaceWebserviceApiService.class);
 
     /**
      * 省卡管获取照片
@@ -252,6 +259,81 @@ public class ServiceUtils {
     }
 
     /**
+     * 根据身份证号和姓名获取照片路径和人员信息mykey
+     *
+     * @param sfzh
+     * @param xm
+     * @return
+     */
+    public Fn35DTO getFn35(String sfzh, String xm) {
+        Fn35DTO fn35DTO = new Fn35DTO();
+        FormatedLogUtil logUtil = new FormatedLogUtil();
+        FaceApiBusiCommonParam busiCommonParam = new FaceApiBusiCommonParam();
+        List<PersonImageCollected> listResultImage = new ArrayList<>(16);
+        try {
+            CallResultOfHlDfs callResultOfHlDfs = apiService.fn35QueryPersonImagesAllCollected(sfzh, xm, busiCommonParam, logUtil, listResultImage);
+            if (callResultOfHlDfs.isSucc()) {
+                if (CollectionUtil.isNotEmpty(listResultImage)) {
+                    fn35DTO.setSucc(true);
+                    fn35DTO.setImgs(listResultImage);
+                }
+            } else {
+                logUtil.setSucc(false).append("faceEngine.errMsg=" + callResultOfHlDfs.getErrStr());
+            }
+            return fn35DTO;
+        } catch (Exception e) {
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            return fn35DTO;
+        } finally {
+            // 日志处理
+            if (logUtil.isSucc()) {
+                LoggerFactory.getLogger("root").info(logUtil.getLogString());
+            } else {
+                LoggerFactory.getLogger("error").error(logUtil.getLogString());
+            }
+        }
+    }
+
+    /**
+     * 根据身份证号和姓名获取照片路径和人员信息mykey
+     *
+     * @param sfzh
+     * @param xm
+     * @return
+     */
+    public FeatrueDTO getFn36(String sfzh, String xm,int mykey) {
+        FeatrueDTO featrueDTO = new FeatrueDTO();
+        FormatedLogUtil logUtil = new FormatedLogUtil();
+        FaceApiBusiCommonParam busiCommonParam = new FaceApiBusiCommonParam();
+        AtomicReference<FaceAndFeatureStringExtracted> feature = new AtomicReference<>();
+        try {
+            CallResultOfHlDfs callResultOfHlDfs = apiService.fn36QueryPersonImageFeatureSpecialIdxCollected(
+                    sfzh, xm, SDKAPIType.HL, busiCommonParam, logUtil,
+                    new BiologyFingerNum(mykey), feature);
+            if (callResultOfHlDfs.isSucc()) {
+                if (ObjectUtil.isNotNull(feature.get()) && StringUtils.isNotBlank(feature.get().getFeatureStr())) {
+                    featrueDTO.setSucc(true);
+                    featrueDTO.setBbh(FACE_API_TZZBBH);
+                    featrueDTO.setFeatureStr(feature.get().getFeatureStr());
+                }
+            } else {
+                logUtil.setSucc(false).append("faceEngine.errMsg=" + callResultOfHlDfs.getErrStr());
+            }
+            return featrueDTO;
+        } catch (Exception e) {
+            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+            return featrueDTO;
+        } finally {
+            // 日志处理
+            if (logUtil.isSucc()) {
+                LoggerFactory.getLogger("root").info(logUtil.getLogString());
+            } else {
+                LoggerFactory.getLogger("error").error(logUtil.getLogString());
+            }
+        }
+    }
+
+    /**
      * 调用生物特征平台服务公共类
      *
      * @param actionCode
@@ -374,10 +456,10 @@ public class ServiceUtils {
         if (null == SERVICE_UTILS) {
             initLock.lock();
             try {
-                if(null == SERVICE_UTILS){
+                if (null == SERVICE_UTILS) {
                     throw new IllegalArgumentException(" ServiceUtils uninitialized ");
                 }
-            }finally {
+            } finally {
                 initLock.unlock();
             }
         }
@@ -415,7 +497,7 @@ public class ServiceUtils {
     }
 
     public static void main(String[] args) {
-        new HlServiceConfig().init();
+        /*new HlServiceConfig().init();
         String path = "hldfs.v100.s101.20200828.10000016e072aac2d.dat";
         byte[] bytes = FileStorager.download(path);
         if(null != bytes){
@@ -424,6 +506,6 @@ public class ServiceUtils {
                 Console.log(bioAssayDTO.toString());
                 System.exit(1);
             }
-        }
+        }*/
     }
 }
