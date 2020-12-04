@@ -211,7 +211,7 @@
     </select>
 
     <select id="getQhZybrInfo" resultType="com.tor.project.entity.QhZybrInfo">
-        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw
+        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw , 统筹区 tcq
         from kc21_yyjg@QHDR
         where 1=1
         and 出院时间 is null
@@ -221,7 +221,7 @@
     </select>
 
     <select id="getQhZybrCyInfo" resultType="com.tor.project.entity.QhZybrInfo">
-        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw
+        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw , 统筹区 tcq
         from kc21_yyjg@QHDR
         where 1=1
         and 出院时间 is not null

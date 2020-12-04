@@ -724,6 +724,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 zybr.setDiseaseDiagnosis(info.getJbzd());
                 zybr.setNaturePersonnel(info.getRysz());
                 zybr.setInsuredUnit(info.getCbdw());
+                zybr.setInsuredAreaCode(info.getTcq());
                 zybrService.saveOrUpdate(zybr);
                 logUtil.append("保存成功");
             }

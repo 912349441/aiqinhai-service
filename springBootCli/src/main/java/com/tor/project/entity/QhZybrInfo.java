@@ -19,6 +19,7 @@ public class QhZybrInfo {
     private String jbzd;
     private String rysz;
     private String cbdw;
+    private String tcq;
 
     private Date rysj;
     private Date cysj;
