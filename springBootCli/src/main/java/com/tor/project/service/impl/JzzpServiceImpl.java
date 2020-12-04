@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -541,17 +542,12 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         log.info(new FormatedLogUtil().append("=============start migrateQhJzppInfo==============").getLogString());
         FormatedLogUtil startLogUtil = new FormatedLogUtil();
         Stopwatch startStarted = Stopwatch.createStarted();
-        List<Tasktime> tasktimeList = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1));
-        if(tasktimeList.size() != 1){
-            log.info("tasktimeList 不唯一 size={}",tasktimeList.size());
-            return;
-        }
-        Tasktime tasktime = tasktimeList.get(0);
-        String tasktimeString = DateUtil.format(tasktimeList.get(0).getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
         try {
             while (true){
+                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1)).get(0);
+                String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, 100);
+                List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, 10000);
                 log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}",jzzpInfoList.size())).getLogString());
                 if(jzzpInfoList.size() < 1){
                     break;
@@ -569,7 +565,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         jzzp.setXm(jzzpInfo.getXm());
                         jzzp.setSbkh(jzzpInfo.getGrbh());
                         jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0,5,1))[0]);
-                        this.saveOrUpdate(jzzp);
+                        jzzpMapper.saveJzzp(jzzp);
                         logUtil.append("保存成功");
                     } catch (Exception e) {
                         logUtil.setSucc(false).append(LogUtils.getTrace(e));
@@ -616,10 +612,10 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         Stopwatch startStarted = Stopwatch.createStarted();
         try {
             while (true){
-                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 100)).get(0);
+                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
                 String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 2);
+                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
                 log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}",LdjgList.size())).getLogString());
                 if(LdjgList.size() < 1){
                     break;
