@@ -1,8 +1,6 @@
 package com.tor.project.mapper.primary;
 
-import com.tor.project.entity.HyJzzpPhoto;
-import com.tor.project.entity.JyJzzpPhoto;
-import com.tor.project.entity.Jzzp;
+import com.tor.project.entity.*;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -46,11 +44,28 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
     void migrateJyJzppInfo();
     void migrateJyLdjgInfo();
     void migrateJyZybrkSInfo();
+    void migrateJyZybrChInfo();
     void migrateJyZybrInfo();
     void migrateJyZybrCyInfo();
 
+    /**
+     * 青海参保人员信息
+     * @param mykey
+     * @param maxSize
+     * @return
+     */
+    List<QhJzzpInfo> getQhJzzpInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
 
-    Integer getQhMaxMykey();
+    /**
+     * 青海两定机构信息
+     * @param gxsj
+     * @param maxSize
+     * @return
+     */
+    List<JcLdjg> getQhLdjgInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
+
+    List<QhZybrInfo> getQhZybrInfo();
+
 
     void saveJzzp(Jzzp jzzp);
 }

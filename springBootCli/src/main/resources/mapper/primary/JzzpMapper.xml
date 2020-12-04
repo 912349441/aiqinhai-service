@@ -125,6 +125,31 @@
         end;
     </select>
 
+    <select id="migrateJyZybrChInfo">
+        declare
+        begin
+            for i in (select z.ZYBRID,v.AKE020 CH
+                            from jysi.jgxt_zyryjbxx@to_dr v,
+                                 JC_LDJG l,
+                                 YW_JZZP j,
+                                 YW_ZYBR z
+                            where v.AKB020 = l.JGDM
+                              and v.AAC001 = j.PERSONALNUMBER
+                              and z.YLDWID = l.ID
+                              AND z.ZPID = j.ZPID
+                              and v.AKB020 IS NOT NULL
+                              AND v.BKC194 IS NULL
+                              AND ZYBRID IS NOT NULL
+                              AND l.ID IS NOT NULL
+                              AND v.AKE020 IS NOT NULL
+                              AND (Z.CH IS NULL OR z.CH != v.AKE020))
+                loop
+                    update YW_ZYBR set CH = i.CH where ZYBRID = i.ZYBRID;
+                    commit;
+                end loop;
+        end;
+    </select>
+
     <select id="migrateJyZybrInfo">
         declare
         begin
@@ -168,8 +193,30 @@
         end;
     </select>
 
-    <select id="getQhMaxMykey" resultType="java.lang.Integer">
-        select MAX(TO_NUMBER(PERSONALNUMBER)) as mykey from YW_JZZP where regexp_like(PERSONALNUMBER,'^[0-9]+[0-9]$')
+    <select id="getQhJzzpInfoByGxsj" resultType="com.tor.project.entity.QhJzzpInfo">
+        select 个人编号 grbh,姓名 xm,社保卡号 sbkh,身份证号码 sfzh,更新时间 gxsj
+        from AC01_YYJG@QHDR
+        where 1=1
+        and  #{maxSize} >= ROWNUM
+        and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
+        and 个人编号 is not null
+    </select>
+
+    <select id="getQhLdjgInfoByGxsj" resultType="com.tor.project.entity.JcLdjg">
+        select 两定机构代码 jgdm,机构名称 jgmc,机构地址 lxdz,联系人 lxr,联系电话 lxdh,类型 jglx,更新时间 addtime
+        from kb01_yyjg@QHDR
+        where 1=1
+        and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
+    </select>
+
+    <select id="getQhZybrInfo" resultType="com.tor.project.entity.QhZybrInfo">
+        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw
+        from kc21_yyjg@QHDR
+        where 1=1
+        and 出院时间 is null
+        and 机构编号 is not null
+        and 个人编号 is not null
+        and 入院时间 is not null
     </select>
 
     <insert id="saveJzzp">

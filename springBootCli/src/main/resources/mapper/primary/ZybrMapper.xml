@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tor.project.mapper.primary.ZybrMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.Zybr">
+        <id column="ZYBRID" property="zybrid" />
+        <result column="XM" property="xm" />
+        <result column="SFZH" property="sfzh" />
+        <result column="SBKH" property="sbkh" />
+        <result column="ZPID" property="zpid" />
+        <result column="RZSJ" property="rzsj" />
+        <result column="CH" property="ch" />
+        <result column="SFCY" property="sfcy" />
+        <result column="CYSJ" property="cysj" />
+        <result column="KSID" property="ksid" />
+        <result column="YLDWID" property="yldwid" />
+        <result column="PINYIN" property="pinyin" />
+        <result column="LASTPATROLTIME" property="lastpatroltime" />
+        <result column="SECONDTEMPLATEPATH" property="secondtemplatepath" />
+        <result column="SECONDTEMPLATESCORE" property="secondtemplatescore" />
+        <result column="PATROLDAILYTOTAL" property="patroldailytotal" />
+        <result column="PATROLDAILYFAILED" property="patroldailyfailed" />
+        <result column="PATROLTASKTOTAL" property="patroltasktotal" />
+        <result column="PATROLTASKFAILED" property="patroltaskfailed" />
+        <result column="ADDFLAG" property="addflag" />
+        <result column="COMPAREFLAG" property="compareflag" />
+        <result column="PHOTOEXISTS" property="photoexists" />
+        <result column="HOSPITALCATEGORY" property="hospitalcategory" />
+        <result column="DISEASE_DIAGNOSIS" property="diseaseDiagnosis" />
+        <result column="NATURE_PERSONNEL" property="naturePersonnel" />
+        <result column="INSURED_UNIT" property="insuredUnit" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ZYBRID, XM, SFZH, SBKH, ZPID, RZSJ, CH, SFCY, CYSJ, KSID, YLDWID, PINYIN, LASTPATROLTIME, SECONDTEMPLATEPATH, SECONDTEMPLATESCORE, PATROLDAILYTOTAL, PATROLDAILYFAILED, PATROLTASKTOTAL, PATROLTASKFAILED, ADDFLAG, COMPAREFLAG, PHOTOEXISTS, HOSPITALCATEGORY, DISEASE_DIAGNOSIS, NATURE_PERSONNEL, INSURED_UNIT
+    </sql>
+
+</mapper>

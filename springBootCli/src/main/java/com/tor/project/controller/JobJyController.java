@@ -19,16 +19,16 @@ public class JobJyController {
     @Autowired
     private HyJzzpPhotoService jzzpPhotoService;
 
-    @GetMapping("/migrateJzppPhotos")
-    @ApiModelProperty("江阴 - 照片同步到生物特征平台")
-    public void migrateJzppPhotos() {
-        ThreadUtil.execute(() -> jzzpService.migrateJzppJyPhotosJob());
-    }
-
     @GetMapping("/migrateJyJzppInfo()")
     @ApiModelProperty("江阴 - 信息同步到生物特征平台")
     public void migrateJyJzppInfo() {
         ThreadUtil.execute(() -> jzzpService.migrateJyJzppInfo());
+    }
+
+    @GetMapping("/migrateJzppPhotos")
+    @ApiModelProperty("江阴 - 照片同步到生物特征平台")
+    public void migrateJzppPhotos() {
+        ThreadUtil.execute(() -> jzzpService.migrateJzppJyPhotosJob());
     }
 
 }

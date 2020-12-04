@@ -41,6 +41,8 @@ public interface JzzpService extends IService<Jzzp> {
      * 迁移青海参保人员信息
      */
     public void migrateQhJzppInfo();
+    public void migrateQhLdjgInfo();
+    public void migrateQhZybrInfo();
     public void migrateQhJzppPhotos();
 
 

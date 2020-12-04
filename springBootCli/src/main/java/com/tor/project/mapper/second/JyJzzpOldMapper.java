@@ -24,11 +24,4 @@ public interface JyJzzpOldMapper extends BaseMapper<JyJzzpOld> {
     void migrateJzppJyPhotoJob();
     List<JyJzzpPhoto> getJyJzzpZpBlobBySfzhAndXm(@Param("cert_no") String cert_no, @Param("name") String name);
 
-    /**
-     * 青海参保人员信息
-     * @param mykey
-     * @param maxSize
-     * @return
-     */
-    List<QhJzzpInfo> getQhJzzpInfoByMykeyStart(@Param("mykey") Integer mykey,@Param("maxSize") Integer maxSize);
 }

@@ -27,19 +27,26 @@ public class JobQhController {
     private JzzpService jzzpService;
 
     @GetMapping("/migrateJzppInfo")
-    @ApiModelProperty("青海 - 信息同步到生物特征平台")
+    @ApiModelProperty("青海 - 人员信息同步")
     public void migrateJzppInfo(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            request.getRequestDispatcher("http://192.168.1.2:8092/spzpjk/hospital/hospital-patient-list.html").forward(request, response);
-            log.info(response.toString());
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         ThreadUtil.execute(() -> {
             jzzpService.migrateQhJzppInfo();
+        });
+    }
+
+    @GetMapping("/migrateQhLdjgInfo")
+    @ApiModelProperty("青海 - 两定机构")
+    public void migrateQhLdjgInfo(HttpServletRequest request, HttpServletResponse response) {
+        ThreadUtil.execute(() -> {
+            jzzpService.migrateQhLdjgInfo();
+        });
+    }
+
+    @GetMapping("/migrateQhZybrInfo")
+    @ApiModelProperty("青海 - 入院")
+    public void migrateQhZybrInfo(HttpServletRequest request, HttpServletResponse response) {
+        ThreadUtil.execute(() -> {
+            jzzpService.migrateQhZybrInfo();
         });
     }
 

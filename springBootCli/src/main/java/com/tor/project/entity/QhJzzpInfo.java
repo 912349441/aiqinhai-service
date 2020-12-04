@@ -3,12 +3,17 @@ package com.tor.project.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter
 @Setter
 public class QhJzzpInfo {
 
-    private Integer mykey;
-    private String personIdCardNumber;
-    private String personName;
+    private String grbh;
+    private String sfzh;
+    private String sbkh;
+    private String xm;
+    private Date gxsj;
 
 }
