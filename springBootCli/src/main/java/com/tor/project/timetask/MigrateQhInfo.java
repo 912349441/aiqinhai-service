@@ -19,13 +19,13 @@ public class MigrateQhInfo {
 
     @Scheduled(cron = "${QhJob.MigrateQhInfo}")
     public void execute() throws Exception {
-        ThreadUtil.execute(() -> {
+        /*ThreadUtil.execute(() -> {
             jzzpService.migrateQhJzppInfo();
             jzzpService.migrateQhZybrInfo();
         });
         ThreadUtil.execute(() -> jzzpService.migrateQhLdjgInfo());
         ThreadUtil.execute(() -> jzzpService.migrateQhZybrInfo());
-        ThreadUtil.execute(() -> jzzpService.migrateQhJzppPhotos());
+        ThreadUtil.execute(() -> jzzpService.migrateQhJzppPhotos());*/
     }
 
 }

@@ -1,39 +1,25 @@
 package com.tor.project.service.impl;
 
-import java.time.LocalDateTime;
-
-import cn.com.itsea.util.ImageUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.StopWatch;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.base.Stopwatch;
-import com.sun.javafx.scene.control.behavior.OptionalBoolean;
-import com.tor.project.ZybrZylbEnum;
+import com.tor.project.enums.ZybrZylbEnum;
 import com.tor.project.dto.FeatrueDTO;
 import com.tor.project.dto.Fn35DTO;
 import com.tor.project.entity.*;
 import com.tor.project.mapper.primary.JzzpMapper;
-import com.tor.project.mapper.primary.JzzptzzMapper;
 import com.tor.project.mapper.second.JyJzzpOldMapper;
 import com.tor.project.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tor.project.utils.*;
-import io.swagger.models.auth.In;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,16 +30,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -81,7 +63,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     @Autowired
     private TasktimeService tasktimeService;
     @Autowired
-    private JcLdjgService ldjgService;
+    private LdjgService ldjgService;
     @Autowired
     private ZybrService zybrService;
 
@@ -632,29 +614,25 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         log.info(new FormatedLogUtil().append("=============start migrateQhLdjgInfo==============").getLogString());
         FormatedLogUtil startLogUtil = new FormatedLogUtil();
         Stopwatch startStarted = Stopwatch.createStarted();
-        List<Tasktime> tasktimeList = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2));
-        if(tasktimeList.size() != 1){
-            log.info("tasktimeList 不唯一 size={}",tasktimeList.size());
-            return;
-        }
-        Tasktime tasktime = tasktimeList.get(0);
-        String tasktimeString = DateUtil.format(tasktimeList.get(0).getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
         try {
             while (true){
+                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 100)).get(0);
+                String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<JcLdjg> jcLdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 100);
-                log.info(new FormatedLogUtil(StrUtil.format("jcLdjgList.size={}",jcLdjgList.size())).getLogString());
-                if(jcLdjgList.size() < 1){
+                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 2);
+                log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}",LdjgList.size())).getLogString());
+                if(LdjgList.size() < 1){
                     break;
                 }
-                for (JcLdjg ldjgNow : jcLdjgList) {
+                for (Ldjg ldjgNow : LdjgList) {
                     FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},jgmc={}", ldjgNow.getJgdm(),ldjgNow.getJgmc()));
                     Stopwatch started = Stopwatch.createStarted();
                     try {
-                        JcLdjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<JcLdjg>().eq(JcLdjg::getJgdm, ldjgNow.getJgdm()));
+                        Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, ldjgNow.getJgdm()));
                         if(ObjectUtil.isNull(ldjg)){
-                            ldjg = new JcLdjg();
+                            ldjg = new Ldjg();
                         }
+                        ldjg.setQxdm("630000");
                         ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setInstitutionNo(ldjgNow.getJgdm());
                         ldjg.setJgmc(ldjgNow.getJgmc());
@@ -663,7 +641,12 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         ldjg.setLxdh(ldjgNow.getLxdh());
                         ldjg.setJglx(ldjgNow.getJglx());
                         ldjg.setAddtime(ldjgNow.getAddtime());
-                        ldjgService.saveOrUpdate(ldjg);
+                        ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(),1) ? "A1" : "E1");
+                        if(ObjectUtil.isNull(ldjg.getId())){
+                            ldjgService.saveLdjg(ldjg);
+                        }else{
+                            ldjgService.updateLdjg(ldjg);
+                        }
                         logUtil.append("保存成功");
                     } catch (Exception e) {
                         logUtil.setSucc(false).append(LogUtils.getTrace(e));
@@ -712,7 +695,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             List<QhZybrInfo> zybrInfoList = jzzpMapper.getQhZybrInfo();
             for (QhZybrInfo info : zybrInfoList) {
                 FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},grbh={},rysj={}", info.getJgdm(), info.getGrbh(), info.getRysj()));
-                JcLdjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<JcLdjg>().eq(JcLdjg::getJgdm, info.getJgdm()));
+                Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, info.getJgdm()));
                 if(ObjectUtil.isNull(ldjg)){
                     logUtil.append("未找到对应的两定机构");
                     continue;

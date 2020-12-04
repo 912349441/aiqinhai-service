@@ -20,7 +20,6 @@ public class MigrateJyZybrInfo {
 
     @Scheduled(cron = "${JyJob.MigrateJyZybrInfo}")
     public void execute() throws Exception {
-        jzzpService.migrateQhJzppInfo();
         ThreadUtil.execute(() -> jzzpService.migrateJyJzppInfo());
     }
 }

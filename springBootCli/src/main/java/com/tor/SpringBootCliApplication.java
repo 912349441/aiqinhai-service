@@ -31,6 +31,6 @@ public class SpringBootCliApplication {
     }
 
     private static void printProjectConfigs() {
-        log.info("==> run at http://{}:{} <==", NetUtil.getLocalhostStr(),SpringContextHolder.getBean(ServerProperties.class).getPort());
+        log.info("==> run at http://{}:{}/swagger-ui.html <==", NetUtil.getLocalhostStr(),SpringContextHolder.getBean(ServerProperties.class).getPort());
     }
 }

@@ -28,6 +28,7 @@ public class Tasktime extends Model<Tasktime> {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "timeid", type = IdType.AUTO)
     private String timeid;
 
     private Date tasktime;

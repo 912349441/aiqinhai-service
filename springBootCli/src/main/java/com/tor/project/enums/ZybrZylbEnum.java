@@ -1,7 +1,6 @@
-package com.tor.project;
+package com.tor.project.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public enum ZybrZylbEnum {
