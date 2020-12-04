@@ -50,6 +50,14 @@ public class JobQhController {
         });
     }
 
+    @GetMapping("/migrateQhZybrCyInfo")
+    @ApiModelProperty("青海 - 出院")
+    public void migrateQhZybrCyInfo(HttpServletRequest request, HttpServletResponse response) {
+        ThreadUtil.execute(() -> {
+            jzzpService.migrateQhZybrCyInfo();
+        });
+    }
+
     @GetMapping("/migrateQhJzppPhotos")
     @ApiModelProperty("青海 - 照片同步到生物特征平台")
     public void migrateQhJzppPhotos() {

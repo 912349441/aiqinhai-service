@@ -731,7 +731,61 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
         } finally {
             ZYBR_LOCK.unlock();
-            startLogUtil.append("migrateQhLdjgInfo==>释放LDJG_LOCK锁");
+            startLogUtil.append("migrateQhLdjgInfo==>释放ZYBR_LOCK锁");
+            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+            if (startLogUtil.isSucc()) {
+                log.info(startLogUtil.getLogString());
+            } else {
+                log.error(startLogUtil.getLogString());
+            }
+        }
+    }
+
+    @Override
+    public void migrateQhZybrCyInfo() {
+        if(!RegVerUtils.isQingHai()){
+            log.info("非青海版本");
+            return;
+        }
+        if (!ZYBR_LOCK.tryLock()) {
+            log.info(new FormatedLogUtil().append("migrateQhZybrCyInfo Lock not acquired;exit the current thread").getLogString());
+            return;
+        }
+        ZYBR_LOCK.lock();
+        log.info(new FormatedLogUtil().append("=============start migrateQhZybrCyInfo==============").getLogString());
+        FormatedLogUtil startLogUtil = new FormatedLogUtil();
+        Stopwatch startStarted = Stopwatch.createStarted();
+        try {
+            List<Zybr> zybrList = zybrService.list(new LambdaQueryWrapper<Zybr>().eq(Zybr::getSfcy, 0));
+            for (Zybr zybr : zybrList) {
+                FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("yldwid={},zpid={},rysj={}", zybr.getYldwid(), zybr.getZpid(), zybr.getRzsj()));
+                Ldjg ldjg = ldjgService.getById(zybr.getYldwid());
+                if(ObjectUtil.isNull(ldjg)){
+                    logUtil.append("未找到对应的两定机构");
+                    continue;
+                }
+                Jzzp jzzp = getById(zybr.getZpid());
+                if(ObjectUtil.isNull(jzzp)){
+                    logUtil.append("未找到对应的参保人");
+                    continue;
+                }
+                logUtil.append(StrUtil.format("jgdm={},grbh={}", ldjg.getJgdm(), jzzp.getPersonalnumber()));
+                List<QhZybrInfo> zybrCyInfo = jzzpMapper.getQhZybrCyInfo(ldjg.getJgdm(), jzzp.getPersonalnumber(), zybr.getRzsj());
+                if(CollectionUtil.isEmpty(zybrCyInfo)){
+                    logUtil.append("患者还未出院");
+                    continue;
+                }
+                QhZybrInfo zybrInfo = zybrCyInfo.get(0);
+                zybr.setSfcy(1);
+                zybr.setCysj(zybrInfo.getCysj());
+                zybrService.updateById(zybr);
+                logUtil.append("出院成功");
+            }
+        } catch (Exception e) {
+            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
+        } finally {
+            ZYBR_LOCK.unlock();
+            startLogUtil.append("migrateQhZybrCyInfo==>释放ZYBR_LOCK锁");
             startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
             if (startLogUtil.isSucc()) {
                 log.info(startLogUtil.getLogString());

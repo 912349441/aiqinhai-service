@@ -1,6 +1,6 @@
 package com.tor.project.mapper.primary;
 
-import com.tor.project.entity.JcLdjg;
+import com.tor.project.entity.Ldjg;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
@@ -10,9 +10,16 @@ import org.springframework.stereotype.Repository;
  * </p>
  *
  * @author Tzx
- * @since 2020-08-27
+ * @since 2020-12-04
  */
 @Repository
-public interface JcLdjgMapper extends BaseMapper<JcLdjg> {
+public interface LdjgMapper extends BaseMapper<Ldjg> {
 
+    /**
+     * 保存两定机构
+     * @param ldjg
+     */
+    void saveLdjg(Ldjg ldjg);
+
+    void updateLdjg(Ldjg ldjg);
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tor.project.mapper.primary.JcLdjgMapper">
+<mapper namespace="com.tor.project.mapper.primary.LdjgMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.tor.project.entity.JcLdjg">
+    <resultMap id="BaseResultMap" type="com.tor.project.entity.Ldjg">
         <id column="ID" property="id" />
         <result column="JGDM" property="jgdm" />
         <result column="JGMC" property="jgmc" />
@@ -34,11 +34,21 @@
         <result column="FACTORY_NAME" property="factoryName" />
         <result column="SECURITY_KEY" property="securityKey" />
         <result column="PILOT" property="pilot" />
+        <result column="AGENCY_SUPERVISION" property="agencySupervision" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, JGDM, JGMC, JGLX, JGLBDM, JGJBDM, QXDM, LXDZ, LXR, LXDH, BZ, ADDTIME, SUPERVISE, OPENING_TIME, BUYING_MEDICINE, PHYSIOTHERAPY, ATTENDANCE, JGZT, STARTTIME, ENDTIME, MSG, LASTSWIPECARDDATE, LASTCONNECTIONDATE, INPATIENT, REGULATORY_MODEL, INSTITUTION_NO, FACTORY_ID, FACTORY_NAME, SECURITY_KEY, PILOT
+        ID, JGDM, JGMC, JGLX, JGLBDM, JGJBDM, QXDM, LXDZ, LXR, LXDH, BZ, ADDTIME, SUPERVISE, OPENING_TIME, BUYING_MEDICINE, PHYSIOTHERAPY, ATTENDANCE, JGZT, STARTTIME, ENDTIME, MSG, LASTSWIPECARDDATE, LASTCONNECTIONDATE, INPATIENT, REGULATORY_MODEL, INSTITUTION_NO, FACTORY_ID, FACTORY_NAME, SECURITY_KEY, PILOT, AGENCY_SUPERVISION
     </sql>
 
+    <insert id="saveLdjg">
+        INSERT INTO JC_LDJG  ( jgdm, jgmc, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no )
+        VALUES  ( #{jgdm}, #{jgmc}, #{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo})
+    </insert>
+
+    <insert id="updateLdjg">
+        update JC_LDJG set JGDM =#{jgdm},jgmc = #{jgmc},jglx = #{jglx},jglbdm = #{jglbdm},lxr = #{lxr},addtime = #{addtime},institution_no = #{institutionNo}
+        where ID = #{id}
+    </insert>
 </mapper>

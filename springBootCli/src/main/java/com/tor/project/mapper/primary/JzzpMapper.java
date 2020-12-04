@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -62,9 +63,22 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
      * @param maxSize
      * @return
      */
-    List<JcLdjg> getQhLdjgInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
+    List<Ldjg> getQhLdjgInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
 
+    /**
+     * 入院
+     * @return
+     */
     List<QhZybrInfo> getQhZybrInfo();
+
+    /**
+     * 出院
+     * @param jgdm
+     * @param grbh
+     * @param rysj
+     * @return
+     */
+    List<QhZybrInfo> getQhZybrCyInfo(@Param("jgdm") String jgdm,@Param("grbh") String grbh, @Param("rysj") Date rysj);
 
 
     void saveJzzp(Jzzp jzzp);

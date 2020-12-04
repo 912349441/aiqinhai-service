@@ -66,7 +66,7 @@ public class Zybr extends Model<Zybr> {
     /**
      * 是否出院 0：否 （默认）1：是
      */
-    private Double sfcy;
+    private Integer sfcy;
 
     /**
      * 出院时间

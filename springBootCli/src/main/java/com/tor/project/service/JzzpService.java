@@ -43,6 +43,7 @@ public interface JzzpService extends IService<Jzzp> {
     public void migrateQhJzppInfo();
     public void migrateQhLdjgInfo();
     public void migrateQhZybrInfo();
+    public void migrateQhZybrCyInfo();
     public void migrateQhJzppPhotos();
 
 

@@ -22,6 +22,7 @@ public class MigrateQhInfo {
         /*ThreadUtil.execute(() -> {
             jzzpService.migrateQhJzppInfo();
             jzzpService.migrateQhZybrInfo();
+            jzzpService.migrateQhZybrCyInfo();
         });
         ThreadUtil.execute(() -> jzzpService.migrateQhLdjgInfo());
         ThreadUtil.execute(() -> jzzpService.migrateQhZybrInfo());
