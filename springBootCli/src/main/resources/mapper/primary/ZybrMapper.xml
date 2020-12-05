@@ -38,4 +38,23 @@
         ZYBRID, XM, SFZH, SBKH, ZPID, RZSJ, CH, SFCY, CYSJ, KSID, YLDWID, PINYIN, LASTPATROLTIME, SECONDTEMPLATEPATH, SECONDTEMPLATESCORE, PATROLDAILYTOTAL, PATROLDAILYFAILED, PATROLTASKTOTAL, PATROLTASKFAILED, ADDFLAG, COMPAREFLAG, PHOTOEXISTS, HOSPITALCATEGORY, DISEASE_DIAGNOSIS, NATURE_PERSONNEL, INSURED_UNIT,INSURED_AREA_CODE
     </sql>
 
+    <insert id="saveZybr">
+        INSERT INTO YW_ZYBR  ( xm, sfzh,  zpid, rzsj, yldwid, hospitalcategory, disease_diagnosis, nature_personnel, insured_unit, insured_area_code )
+        VALUES  ( #{xm}, #{sfzh},  #{zpid}, #{rzsj}, #{yldwid}, #{hospitalcategory}, #{diseaseDiagnosis}, #{naturePersonnel}, #{insuredUnit}, #{insuredAreaCode} )
+    </insert>
+
+    <update id="updateZybr">
+        update YW_ZYBR set
+           xm = #{xm},
+           sfzh = #{sfzh},
+           zpid = #{zpid},
+           rzsj = #{rzsj},
+           yldwid = #{yldwid},
+           hospitalcategory = #{hospitalcategory},
+           disease_diagnosis = #{diseaseDiagnosis},
+           nature_personnel = #{naturePersonnel},
+           insured_unit = #{insured_unit},
+           insured_area_code = #{insured_area_code}
+        where zybrid = #{zybrid}
+    </update>
 </mapper>

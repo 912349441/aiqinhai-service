@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ZybrService extends IService<Zybr> {
 
+    void saveZybr(Zybr zybr);
+    void updateZybr(Zybr zybr);
 }
