@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:application.yml")
 @EnableScheduling
 public class MigrateQhInfo {
+
     @Autowired
     private JzzpService jzzpService;
 

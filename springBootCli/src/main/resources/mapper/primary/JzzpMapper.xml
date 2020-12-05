@@ -234,4 +234,13 @@
         INSERT INTO YW_JZZP (sfzh, xm, sbkh, personalnumber, thread_number)
         VALUES (#{sfzh}, #{xm}, #{sbkh}, #{personalnumber}, #{threadNumber})
     </insert>
+
+    <insert id="updateJzp">
+        update yw_jzzp set
+         sfzh = #{sfzh},
+         xm = #{xm},
+         sbkh = #{sbkh},
+         personalnumber = #{personalnumber}
+        where zpid = #{zpid}
+    </insert>
 </mapper>

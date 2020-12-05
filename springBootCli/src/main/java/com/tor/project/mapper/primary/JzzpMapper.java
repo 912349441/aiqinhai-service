@@ -82,4 +82,6 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
 
 
     void saveJzzp(Jzzp jzzp);
+
+    void updateJzp(Jzzp jzzp);
 }

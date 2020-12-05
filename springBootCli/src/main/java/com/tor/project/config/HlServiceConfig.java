@@ -33,11 +33,13 @@ public class HlServiceConfig {
                 File file = new File(userDir + "/cfg/hldfs.client.conf.xml");
                 if(!file.exists()){
                     log.warn("file not found ",file.getPath());
+                    continue;
                 }
                 instance.InitialContext(new File(userDir + "/cfg/hldfs.client.conf.xml"));
                 file = new File(userDir + "/cfg/cert.key.server.xml");
                 if(!file.exists()){
                     log.warn("file not found ",file.getPath());
+                    continue;
                 }
                 EncryptUtil.getInstance().InitialContext(new File(userDir + "/cfg/cert.key.server.xml"));
                 ServiceUtils.initialContext();
