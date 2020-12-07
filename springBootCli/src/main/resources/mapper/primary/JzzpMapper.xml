@@ -39,7 +39,7 @@
     <select id="migrateJzppHyInfoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
         declare
             begin
-            for i in (select GRBH,SFZH,XM,SMKH,to_date(JBRQ,'yyyy-mm-dd hh24:mi:ss') TJSJ from v_hy_人员信息@hy_person where not exists(select 1 from YW_JZZP where PERSONALNUMBER = GRBH))
+            for i in (select GRBH,SFZH,XM,SMKH,to_date(JBRQ,'yyyy-MM-dd hh24:mi:ss') TJSJ from v_hy_人员信息@hy_person where not exists(select 1 from YW_JZZP where PERSONALNUMBER = GRBH))
                 loop
                 insert into yw_jzzp(ZPID,PERSONALNUMBER,sfzh,XM,SBKH,THREAD_NUMBER,TJSJ) VALUES(SYS_GUID(),i.GRBH,i.SFZH,i.XM,i.SMKH,(select floor(dbms_random.value(1, 5)) from dual),DECODE(i.TJSJ,null,sysdate,i.TJSJ));
                 commit;
@@ -225,9 +225,9 @@
         from kc21_yyjg@QHDR
         where 1=1
         and 出院时间 is not null
-        and 机构编号 = ${jgdm}
-        and 个人编号 = ${grbh}
-        and 入院时间 = ${rysj}
+        and 机构编号 = #{jgdm}
+        and 个人编号 = #{grbh}
+        and 入院时间 = #{rysj}
     </select>
 
     <insert id="saveJzzp">
