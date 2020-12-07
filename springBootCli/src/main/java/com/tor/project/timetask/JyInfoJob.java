@@ -14,12 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:application.yml")
 @EnableScheduling
-public class MigrateJyZybrInfo {
+public class JyInfoJob {
+
     @Autowired
     private JzzpService jzzpService;
 
-    @Scheduled(cron = "${JyJob.MigrateJyZybrInfo}")
-    public void execute() throws Exception {
+    @Scheduled(cron = "${JyJob.JyInfoJob}")
+    public void execute(){
         ThreadUtil.execute(() -> jzzpService.migrateJyJzppInfo());
     }
 }

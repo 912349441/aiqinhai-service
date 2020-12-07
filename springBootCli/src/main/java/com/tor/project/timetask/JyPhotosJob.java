@@ -1,6 +1,7 @@
 package com.tor.project.timetask;
 
 import cn.hutool.core.thread.ThreadUtil;
+import com.tor.project.utils.RegVerUtils;
 import com.tor.project.service.JzzpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:application.yml")
 @EnableScheduling
-public class MigrateQhInfo {
+public class JyPhotosJob {
 
     @Autowired
     private JzzpService jzzpService;
 
-    @Scheduled(cron = "${QhJob.MigrateQhInfo}")
-    public void execute() throws Exception {
-        ThreadUtil.execute(() -> {
-            jzzpService.migrateQhJzppInfo();
-            jzzpService.migrateQhZybrInfo();
-            jzzpService.migrateQhZybrCyInfo();
-        });
-        ThreadUtil.execute(() -> jzzpService.migrateQhLdjgInfo());
-        ThreadUtil.execute(() -> jzzpService.migrateQhJzppPhotos());
+    @Scheduled(cron = "${JyJob.JyPhotosJob}")
+    public void execute(){
+        ThreadUtil.execute(() -> jzzpService.migrateJzppJyPhotosJob());
     }
-
 }

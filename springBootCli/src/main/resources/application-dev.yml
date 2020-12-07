@@ -23,13 +23,19 @@ spring:
 
 # 定时任务
 # 0 0 1 * * ?
+# 0 0 0/2 * * ?
 # 0 */5 * * * ?
 # 0/60 * * * * ?
 JyJob:
-  MigrateJyZybrInfo: 0/10 * * * * ?
-  MigrateJzppJyPhotosJob: 0 0 1 * * ?
+  JyInfoJob: 0 0 0/2 * * ?
+  JyPhotosJob: 0 0 1 * * ?
 HyJob:
-  MigrateJzppHyInfoAndPhotosJob: 0 0 1 * * ?
+  HyInfoAndPhotosJob: 0 0 1 * * ?
+QhJob:
+  QhInfoJob: 0 0 0/2 * * ?
+  QhPhotoJob: 0 0 1 * * ?
 
+# 单次处理最大数量
+handle_max_size: 100
 # 金华照片物理地址根目录
 migrate_jzpp_photo_path: C:\Users\Administrator\Pictures\

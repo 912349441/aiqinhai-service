@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:application.yml")
 @EnableScheduling
-public class MigrateJzppHyInfoAndPhotosJob {
+public class HyInfoAndPhotosJob {
     @Autowired
     private JzzpService jzzpService;
 
-    @Scheduled(cron = "${HyJob.MigrateJzppHyInfoAndPhotosJob}")
-    public void execute() throws Exception {
+    @Scheduled(cron = "${HyJob.HyInfoAndPhotosJob}")
+    public void execute() {
         ThreadUtil.execute(() -> {
             jzzpService.migrateJzppHyInfoJob();
             jzzpService.migrateJzppHyPhotosJob();
