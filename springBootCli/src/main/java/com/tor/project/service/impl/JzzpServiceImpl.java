@@ -78,6 +78,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     private final static Lock PHOTO_LOCK = new ReentrantLock();
     private final static Lock LDJG_LOCK = new ReentrantLock();
     private final static Lock ZYBR_LOCK = new ReentrantLock();
+    private final static Lock ZYBRCY_LOCK = new ReentrantLock();
 
     /**
      * 金华迁移照片
@@ -767,11 +768,11 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        if (!ZYBR_LOCK.tryLock()) {
+        if (!ZYBRCY_LOCK.tryLock()) {
             log.info(new FormatedLogUtil().append("migrateQhZybrCyInfo Lock not acquired;exit the current thread").getLogString());
             return;
         }
-        ZYBR_LOCK.lock();
+        ZYBRCY_LOCK.lock();
         log.info(new FormatedLogUtil().append("=============start migrateQhZybrCyInfo==============").getLogString());
         FormatedLogUtil startLogUtil = new FormatedLogUtil();
         Stopwatch startStarted = Stopwatch.createStarted();
@@ -816,7 +817,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         } catch (Exception e) {
             startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
         } finally {
-            ZYBR_LOCK.unlock();
+            ZYBRCY_LOCK.unlock();
             startLogUtil.append("migrateQhZybrCyInfo==>释放ZYBR_LOCK锁");
             startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
             if (startLogUtil.isSucc()) {
