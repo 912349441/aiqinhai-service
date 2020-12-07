@@ -27,30 +27,30 @@ public class RegVerUtils {
     }
 
     public static boolean isHz() {
-        return HANG_ZHOU.equals(version);
+        return HANG_ZHOU.equalsIgnoreCase(version);
     }
 
     public static boolean isJh() {
-        return JIN_HUA.equals(version);
+        return JIN_HUA.equalsIgnoreCase(version);
     }
 
     public static boolean isHy() {
-        return HAI_YAN.equals(version);
+        return HAI_YAN.equalsIgnoreCase(version);
     }
 
     public static boolean isJy() {
-        return JIANG_YIN.equals(version);
+        return JIANG_YIN.equalsIgnoreCase(version);
     }
 
     public static boolean isJa() {
-        return JI_AN.equals(version);
+        return JI_AN.equalsIgnoreCase(version);
     }
 
     public static boolean isSiHong() {
-        return SI_HONG.equals(version);
+        return SI_HONG.equalsIgnoreCase(version);
     }
 
     public static boolean isQingHai() {
-        return QING_HAI.equals(version);
+        return QING_HAI.equalsIgnoreCase(version);
     }
 }
