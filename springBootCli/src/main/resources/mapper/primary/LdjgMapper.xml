@@ -43,12 +43,12 @@
     </sql>
 
     <insert id="saveLdjg">
-        INSERT INTO JC_LDJG  ( jgdm, jgmc, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no )
-        VALUES  ( #{jgdm}, #{jgmc}, #{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo})
+        INSERT INTO JC_LDJG  ( jgdm, jgmc, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no,inpatient )
+        VALUES  ( #{jgdm}, #{jgmc}, #{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo},#{inpatient})
     </insert>
 
     <insert id="updateLdjg">
-        update JC_LDJG set JGDM =#{jgdm},jgmc = #{jgmc},jglx = #{jglx},jglbdm = #{jglbdm},lxr = #{lxr},addtime = #{addtime},institution_no = #{institutionNo}
+        update JC_LDJG set JGDM =#{jgdm},jgmc = #{jgmc},jglx = #{jglx},jglbdm = #{jglbdm},lxr = #{lxr},addtime = #{addtime},institution_no = #{institutionNo},inpatient = #{inpatient}
         where ID = #{id}
     </insert>
 </mapper>
