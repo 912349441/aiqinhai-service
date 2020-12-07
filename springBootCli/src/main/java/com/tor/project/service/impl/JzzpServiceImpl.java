@@ -779,7 +779,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         try {
             List<Zybr> zybrList = zybrService.list(new LambdaQueryWrapper<Zybr>().eq(Zybr::getSfcy, 0));
             for (Zybr zybr : zybrList) {
-                FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("yldwid={},zpid={},rysj={}", zybr.getYldwid(), zybr.getZpid(), zybr.getRzsj()));
+                FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("yldwid={},zpid={}", zybr.getYldwid(), zybr.getZpid()));
                 Stopwatch started = Stopwatch.createStarted();
                 try {
                     Ldjg ldjg = ldjgService.getById(zybr.getYldwid());
