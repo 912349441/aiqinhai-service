@@ -806,11 +806,11 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 }catch (Exception e){
                     logUtil.setSucc(false).append(LogUtils.getTrace(e));
                 }finally {
-                    startLogUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                    if (startLogUtil.isSucc()) {
-                        log.info(startLogUtil.getLogString());
+                    logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                    if (logUtil.isSucc()) {
+                        log.info(logUtil.getLogString());
                     } else {
-                        log.error(startLogUtil.getLogString());
+                        log.error(logUtil.getLogString());
                     }
                 }
             }
