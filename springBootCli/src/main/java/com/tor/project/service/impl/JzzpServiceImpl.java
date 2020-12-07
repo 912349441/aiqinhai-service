@@ -639,6 +639,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         if(ObjectUtil.isNull(ldjg)){
                             ldjg = new Ldjg();
                         }
+                        ldjg.setInpatient(1);
                         ldjg.setQxdm("630000");
                         ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setInstitutionNo(ldjgNow.getJgdm());
