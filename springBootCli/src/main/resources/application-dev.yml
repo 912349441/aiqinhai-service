@@ -33,7 +33,7 @@ HyJob:
   HyInfoAndPhotosJob: 0 0 1 * * ?
 QhJob:
   QhInfoJob: 0 0 0/2 * * ?
-  QhPhotoJob: 0 0 1 * * ?
+  QhPhotosJob: 0 0 1 * * ?
 
 # 单次处理最大数量
 handle_max_size: 100
