@@ -643,13 +643,14 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         ldjg.setInpatient(1);
                         ldjg.setQxdm("630000");
                         ldjg.setJgdm(ldjgNow.getJgdm());
-                        ldjg.setInstitutionNo(ldjgNow.getJgdm());
                         ldjg.setJgmc(ldjgNow.getJgmc());
                         ldjg.setLxdz(ldjgNow.getLxdz());
                         ldjg.setLxr(ldjgNow.getLxr());
                         ldjg.setLxdh(ldjgNow.getLxdh());
                         ldjg.setJglx(ldjgNow.getJglx());
+                        ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setAddtime(ldjgNow.getAddtime());
+                        ldjg.setInstitutionNo(ldjgNow.getJgdm());
                         ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(),1) ? "A1" : "E1");
                         if(ObjectUtil.isNull(ldjg.getId())){
                             ldjgService.saveLdjg(ldjg);
