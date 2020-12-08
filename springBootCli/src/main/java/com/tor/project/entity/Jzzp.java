@@ -149,4 +149,8 @@ public class Jzzp extends Model<Jzzp> {
      */
     private Integer threadNumber;
 
+    /**
+     * 参保人员参保统筹区域代码
+     */
+    private String insuredAreaCode;
 }

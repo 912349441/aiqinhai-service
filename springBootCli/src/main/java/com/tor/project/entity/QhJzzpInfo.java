@@ -14,6 +14,7 @@ public class QhJzzpInfo {
     private String sfzh;
     private String sbkh;
     private String xm;
+    private String tcq;
     private Date gxsj;
 
 }

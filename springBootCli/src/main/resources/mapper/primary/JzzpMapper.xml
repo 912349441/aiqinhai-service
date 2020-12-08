@@ -29,6 +29,7 @@
         <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime"/>
         <result column="MODELING_STATE" property="modelingState"/>
         <result column="THREAD_NUMBER" property="threadNumber"/>
+        <result column="INSURED_AREA_CODE" property="insuredAreaCode"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -194,7 +195,7 @@
     </select>
 
     <select id="getQhJzzpInfoByGxsj" resultType="com.tor.project.entity.QhJzzpInfo">
-        select 个人编号 grbh,姓名 xm,社保卡号 sbkh,身份证号码 sfzh,更新时间 gxsj
+        select 个人编号 grbh,姓名 xm,社保卡号 sbkh,身份证号码 sfzh,更新时间 gxsj,统筹区 tcq
         from AC01_YYJG@QHDR
         where 1=1
         and  #{maxSize} >= ROWNUM
@@ -231,8 +232,16 @@
     </select>
 
     <insert id="saveJzzp">
-        INSERT INTO YW_JZZP (sfzh, xm, sbkh, personalnumber, thread_number)
-        VALUES (#{sfzh}, #{xm}, #{sbkh}, #{personalnumber}, #{threadNumber})
+        INSERT INTO YW_JZZP (sfzh, xm, sbkh, personalnumber, thread_number
+        <if test="insuredAreaCode != null and insuredAreaCode != ''">
+            ,INSURED_AREA_CODE
+        </if>
+        )
+        VALUES (#{sfzh}, #{xm}, #{sbkh}, #{personalnumber}, #{threadNumber}
+        <if test="insuredAreaCode != null and insuredAreaCode != ''">
+            ,#{insuredAreaCode}
+        </if>
+        )
     </insert>
 
     <insert id="updateJzp">

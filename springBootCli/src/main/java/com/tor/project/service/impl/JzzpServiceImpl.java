@@ -571,6 +571,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         jzzp.setSfzh(jzzpInfo.getSfzh());
                         jzzp.setXm(jzzpInfo.getXm());
                         jzzp.setSbkh(jzzpInfo.getSbkh());
+                        jzzp.setInsuredAreaCode(jzzpInfo.getTcq());
                         if(StringUtils.isBlank(jzzp.getZpid())){
                             jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0,5,1))[0]);
                             jzzpMapper.saveJzzp(jzzp);
