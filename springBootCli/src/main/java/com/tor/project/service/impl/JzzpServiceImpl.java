@@ -3,6 +3,7 @@ package com.tor.project.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -571,7 +572,8 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         jzzp.setSfzh(jzzpInfo.getSfzh());
                         jzzp.setXm(jzzpInfo.getXm());
                         jzzp.setSbkh(jzzpInfo.getSbkh());
-                        jzzp.setInsuredAreaCode(jzzpInfo.getTcq());
+                        // 移除统筹区末尾的0
+                        jzzp.setInsuredAreaCode(remove_ending_with_0(jzzpInfo.getTcq()));
                         if(StringUtils.isBlank(jzzp.getZpid())){
                             jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0,5,1))[0]);
                             jzzpMapper.saveJzzp(jzzp);
@@ -737,7 +739,8 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     zybr.setDiseaseDiagnosis(info.getJbzd());
                     zybr.setNaturePersonnel(info.getRysz());
                     zybr.setInsuredUnit(info.getCbdw());
-                    zybr.setInsuredAreaCode(info.getTcq());
+                    // 移除统筹区末尾的0
+                    zybr.setInsuredAreaCode(remove_ending_with_0(info.getTcq()));
                     zybrMapper.saveZybr(zybr);
                     logUtil.append("保存成功");
                 }catch (Exception e){
@@ -763,6 +766,17 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 log.error(startLogUtil.getLogString());
             }
         }
+    }
+
+    /**
+     * 删除末尾所有0
+     *
+     * @param s
+     * @return
+     */
+    private static String remove_ending_with_0(String s) {
+        if (StringUtils.isBlank(s)) while (s.substring(s.length() - 1).equals("0")) s = s.substring(0, s.length() - 1);
+        return s;
     }
 
     @Override
