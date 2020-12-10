@@ -629,7 +629,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
                 String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, HANDLE_MAX_SIZE);
+                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
                 log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}",LdjgList.size())).getLogString());
                 if(LdjgList.size() < 1){
                     break;
@@ -643,7 +643,6 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                             ldjg = new Ldjg();
                         }
                         ldjg.setInpatient(1);
-                        ldjg.setQxdm("630000");
                         ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setJgmc(ldjgNow.getJgmc());
                         ldjg.setLxdz(ldjgNow.getLxdz());
@@ -653,6 +652,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setAddtime(ldjgNow.getAddtime());
                         ldjg.setInstitutionNo(ldjgNow.getJgdm());
+                        ldjg.setQxdm(remove_ending_with_0(ldjgNow.getQxdm()));
                         ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(),1) ? "A1" : "E1");
                         if(ObjectUtil.isNull(ldjg.getId())){
                             ldjgService.saveLdjg(ldjg);
@@ -746,11 +746,11 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 }catch (Exception e){
                     logUtil.setSucc(false).append(LogUtils.getTrace(e));
                 }finally {
-                    startLogUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                    if (startLogUtil.isSucc()) {
-                        log.info(startLogUtil.getLogString());
+                    logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                    if (logUtil.isSucc()) {
+                        log.info(logUtil.getLogString());
                     } else {
-                        log.error(startLogUtil.getLogString());
+                        log.error(logUtil.getLogString());
                     }
                 }
             }
@@ -775,7 +775,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      * @return
      */
     private static String remove_ending_with_0(String s) {
-        if (StringUtils.isBlank(s)) while (s.substring(s.length() - 1).equals("0")) s = s.substring(0, s.length() - 1);
+        if (StringUtils.isNotBlank(s)) while (s.substring(s.length() - 1).equals("0")) s = s.substring(0, s.length() - 1);
         return s;
     }
 
@@ -860,7 +860,6 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         FormatedLogUtil logUtil = new FormatedLogUtil();
         Stopwatch started = Stopwatch.createStarted();
         try {
-            started = Stopwatch.createStarted();
             logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
             QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
                     .select("THREAD_NUMBER")

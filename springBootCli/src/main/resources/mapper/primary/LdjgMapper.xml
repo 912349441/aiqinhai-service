@@ -4,37 +4,37 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.tor.project.entity.Ldjg">
-        <id column="ID" property="id" />
-        <result column="JGDM" property="jgdm" />
-        <result column="JGMC" property="jgmc" />
-        <result column="JGLX" property="jglx" />
-        <result column="JGLBDM" property="jglbdm" />
-        <result column="JGJBDM" property="jgjbdm" />
-        <result column="QXDM" property="qxdm" />
-        <result column="LXDZ" property="lxdz" />
-        <result column="LXR" property="lxr" />
-        <result column="LXDH" property="lxdh" />
-        <result column="BZ" property="bz" />
-        <result column="ADDTIME" property="addtime" />
-        <result column="SUPERVISE" property="supervise" />
-        <result column="OPENING_TIME" property="openingTime" />
-        <result column="BUYING_MEDICINE" property="buyingMedicine" />
-        <result column="PHYSIOTHERAPY" property="physiotherapy" />
-        <result column="ATTENDANCE" property="attendance" />
-        <result column="JGZT" property="jgzt" />
-        <result column="STARTTIME" property="starttime" />
-        <result column="ENDTIME" property="endtime" />
-        <result column="MSG" property="msg" />
-        <result column="LASTSWIPECARDDATE" property="lastswipecarddate" />
-        <result column="LASTCONNECTIONDATE" property="lastconnectiondate" />
-        <result column="INPATIENT" property="inpatient" />
-        <result column="REGULATORY_MODEL" property="regulatoryModel" />
-        <result column="INSTITUTION_NO" property="institutionNo" />
-        <result column="FACTORY_ID" property="factoryId" />
-        <result column="FACTORY_NAME" property="factoryName" />
-        <result column="SECURITY_KEY" property="securityKey" />
-        <result column="PILOT" property="pilot" />
-        <result column="AGENCY_SUPERVISION" property="agencySupervision" />
+        <id column="ID" property="id"/>
+        <result column="JGDM" property="jgdm"/>
+        <result column="JGMC" property="jgmc"/>
+        <result column="JGLX" property="jglx"/>
+        <result column="JGLBDM" property="jglbdm"/>
+        <result column="JGJBDM" property="jgjbdm"/>
+        <result column="QXDM" property="qxdm"/>
+        <result column="LXDZ" property="lxdz"/>
+        <result column="LXR" property="lxr"/>
+        <result column="LXDH" property="lxdh"/>
+        <result column="BZ" property="bz"/>
+        <result column="ADDTIME" property="addtime"/>
+        <result column="SUPERVISE" property="supervise"/>
+        <result column="OPENING_TIME" property="openingTime"/>
+        <result column="BUYING_MEDICINE" property="buyingMedicine"/>
+        <result column="PHYSIOTHERAPY" property="physiotherapy"/>
+        <result column="ATTENDANCE" property="attendance"/>
+        <result column="JGZT" property="jgzt"/>
+        <result column="STARTTIME" property="starttime"/>
+        <result column="ENDTIME" property="endtime"/>
+        <result column="MSG" property="msg"/>
+        <result column="LASTSWIPECARDDATE" property="lastswipecarddate"/>
+        <result column="LASTCONNECTIONDATE" property="lastconnectiondate"/>
+        <result column="INPATIENT" property="inpatient"/>
+        <result column="REGULATORY_MODEL" property="regulatoryModel"/>
+        <result column="INSTITUTION_NO" property="institutionNo"/>
+        <result column="FACTORY_ID" property="factoryId"/>
+        <result column="FACTORY_NAME" property="factoryName"/>
+        <result column="SECURITY_KEY" property="securityKey"/>
+        <result column="PILOT" property="pilot"/>
+        <result column="AGENCY_SUPERVISION" property="agencySupervision"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -43,12 +43,12 @@
     </sql>
 
     <insert id="saveLdjg">
-        INSERT INTO JC_LDJG  ( jgdm, jgmc, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no,inpatient )
-        VALUES  ( #{jgdm}, #{jgmc}, #{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo},#{inpatient})
+        INSERT INTO JC_LDJG  ( jgdm, jgmc, qxdm, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no,inpatient )
+        VALUES  ( #{jgdm}, #{jgmc}, #{qxdm},#{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo},#{inpatient})
     </insert>
 
     <insert id="updateLdjg">
-        update JC_LDJG set JGDM =#{jgdm},jgmc = #{jgmc},jglx = #{jglx},jglbdm = #{jglbdm},lxr = #{lxr},addtime = #{addtime},institution_no = #{institutionNo},inpatient = #{inpatient}
+        update JC_LDJG set JGDM =#{jgdm},jgmc = #{jgmc},qxdm = #{qxdm},jglx = #{jglx},jglbdm = #{jglbdm},lxr = #{lxr},addtime = #{addtime},institution_no = #{institutionNo},inpatient = #{inpatient}
         where ID = #{id}
     </insert>
 </mapper>

@@ -5,9 +5,9 @@ spring:
       # （主）医保监管数据源
       primary:
         driver-class-name: oracle.jdbc.OracleDriver
-        jdbc-url: jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB
-        username: spzpjkdba_jinhua
-        password: spzpjkdba_jinhua
+        jdbc-url: jdbc:oracle:thin:@10.130.131.236:1521:ORCL
+        username: spzpjkdb
+        password: hzhl#zjut5607
       # （从）如果不需要配置双数据源,配置跟主数据源一致即可
 #      second:
 #        driver-class-name: com.mysql.jdbc.Driver
@@ -17,9 +17,9 @@ spring:
       # （从）如果不需要配置双数据源,配置跟主数据源一致即可
       second:
         driver-class-name: com.mysql.jdbc.Driver
-        jdbc-url: jdbc:mysql://223.93.147.251:63306/yhbiology?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+        jdbc-url: jdbc:mysql://10.130.131.236:3306/yhbiology?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
         username: yhbiology
-        password: biology~！2020
+        password: hzhl#zjut5607
 
 # 定时任务
 # 0 0 1 * * ?

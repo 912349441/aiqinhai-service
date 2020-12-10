@@ -204,7 +204,7 @@
     </select>
 
     <select id="getQhLdjgInfoByGxsj" resultType="com.tor.project.entity.Ldjg">
-        select 两定机构代码 jgdm,机构名称 jgmc,机构地址 lxdz,联系人 lxr,联系电话 lxdh,类型 jglx,更新时间 addtime,行政区划 jgdm
+        select 两定机构代码 jgdm,机构名称 jgmc,机构地址 lxdz,联系人 lxr,联系电话 lxdh,类型 jglx,更新时间 addtime,统筹区 qxdm
         from kb01_yyjg@QHDR
         where 1=1
         and  #{maxSize} >= ROWNUM

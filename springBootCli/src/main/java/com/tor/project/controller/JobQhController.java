@@ -1,22 +1,16 @@
 package com.tor.project.controller;
 
 import cn.hutool.core.thread.ThreadUtil;
-import com.tor.project.service.HyJzzpPhotoService;
 import com.tor.project.service.JzzpService;
-import com.tor.project.utils.RegVerUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sun.rmi.runtime.Log;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Slf4j
 @RestController
