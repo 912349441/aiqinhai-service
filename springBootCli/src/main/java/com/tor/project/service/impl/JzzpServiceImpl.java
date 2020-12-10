@@ -561,7 +561,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     break;
                 }
                 for (QhJzzpInfo jzzpInfo : jzzpInfoList) {
-                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={}", jzzpInfo.getGrbh(),jzzpInfo.getSfzh(), jzzpInfo.getXm()));
+                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={},tcq={}", jzzpInfo.getGrbh(),jzzpInfo.getSfzh(), jzzpInfo.getXm(),jzzpInfo.getTcq()));
                     Stopwatch started = Stopwatch.createStarted();
                     try {
                         Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getGrbh()));
