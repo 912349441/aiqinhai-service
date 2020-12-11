@@ -34,7 +34,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE
+        ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE,INSURED_AREA_CODE
     </sql>
 
     <select id="migrateJzppHyInfoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
@@ -201,6 +201,7 @@
         and  #{maxSize} >= ROWNUM
         and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
         and 个人编号 is not null
+        order by 更新时间 asc
     </select>
 
     <select id="getQhLdjgInfoByGxsj" resultType="com.tor.project.entity.Ldjg">
@@ -209,6 +210,7 @@
         where 1=1
         and  #{maxSize} >= ROWNUM
         and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
+        order by 更新时间 asc
     </select>
 
     <select id="getQhZybrInfo" resultType="com.tor.project.entity.QhZybrInfo">

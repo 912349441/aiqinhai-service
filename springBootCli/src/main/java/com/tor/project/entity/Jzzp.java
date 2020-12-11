@@ -1,5 +1,6 @@
 package com.tor.project.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -52,7 +54,7 @@ public class Jzzp extends Model<Jzzp> {
     /**
      * 添加时间,添加时的系统时间
      */
-    private LocalDateTime tjsj;
+    private Date tjsj;
 
     /**
      * 是否有效1：有效，默认；0：无效，即属于删除的情况
@@ -77,7 +79,7 @@ public class Jzzp extends Model<Jzzp> {
     /**
      * 更新时间
      */
-    private LocalDateTime gxsj;
+    private Date gxsj;
 
     /**
      * 特征值状态0未提取;1已提取;-1无特征值

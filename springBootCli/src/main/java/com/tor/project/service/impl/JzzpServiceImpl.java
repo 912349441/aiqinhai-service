@@ -16,6 +16,8 @@ import com.tor.project.dto.FeatrueDTO;
 import com.tor.project.dto.Fn35DTO;
 import com.tor.project.entity.*;
 import com.tor.project.mapper.primary.JzzpMapper;
+import com.tor.project.mapper.primary.JzzptzzMapper;
+import com.tor.project.mapper.primary.LdjgMapper;
 import com.tor.project.mapper.primary.ZybrMapper;
 import com.tor.project.mapper.second.JyJzzpOldMapper;
 import com.tor.project.service.*;
@@ -60,6 +62,10 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     @Autowired
     private JzzpMapper jzzpMapper;
     @Autowired
+    private LdjgMapper ldjgMapper;
+    @Autowired
+    private ZybrMapper zybrMapper;
+    @Autowired
     private JzzptzzService jzzptzzService;
     @Autowired
     private JyJzzpOldMapper jyJzzpOldMapper;
@@ -71,8 +77,6 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     private LdjgService ldjgService;
     @Autowired
     private ZybrService zybrService;
-    @Autowired
-    private ZybrMapper zybrMapper;
 
 
     private final static Lock INFO_LOCK = new ReentrantLock();
@@ -232,7 +236,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateJzppHyInfoJob() {
-        if(!RegVerUtils.isHy()){
+        if (!RegVerUtils.isHy()) {
             log.info("非海盐版本");
             return;
         }
@@ -264,7 +268,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      */
     @Override
     public void migrateJzppHyPhotosJob() {
-        if(!RegVerUtils.isHy()){
+        if (!RegVerUtils.isHy()) {
             log.info("非海盐版本");
             return;
         }
@@ -365,7 +369,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      */
     @Override
     public void migrateJzppJyPhotosJob() {
-        if(!RegVerUtils.isJy()){
+        if (!RegVerUtils.isJy()) {
             log.info("非江阴版本");
             return;
         }
@@ -486,7 +490,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateJyJzppInfo() {
-        if(!RegVerUtils.isJy()){
+        if (!RegVerUtils.isJy()) {
             log.info("非江阴版本");
             return;
         }
@@ -538,7 +542,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateQhJzppInfo() {
-        if(!RegVerUtils.isQingHai()){
+        if (!RegVerUtils.isQingHai()) {
             log.info("非青海版本");
             return;
         }
@@ -551,36 +555,38 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         FormatedLogUtil startLogUtil = new FormatedLogUtil();
         Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            while (true){
+            while (true) {
                 Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1)).get(0);
                 String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
                 List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, HANDLE_MAX_SIZE);
-                log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}",jzzpInfoList.size())).getLogString());
-                if(jzzpInfoList.size() < 1){
+                log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}", jzzpInfoList.size())).getLogString());
+                if (jzzpInfoList.size() < 1) {
                     break;
                 }
                 for (QhJzzpInfo jzzpInfo : jzzpInfoList) {
-                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={},tcq={}", jzzpInfo.getGrbh(),jzzpInfo.getSfzh(), jzzpInfo.getXm(),jzzpInfo.getTcq()));
+                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={},tcq={}", jzzpInfo.getGrbh(), jzzpInfo.getSfzh(), jzzpInfo.getXm(), jzzpInfo.getTcq()));
                     Stopwatch started = Stopwatch.createStarted();
+                    Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getGrbh()));
                     try {
-                        Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getGrbh()));
-                        if(ObjectUtil.isNull(jzzp)){
+                        if (ObjectUtil.isNull(jzzp)) {
                             jzzp = new Jzzp();
                         }
+                        jzzp.setTjsj(new Date());
                         jzzp.setPersonalnumber(jzzpInfo.getGrbh());
                         jzzp.setSfzh(jzzpInfo.getSfzh());
                         jzzp.setXm(jzzpInfo.getXm());
                         jzzp.setSbkh(jzzpInfo.getSbkh());
                         // 移除统筹区末尾的0
                         jzzp.setInsuredAreaCode(remove_ending_with_0(jzzpInfo.getTcq()));
-                        if(StringUtils.isBlank(jzzp.getZpid())){
-                            jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0,5,1))[0]);
+                        if (StringUtils.isBlank(jzzp.getZpid())) {
+                            jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0, 5, 1))[0]);
                             jzzpMapper.saveJzzp(jzzp);
-                        }else{
-                            jzzpMapper.updateJzp(jzzp);
+                            logUtil.append("insert success");
+                        } else {
+                            jzzpMapper.updateById(jzzp);
+                            logUtil.append("update success");
                         }
-                        logUtil.append("success");
                     } catch (Exception e) {
                         logUtil.setSucc(false).append(LogUtils.getTrace(e));
                     } finally {
@@ -612,7 +618,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateQhLdjgInfo() {
-        if(!RegVerUtils.isQingHai()){
+        if (!RegVerUtils.isQingHai()) {
             log.info("非青海版本");
             return;
         }
@@ -625,24 +631,25 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         FormatedLogUtil startLogUtil = new FormatedLogUtil();
         Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            while (true){
+            while (true) {
                 Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
                 String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
                 log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
                 List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
-                log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}",LdjgList.size())).getLogString());
-                if(LdjgList.size() < 1){
+                log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}", LdjgList.size())).getLogString());
+                if (LdjgList.size() < 1) {
                     break;
                 }
                 for (Ldjg ldjgNow : LdjgList) {
-                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},jgmc={}", ldjgNow.getJgdm(),ldjgNow.getJgmc()));
+                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},jgmc={}", ldjgNow.getJgdm(), ldjgNow.getJgmc()));
                     Stopwatch started = Stopwatch.createStarted();
                     try {
                         Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, ldjgNow.getJgdm()));
-                        if(ObjectUtil.isNull(ldjg)){
+                        if (ObjectUtil.isNull(ldjg)) {
                             ldjg = new Ldjg();
                         }
                         ldjg.setInpatient(1);
+                        ldjg.setAddtime(new Date());
                         ldjg.setJgdm(ldjgNow.getJgdm());
                         ldjg.setJgmc(ldjgNow.getJgmc());
                         ldjg.setLxdz(ldjgNow.getLxdz());
@@ -653,13 +660,14 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                         ldjg.setAddtime(ldjgNow.getAddtime());
                         ldjg.setInstitutionNo(ldjgNow.getJgdm());
                         ldjg.setQxdm(remove_ending_with_0(ldjgNow.getQxdm()));
-                        ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(),1) ? "A1" : "E1");
-                        if(ObjectUtil.isNull(ldjg.getId())){
-                            ldjgService.saveLdjg(ldjg);
-                        }else{
-                            ldjgService.updateLdjg(ldjg);
+                        ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(), 1) ? "A1" : "E1");
+                        if (StringUtils.isBlank(ldjg.getId())) {
+                            ldjgMapper.saveLdjg(ldjg);
+                            logUtil.append("insert success");
+                        } else {
+                            ldjgMapper.updateById(ldjg);
+                            logUtil.append("update success");
                         }
-                        logUtil.append("保存成功");
                     } catch (Exception e) {
                         logUtil.setSucc(false).append(LogUtils.getTrace(e));
                     } finally {
@@ -691,7 +699,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateQhZybrInfo() {
-        if(!RegVerUtils.isQingHai()){
+        if (!RegVerUtils.isQingHai()) {
             log.info("非青海版本");
             return;
         }
@@ -705,18 +713,18 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
         Stopwatch startStarted = Stopwatch.createStarted();
         try {
             List<QhZybrInfo> zybrInfoList = jzzpMapper.getQhZybrInfo();
-            log.info(new FormatedLogUtil().append(StrUtil.format("=============jzzpMapper.getQhZybrInfo().size={}==============",zybrInfoList.size())).getLogString());
+            log.info(new FormatedLogUtil().append(StrUtil.format("=============jzzpMapper.getQhZybrInfo().size={}==============", zybrInfoList.size())).getLogString());
             for (QhZybrInfo info : zybrInfoList) {
                 FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},grbh={},rysj={}", info.getJgdm(), info.getGrbh(), info.getRysj()));
                 Stopwatch started = Stopwatch.createStarted();
                 try {
                     Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, info.getJgdm()));
-                    if(ObjectUtil.isNull(ldjg)){
+                    if (ObjectUtil.isNull(ldjg)) {
                         logUtil.append("未找到对应的两定机构");
                         continue;
                     }
                     Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, info.getGrbh()));
-                    if(ObjectUtil.isNull(jzzp)){
+                    if (ObjectUtil.isNull(jzzp)) {
                         logUtil.append("未找到对应的参保人");
                         continue;
                     }
@@ -724,7 +732,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                             .eq(Zybr::getZpid, jzzp.getZpid())
                             .eq(Zybr::getYldwid, ldjg.getId())
                             .eq(Zybr::getRzsj, info.getRysj()));
-                    if(ObjectUtil.isNotNull(zybr)){
+                    if (ObjectUtil.isNotNull(zybr)) {
                         logUtil.append("该病人已入院");
                         continue;
                     }
@@ -742,10 +750,10 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     // 移除统筹区末尾的0
                     zybr.setInsuredAreaCode(remove_ending_with_0(info.getTcq()));
                     zybrMapper.saveZybr(zybr);
-                    logUtil.append("保存成功");
-                }catch (Exception e){
+                    logUtil.append("insert success");
+                } catch (Exception e) {
                     logUtil.setSucc(false).append(LogUtils.getTrace(e));
-                }finally {
+                } finally {
                     logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
                     if (logUtil.isSucc()) {
                         log.info(logUtil.getLogString());
@@ -775,13 +783,14 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
      * @return
      */
     private static String remove_ending_with_0(String s) {
-        if (StringUtils.isNotBlank(s)) while (s.substring(s.length() - 1).equals("0")) s = s.substring(0, s.length() - 1);
+        if (StringUtils.isNotBlank(s))
+            while (s.substring(s.length() - 1).equals("0")) s = s.substring(0, s.length() - 1);
         return s;
     }
 
     @Override
     public void migrateQhZybrCyInfo() {
-        if(!RegVerUtils.isQingHai()){
+        if (!RegVerUtils.isQingHai()) {
             log.info("非青海版本");
             return;
         }
@@ -800,29 +809,29 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 Stopwatch started = Stopwatch.createStarted();
                 try {
                     Ldjg ldjg = ldjgService.getById(zybr.getYldwid());
-                    if(ObjectUtil.isNull(ldjg)){
+                    if (ObjectUtil.isNull(ldjg)) {
                         logUtil.append("未找到对应的两定机构");
                         continue;
                     }
                     Jzzp jzzp = getById(zybr.getZpid());
-                    if(ObjectUtil.isNull(jzzp)){
+                    if (ObjectUtil.isNull(jzzp)) {
                         logUtil.append("未找到对应的参保人");
                         continue;
                     }
                     logUtil.append(StrUtil.format("jgdm={},grbh={}", ldjg.getJgdm(), jzzp.getPersonalnumber()));
                     List<QhZybrInfo> zybrCyInfo = jzzpMapper.getQhZybrCyInfo(ldjg.getJgdm(), jzzp.getPersonalnumber(), zybr.getRzsj());
-                    if(CollectionUtil.isEmpty(zybrCyInfo)){
+                    if (CollectionUtil.isEmpty(zybrCyInfo)) {
                         logUtil.append("患者还未出院");
                         continue;
                     }
                     QhZybrInfo zybrInfo = zybrCyInfo.get(0);
                     zybr.setSfcy(1);
                     zybr.setCysj(zybrInfo.getCysj());
-                    zybrMapper.updateZybr(zybr);
+                    zybrMapper.updateById(zybr);
                     logUtil.append("出院成功");
-                }catch (Exception e){
+                } catch (Exception e) {
                     logUtil.setSucc(false).append(LogUtils.getTrace(e));
-                }finally {
+                } finally {
                     logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
                     if (logUtil.isSucc()) {
                         log.info(logUtil.getLogString());
@@ -847,7 +856,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     @Override
     public void migrateQhJzppPhotos() {
-        if(!RegVerUtils.isQingHai()){
+        if (!RegVerUtils.isQingHai()) {
             log.info("非青海版本");
             return;
         }
@@ -889,6 +898,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
 
     /**
      * 青海
+     *
      * @param num
      */
     private void migrateJzppQhPhotos(int num) {
@@ -912,9 +922,9 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 if (!fn35.isSucc()) {
                     continue;
                 }
-                FeatrueDTO fn36 = ServiceUtils.getInstance().getFn36(jzzp.getSfzh(), jzzp.getXm(),fn35.latest().getImgIdx());
+                FeatrueDTO fn36 = ServiceUtils.getInstance().getFn36(jzzp.getSfzh(), jzzp.getXm(), fn35.latest().getImgIdx());
                 logUtil.append(StrUtil.format("fn36.isSucc:{}", fn35.isSucc()));
-                if(!fn36.isSucc()){
+                if (!fn36.isSucc()) {
                     continue;
                 }
                 Jzzptzz jzzptzz = new Jzzptzz();
