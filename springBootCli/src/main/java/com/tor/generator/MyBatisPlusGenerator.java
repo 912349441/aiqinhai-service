@@ -26,9 +26,9 @@ public class MyBatisPlusGenerator {
 
     private final static DbType DBTYPE = DbType.ORACLE;
     private final static String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
-    private final static String URL = "jdbc:oracle:thin:@10.130.131.236:1521:ORCL";
-    private final static String USER_NAME = "spzpjkdb";
-    private final static String PASSWORD = "hzhl#zjut5607";
+    private final static String URL = "jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB";
+    private final static String USER_NAME = "spzpjkdba_hangzhou";
+    private final static String PASSWORD = "spzpjkdba_hangzhou";
 
     /*MYSQL*/
 
