@@ -8,6 +8,7 @@ import cn.com.itsea.hldfs.api.client.FactoryOfTrackerServerClientSide;
 import cn.com.itsea.hldfs.api.client.HldfsArchiveServiceImpl;
 import cn.com.itsea.hldfs.api.client.HldfsTrackerServiceImpl;
 import cn.com.itsea.hldfs.server.utils.EncryptUtil;
+import cn.hutool.core.lang.Console;
 import com.tor.project.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +20,8 @@ import java.io.File;
  * @author zhuhs
  * @date 2020/9/27 8:28
  */
-@Configuration
 @Slf4j
+@Configuration
 public class HlServiceConfig {
 
     @Bean

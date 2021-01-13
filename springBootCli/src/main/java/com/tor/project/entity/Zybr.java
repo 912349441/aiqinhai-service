@@ -162,7 +162,11 @@ public class Zybr extends Model<Zybr> {
      */
     private String insuredUnit;
 
-    private String insuredAreaCode;
+    /**
+     * 住院病人参保区县代码
+     */
+    private String brqxdm;
+
     @Override
     protected Serializable pkVal() {
         return this.zybrid;

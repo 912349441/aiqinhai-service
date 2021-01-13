@@ -21,6 +21,7 @@
         <hutool.version>5.0.0</hutool.version>
         <swagger.version>2.9.2</swagger.version>
         <ojdbc8.version>12.2.0.1</ojdbc8.version>
+        <pinyin4j.version>2.5.0</pinyin4j.version>
         <fastjson.version>1.2.45</fastjson.version>
         <unit-sync.version>1.0.0</unit-sync.version>
         <commons-io.version>2.2</commons-io.version>
@@ -243,7 +244,12 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
-
+        <!--pinyin4j-->
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>${pinyin4j.version}</version>
+        </dependency>
 
     </dependencies>
 

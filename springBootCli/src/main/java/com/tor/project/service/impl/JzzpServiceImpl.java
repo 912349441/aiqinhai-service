@@ -79,11 +79,11 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
     private ZybrService zybrService;
 
 
-    private final static Lock INFO_LOCK = new ReentrantLock();
-    private final static Lock PHOTO_LOCK = new ReentrantLock();
-    private final static Lock LDJG_LOCK = new ReentrantLock();
-    private final static Lock ZYBR_LOCK = new ReentrantLock();
-    private final static Lock ZYBRCY_LOCK = new ReentrantLock();
+    private Lock INFO_LOCK = new ReentrantLock();
+    private Lock PHOTO_LOCK = new ReentrantLock();
+    private Lock LDJG_LOCK = new ReentrantLock();
+    private Lock ZYBR_LOCK = new ReentrantLock();
+    private Lock ZYBRCY_LOCK = new ReentrantLock();
 
     /**
      * 金华迁移照片
@@ -103,7 +103,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     .isNull("FZZD")
                     .groupBy("THREAD_NUMBER");
             List<Jzzp> list = list(wrapper);
-            log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
+            log.info(StrUtil.format("thread_number size:{}", list.size()));
             CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(list.size());
             list.forEach(jzzp -> ThreadUtil.execute(() -> {
                 migrateJzppPhotos(jzzp.getThreadNumber());
@@ -285,7 +285,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     .isNull("FZZD")*/
                     .groupBy("THREAD_NUMBER");
             List<Jzzp> list = list(wrapper);
-            log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
+            log.info(StrUtil.format("thread_number size:{}", list.size()));
             CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(list.size());
             list.forEach(jzzp -> ThreadUtil.execute(() -> {
                 migrateJzppHyPhotos(jzzp.getThreadNumber());
@@ -313,7 +313,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 .isNull("ZPLJ")
                 /*.isNull("FZZD")*/;
         List<Jzzp> list = list(wrapper);
-        log.info(new FormatedLogUtil(StrUtil.format("thread_number:{} list_size:{}", num, list.size())).getLogString());
+        log.info(StrUtil.format("thread_number:{} list_size:{}", num, list.size()));
         for (Jzzp jzzp : list) {
             FormatedLogUtil logUtil = new FormatedLogUtil();
             logUtil.append(StrUtil.format("sfzh={} xm={}", jzzp.getSfzh(), jzzp.getXm()));
@@ -373,7 +373,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非江阴版本");
             return;
         }
-        log.info(new FormatedLogUtil().append("=============start migrateJzppJyPhotosJob==============").getLogString());
+        log.info("=============start migrateJzppJyPhotosJob==============");
         /*if (!PHOTO_LOCK.tryLock()) {
             log.info(new FormatedLogUtil().append("migrateJzppJyPhotosJob Lock not acquired;exit the current thread").getLogString());
             return;
@@ -494,7 +494,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非江阴版本");
             return;
         }
-        log.info(new FormatedLogUtil().append("=============start migrateJyJzppInfo==============").getLogString());
+        log.info("=============start migrateJyJzppInfo==============");
         /*if (!INFO_LOCK.tryLock()) {
             log.info(new FormatedLogUtil().append("migrateJyJzppInfo Lock not acquired;exit the current thread").getLogString());
             return;
@@ -546,73 +546,77 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        if (!INFO_LOCK.tryLock()) {
-            log.info(new FormatedLogUtil().append("migrateQhJzppInfo Lock not acquired;exit the current thread").getLogString());
-            return;
-        }
-        INFO_LOCK.lock();
-        log.info(new FormatedLogUtil().append("=============start migrateQhJzppInfo==============").getLogString());
-        FormatedLogUtil startLogUtil = new FormatedLogUtil();
-        Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            while (true) {
-                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1)).get(0);
-                String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
-                log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, HANDLE_MAX_SIZE);
-                log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}", jzzpInfoList.size())).getLogString());
-                if (jzzpInfoList.size() < 1) {
-                    break;
-                }
-                for (QhJzzpInfo jzzpInfo : jzzpInfoList) {
-                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={},tcq={}", jzzpInfo.getGrbh(), jzzpInfo.getSfzh(), jzzpInfo.getXm(), jzzpInfo.getTcq()));
-                    Stopwatch started = Stopwatch.createStarted();
-                    Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getGrbh()));
-                    try {
-                        if (ObjectUtil.isNull(jzzp)) {
-                            jzzp = new Jzzp();
+            if (INFO_LOCK.tryLock(1, TimeUnit.SECONDS)) {
+                log.info(new FormatedLogUtil().append("=============start migrateQhJzppInfo==============").getLogString());
+                FormatedLogUtil startLogUtil = new FormatedLogUtil();
+                Stopwatch startStarted = Stopwatch.createStarted();
+                try {
+                    while (true) {
+                        Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1)).get(0);
+                        String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
+                        log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
+                        List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, HANDLE_MAX_SIZE);
+                        log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}", jzzpInfoList.size())).getLogString());
+                        if (jzzpInfoList.size() < 1) {
+                            break;
                         }
-                        jzzp.setTjsj(new Date());
-                        jzzp.setPersonalnumber(jzzpInfo.getGrbh());
-                        jzzp.setSfzh(jzzpInfo.getSfzh());
-                        jzzp.setXm(jzzpInfo.getXm());
-                        jzzp.setSbkh(jzzpInfo.getSbkh());
-                        // 移除统筹区末尾的0
-                        jzzp.setInsuredAreaCode(remove_ending_with_0(jzzpInfo.getTcq()));
-                        if (StringUtils.isBlank(jzzp.getZpid())) {
-                            jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0, 5, 1))[0]);
-                            jzzpMapper.saveJzzp(jzzp);
-                            logUtil.append("insert success");
-                        } else {
-                            jzzpMapper.updateById(jzzp);
-                            logUtil.append("update success");
+                        for (QhJzzpInfo jzzpInfo : jzzpInfoList) {
+                            FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("grbh={},sfzh={},xm={},tcq={}", jzzpInfo.getGrbh(), jzzpInfo.getSfzh(), jzzpInfo.getXm(), jzzpInfo.getTcq()));
+                            Stopwatch started = Stopwatch.createStarted();
+                            Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, jzzpInfo.getGrbh()));
+                            try {
+                                if (ObjectUtil.isNull(jzzp)) {
+                                    jzzp = new Jzzp();
+                                }
+                                jzzp.setTjsj(new Date());
+                                jzzp.setPersonalnumber(jzzpInfo.getGrbh());
+                                jzzp.setSfzh(jzzpInfo.getSfzh());
+                                jzzp.setXm(jzzpInfo.getXm());
+                                jzzp.setSbkh(jzzpInfo.getSbkh());
+                                // 移除统筹区末尾的0
+                                jzzp.setBrqxdm(remove_ending_with_0(jzzpInfo.getTcq()));
+                                if (StringUtils.isBlank(jzzp.getZpid())) {
+                                    jzzp.setThreadNumber((NumberUtil.generateRandomNumber(0, 5, 1))[0]);
+                                    jzzpMapper.saveJzzp(jzzp);
+                                    logUtil.append("insert success");
+                                } else {
+                                    jzzpMapper.updateById(jzzp);
+                                    logUtil.append("update success");
+                                }
+                            } catch (Exception e) {
+                                logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                            } finally {
+                                logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                                if (logUtil.isSucc()) {
+                                    log.info(logUtil.getLogString());
+                                } else {
+                                    log.error(logUtil.getLogString());
+                                }
+                            }
+                            tasktime.setTasktime(jzzpInfo.getGxsj());
                         }
-                    } catch (Exception e) {
-                        logUtil.setSucc(false).append(LogUtils.getTrace(e));
-                    } finally {
-                        logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                        if (logUtil.isSucc()) {
-                            log.info(logUtil.getLogString());
-                        } else {
-                            log.error(logUtil.getLogString());
-                        }
+                        tasktimeService.updateById(tasktime);
+                        log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
                     }
-                    tasktime.setTasktime(jzzpInfo.getGxsj());
+                } catch (Exception e) {
+                    startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
+                } finally {
+                    INFO_LOCK.unlock();
+                    startLogUtil.append("migrateQhJzppInfo==>释放INFO_LOCK锁");
+                    startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+                    if (startLogUtil.isSucc()) {
+                        log.info(startLogUtil.getLogString());
+                    } else {
+                        log.error(startLogUtil.getLogString());
+                    }
                 }
-                tasktimeService.updateById(tasktime);
-                log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
-            }
-        } catch (Exception e) {
-            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
-        } finally {
-            INFO_LOCK.unlock();
-            startLogUtil.append("migrateQhJzppInfo==>释放INFO_LOCK锁");
-            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
-            if (startLogUtil.isSucc()) {
-                log.info(startLogUtil.getLogString());
             } else {
-                log.error(startLogUtil.getLogString());
+                log.info(new FormatedLogUtil().append("migrateQhJzppInfo Lock not acquired;exit the current thread").getLogString());
+                return;
             }
+        } catch (InterruptedException e) {
+            log.error(new FormatedLogUtil().append(LogUtils.getTrace(e)).getLogString());
         }
     }
 
@@ -622,78 +626,82 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        if (!LDJG_LOCK.tryLock()) {
-            log.info(new FormatedLogUtil().append("migrateQhLdjgInfo Lock not acquired;exit the current thread").getLogString());
-            return;
-        }
-        LDJG_LOCK.lock();
-        log.info(new FormatedLogUtil().append("=============start migrateQhLdjgInfo==============").getLogString());
-        FormatedLogUtil startLogUtil = new FormatedLogUtil();
-        Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            while (true) {
-                Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
-                String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
-                log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
-                log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}", LdjgList.size())).getLogString());
-                if (LdjgList.size() < 1) {
-                    break;
-                }
-                for (Ldjg ldjgNow : LdjgList) {
-                    FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},jgmc={}", ldjgNow.getJgdm(), ldjgNow.getJgmc()));
-                    Stopwatch started = Stopwatch.createStarted();
-                    try {
-                        Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, ldjgNow.getJgdm()));
-                        if (ObjectUtil.isNull(ldjg)) {
-                            ldjg = new Ldjg();
+            if (LDJG_LOCK.tryLock(1, TimeUnit.SECONDS)) {
+                log.info(new FormatedLogUtil().append("=============start migrateQhLdjgInfo==============").getLogString());
+                FormatedLogUtil startLogUtil = new FormatedLogUtil();
+                Stopwatch startStarted = Stopwatch.createStarted();
+                try {
+                    while (true) {
+                        Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
+                        String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
+                        log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
+                        List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
+                        log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}", LdjgList.size())).getLogString());
+                        if (LdjgList.size() < 1) {
+                            break;
                         }
-                        ldjg.setInpatient(1);
-                        ldjg.setAddtime(new Date());
-                        ldjg.setJgdm(ldjgNow.getJgdm());
-                        ldjg.setJgmc(ldjgNow.getJgmc());
-                        ldjg.setLxdz(ldjgNow.getLxdz());
-                        ldjg.setLxr(ldjgNow.getLxr());
-                        ldjg.setLxdh(ldjgNow.getLxdh());
-                        ldjg.setJglx(ldjgNow.getJglx());
-                        ldjg.setJgdm(ldjgNow.getJgdm());
-                        ldjg.setAddtime(ldjgNow.getAddtime());
-                        ldjg.setInstitutionNo(ldjgNow.getJgdm());
-                        ldjg.setQxdm(remove_ending_with_0(ldjgNow.getQxdm()));
-                        ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(), 1) ? "A1" : "E1");
-                        if (StringUtils.isBlank(ldjg.getId())) {
-                            ldjgMapper.saveLdjg(ldjg);
-                            logUtil.append("insert success");
-                        } else {
-                            ldjgMapper.updateById(ldjg);
-                            logUtil.append("update success");
+                        for (Ldjg ldjgNow : LdjgList) {
+                            FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},jgmc={}", ldjgNow.getJgdm(), ldjgNow.getJgmc()));
+                            Stopwatch started = Stopwatch.createStarted();
+                            try {
+                                Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, ldjgNow.getJgdm()));
+                                if (ObjectUtil.isNull(ldjg)) {
+                                    ldjg = new Ldjg();
+                                }
+                                ldjg.setInpatient(1);
+                                ldjg.setAddtime(new Date());
+                                ldjg.setJgdm(ldjgNow.getJgdm());
+                                ldjg.setJgmc(ldjgNow.getJgmc());
+                                ldjg.setLxdz(ldjgNow.getLxdz());
+                                ldjg.setLxr(ldjgNow.getLxr());
+                                ldjg.setLxdh(ldjgNow.getLxdh());
+                                ldjg.setJglx(ldjgNow.getJglx());
+                                ldjg.setJgdm(ldjgNow.getJgdm());
+                                ldjg.setAddtime(ldjgNow.getAddtime());
+                                ldjg.setInstitutionNo(ldjgNow.getJgdm());
+                                ldjg.setQxdm(remove_ending_with_0(ldjgNow.getQxdm()));
+                                ldjg.setJglbdm(ObjectUtil.equal(ldjgNow.getJglx(), 1) ? "A1" : "E1");
+                                if (StringUtils.isBlank(ldjg.getId())) {
+                                    ldjgMapper.saveLdjg(ldjg);
+                                    logUtil.append("insert success");
+                                } else {
+                                    ldjgMapper.updateById(ldjg);
+                                    logUtil.append("update success");
+                                }
+                            } catch (Exception e) {
+                                logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                            } finally {
+                                logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                                if (logUtil.isSucc()) {
+                                    log.info(logUtil.getLogString());
+                                } else {
+                                    log.error(logUtil.getLogString());
+                                }
+                            }
+                            tasktime.setTasktime(ldjgNow.getAddtime());
                         }
-                    } catch (Exception e) {
-                        logUtil.setSucc(false).append(LogUtils.getTrace(e));
-                    } finally {
-                        logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                        if (logUtil.isSucc()) {
-                            log.info(logUtil.getLogString());
-                        } else {
-                            log.error(logUtil.getLogString());
-                        }
+                        tasktimeService.updateById(tasktime);
+                        log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
                     }
-                    tasktime.setTasktime(ldjgNow.getAddtime());
+                } catch (Exception e) {
+                    startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
+                } finally {
+                    LDJG_LOCK.unlock();
+                    startLogUtil.append("migrateQhLdjgInfo==>释放LDJG_LOCK锁");
+                    startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+                    if (startLogUtil.isSucc()) {
+                        log.info(startLogUtil.getLogString());
+                    } else {
+                        log.error(startLogUtil.getLogString());
+                    }
                 }
-                tasktimeService.updateById(tasktime);
-                log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
-            }
-        } catch (Exception e) {
-            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
-        } finally {
-            LDJG_LOCK.unlock();
-            startLogUtil.append("migrateQhLdjgInfo==>释放LDJG_LOCK锁");
-            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
-            if (startLogUtil.isSucc()) {
-                log.info(startLogUtil.getLogString());
             } else {
-                log.error(startLogUtil.getLogString());
+                log.info(new FormatedLogUtil().append("migrateQhLdjgInfo Lock not acquired;exit the current thread").getLogString());
+                return;
             }
+        } catch (InterruptedException e) {
+            log.error(new FormatedLogUtil().append(LogUtils.getTrace(e)).getLogString());
         }
     }
 
@@ -703,76 +711,84 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        if (!ZYBR_LOCK.tryLock()) {
-            log.info(new FormatedLogUtil().append("migrateQhZybrInfo Lock not acquired;exit the current thread").getLogString());
-            return;
-        }
-        ZYBR_LOCK.lock();
-        log.info(new FormatedLogUtil().append("=============start migrateQhZybrInfo==============").getLogString());
-        FormatedLogUtil startLogUtil = new FormatedLogUtil();
-        Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            List<QhZybrInfo> zybrInfoList = jzzpMapper.getQhZybrInfo();
-            log.info(new FormatedLogUtil().append(StrUtil.format("=============jzzpMapper.getQhZybrInfo().size={}==============", zybrInfoList.size())).getLogString());
-            for (QhZybrInfo info : zybrInfoList) {
-                FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},grbh={},rysj={}", info.getJgdm(), info.getGrbh(), info.getRysj()));
-                Stopwatch started = Stopwatch.createStarted();
+            if (ZYBR_LOCK.tryLock(1, TimeUnit.SECONDS)) {
+                log.info("=============start migrateQhZybrInfo==============");
+                FormatedLogUtil startLogUtil = new FormatedLogUtil();
+                Stopwatch startStarted = Stopwatch.createStarted();
                 try {
-                    Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, info.getJgdm()));
-                    if (ObjectUtil.isNull(ldjg)) {
-                        logUtil.append("未找到对应的两定机构");
-                        continue;
+                    List<QhZybrInfo> zybrInfoList = jzzpMapper.getQhZybrInfo();
+                    log.info("QhZybrInfo().size={}", zybrInfoList.size());
+                    for (QhZybrInfo info : zybrInfoList) {
+                        FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("jgdm={},grbh={},sfzh={},xm={}", info.getJgdm(), info.getGrbh(), info.getSfzh(), info.getXm()));
+                        Stopwatch started = Stopwatch.createStarted();
+                        try {
+                            Ldjg ldjg = ldjgService.getOne(new LambdaQueryWrapper<Ldjg>().eq(Ldjg::getJgdm, info.getJgdm()));
+                            if (ObjectUtil.isNull(ldjg)) {
+                                logUtil.append("未找到对应的两定机构");
+                                continue;
+                            }
+                            Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, info.getGrbh()));
+                            if (ObjectUtil.isNull(jzzp)) {
+                                logUtil.append("未找到对应的参保人");
+                                continue;
+                            }
+                            Zybr zybr = zybrService.getOne(new LambdaQueryWrapper<Zybr>()
+                                    .eq(Zybr::getZpid, jzzp.getZpid())
+                                    .eq(Zybr::getYldwid, ldjg.getId())
+                                    .eq(Zybr::getRzsj, info.getRysj()));
+                            if (ObjectUtil.isNotNull(zybr)) {
+                                logUtil.append("该病人已入院");
+                                continue;
+                            }
+                            zybr = new Zybr();
+                            zybr.setCh(info.getCh());
+                            zybr.setSfzh(info.getSfzh());
+                            zybr.setXm(info.getXm());
+                            zybr.setRzsj(info.getRysj());
+                            zybr.setYldwid(ldjg.getId());
+                            zybr.setZpid(jzzp.getZpid());
+                            zybr.setZpid(jzzp.getZpid());
+                            zybr.setDiseaseDiagnosis(info.getJbzd());
+                            zybr.setNaturePersonnel(info.getRysz());
+                            zybr.setInsuredUnit(info.getCbdw());
+                            // 移除统筹区末尾的0
+                            zybr.setBrqxdm(remove_ending_with_0(info.getTcq()));
+                            zybr.setHospitalcategory(ZybrZylbEnum.getCodeByName(info.getZylb()));
+                            zybr.setPinyin(PinyinUtils.getInstance().getFirstLetterStringForMultiple(info.getXm()));
+                            zybrMapper.saveZybr(zybr);
+                            logUtil.append("insert success");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                        } finally {
+                            logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                            if (logUtil.isSucc()) {
+                                log.info(logUtil.getLogString());
+                            } else {
+                                log.error(logUtil.getLogString());
+                            }
+                        }
                     }
-                    Jzzp jzzp = getOne(new LambdaQueryWrapper<Jzzp>().eq(Jzzp::getPersonalnumber, info.getGrbh()));
-                    if (ObjectUtil.isNull(jzzp)) {
-                        logUtil.append("未找到对应的参保人");
-                        continue;
-                    }
-                    Zybr zybr = zybrService.getOne(new LambdaQueryWrapper<Zybr>()
-                            .eq(Zybr::getZpid, jzzp.getZpid())
-                            .eq(Zybr::getYldwid, ldjg.getId())
-                            .eq(Zybr::getRzsj, info.getRysj()));
-                    if (ObjectUtil.isNotNull(zybr)) {
-                        logUtil.append("该病人已入院");
-                        continue;
-                    }
-                    zybr = new Zybr();
-                    zybr.setCh(info.getCh());
-                    zybr.setSfzh(info.getSfzh());
-                    zybr.setXm(info.getXm());
-                    zybr.setRzsj(info.getRysj());
-                    zybr.setYldwid(ldjg.getId());
-                    zybr.setZpid(jzzp.getZpid());
-                    zybr.setHospitalcategory(ZybrZylbEnum.getCodeByName(info.getZylb()));
-                    zybr.setDiseaseDiagnosis(info.getJbzd());
-                    zybr.setNaturePersonnel(info.getRysz());
-                    zybr.setInsuredUnit(info.getCbdw());
-                    // 移除统筹区末尾的0
-                    zybr.setInsuredAreaCode(remove_ending_with_0(info.getTcq()));
-                    zybrMapper.saveZybr(zybr);
-                    logUtil.append("insert success");
                 } catch (Exception e) {
-                    logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                    e.printStackTrace();
+                    startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
                 } finally {
-                    logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                    if (logUtil.isSucc()) {
-                        log.info(logUtil.getLogString());
+                    ZYBR_LOCK.unlock();
+                    startLogUtil.append("migrateQhZybrInfo==>释放ZYBR_LOCK锁");
+                    startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+                    if (startLogUtil.isSucc()) {
+                        log.info(startLogUtil.getLogString());
                     } else {
-                        log.error(logUtil.getLogString());
+                        log.error(startLogUtil.getLogString());
                     }
                 }
-            }
-        } catch (Exception e) {
-            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
-        } finally {
-            ZYBR_LOCK.unlock();
-            startLogUtil.append("migrateQhZybrInfo==>释放ZYBR_LOCK锁");
-            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
-            if (startLogUtil.isSucc()) {
-                log.info(startLogUtil.getLogString());
             } else {
-                log.error(startLogUtil.getLogString());
+                log.info("migrateQhZybrInfo Lock not acquired;exit the current thread");
+                return;
             }
+        } catch (InterruptedException e) {
+            log.error(LogUtils.getTrace(e));
         }
     }
 
@@ -794,63 +810,67 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        if (!ZYBRCY_LOCK.tryLock()) {
-            log.info(new FormatedLogUtil().append("migrateQhZybrCyInfo Lock not acquired;exit the current thread").getLogString());
-            return;
-        }
-        ZYBRCY_LOCK.lock();
-        log.info(new FormatedLogUtil().append("=============start migrateQhZybrCyInfo==============").getLogString());
-        FormatedLogUtil startLogUtil = new FormatedLogUtil();
-        Stopwatch startStarted = Stopwatch.createStarted();
         try {
-            List<Zybr> zybrList = zybrService.list(new LambdaQueryWrapper<Zybr>().eq(Zybr::getSfcy, 0));
-            for (Zybr zybr : zybrList) {
-                FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("yldwid={},zpid={}", zybr.getYldwid(), zybr.getZpid()));
-                Stopwatch started = Stopwatch.createStarted();
+            if (ZYBRCY_LOCK.tryLock(1, TimeUnit.SECONDS)) {
+                log.info("=============start migrateQhZybrCyInfo==============");
+                FormatedLogUtil startLogUtil = new FormatedLogUtil();
+                Stopwatch startStarted = Stopwatch.createStarted();
                 try {
-                    Ldjg ldjg = ldjgService.getById(zybr.getYldwid());
-                    if (ObjectUtil.isNull(ldjg)) {
-                        logUtil.append("未找到对应的两定机构");
-                        continue;
+                    List<Zybr> zybrList = zybrService.list(new LambdaQueryWrapper<Zybr>().eq(Zybr::getSfcy, 0));
+                    for (Zybr zybr : zybrList) {
+                        FormatedLogUtil logUtil = new FormatedLogUtil(StrUtil.format("yldwid={},zpid={}", zybr.getYldwid(), zybr.getZpid()));
+                        Stopwatch started = Stopwatch.createStarted();
+                        try {
+                            Ldjg ldjg = ldjgService.getById(zybr.getYldwid());
+                            if (ObjectUtil.isNull(ldjg)) {
+                                logUtil.append("未找到对应的两定机构");
+                                continue;
+                            }
+                            Jzzp jzzp = getById(zybr.getZpid());
+                            if (ObjectUtil.isNull(jzzp)) {
+                                logUtil.append("未找到对应的参保人");
+                                continue;
+                            }
+                            logUtil.append(StrUtil.format("jgdm={},grbh={}", ldjg.getJgdm(), jzzp.getPersonalnumber()));
+                            List<QhZybrInfo> zybrCyInfo = jzzpMapper.getQhZybrCyInfo(ldjg.getJgdm(), jzzp.getPersonalnumber(), zybr.getRzsj());
+                            if (CollectionUtil.isEmpty(zybrCyInfo)) {
+                                logUtil.append("患者还未出院");
+                                continue;
+                            }
+                            QhZybrInfo zybrInfo = zybrCyInfo.get(0);
+                            zybr.setSfcy(1);
+                            zybr.setCysj(zybrInfo.getCysj());
+                            zybrMapper.updateById(zybr);
+                            logUtil.append("出院成功");
+                        } catch (Exception e) {
+                            logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                        } finally {
+                            logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                            if (logUtil.isSucc()) {
+                                log.info(logUtil.getLogString());
+                            } else {
+                                log.error(logUtil.getLogString());
+                            }
+                        }
                     }
-                    Jzzp jzzp = getById(zybr.getZpid());
-                    if (ObjectUtil.isNull(jzzp)) {
-                        logUtil.append("未找到对应的参保人");
-                        continue;
-                    }
-                    logUtil.append(StrUtil.format("jgdm={},grbh={}", ldjg.getJgdm(), jzzp.getPersonalnumber()));
-                    List<QhZybrInfo> zybrCyInfo = jzzpMapper.getQhZybrCyInfo(ldjg.getJgdm(), jzzp.getPersonalnumber(), zybr.getRzsj());
-                    if (CollectionUtil.isEmpty(zybrCyInfo)) {
-                        logUtil.append("患者还未出院");
-                        continue;
-                    }
-                    QhZybrInfo zybrInfo = zybrCyInfo.get(0);
-                    zybr.setSfcy(1);
-                    zybr.setCysj(zybrInfo.getCysj());
-                    zybrMapper.updateById(zybr);
-                    logUtil.append("出院成功");
                 } catch (Exception e) {
-                    logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                    startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
                 } finally {
-                    logUtil.append(StrUtil.format("cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-                    if (logUtil.isSucc()) {
-                        log.info(logUtil.getLogString());
+                    ZYBRCY_LOCK.unlock();
+                    startLogUtil.append("migrateQhZybrCyInfo==>释放ZYBR_LOCK锁");
+                    startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
+                    if (startLogUtil.isSucc()) {
+                        log.info(startLogUtil.getLogString());
                     } else {
-                        log.error(logUtil.getLogString());
+                        log.error(startLogUtil.getLogString());
                     }
                 }
-            }
-        } catch (Exception e) {
-            startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
-        } finally {
-            ZYBRCY_LOCK.unlock();
-            startLogUtil.append("migrateQhZybrCyInfo==>释放ZYBR_LOCK锁");
-            startLogUtil.append(StrUtil.format("cost.time={}", startStarted.elapsed(TimeUnit.MILLISECONDS)));
-            if (startLogUtil.isSucc()) {
-                log.info(startLogUtil.getLogString());
             } else {
-                log.error(startLogUtil.getLogString());
+                log.info("migrateQhZybrCyInfo Lock not acquired;exit the current thread");
+                return;
             }
+        } catch (InterruptedException e) {
+            log.error(LogUtils.getTrace(e));
         }
     }
 
@@ -860,39 +880,43 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
             log.info("非青海版本");
             return;
         }
-        log.info(new FormatedLogUtil().append("=============start migrateQhJzppPhotos==============").getLogString());
-        if (!PHOTO_LOCK.tryLock()) {
-            log.info(new FormatedLogUtil().append("migrateQhJzppPhotos Lock not acquired;exit the current thread").getLogString());
-            return;
-        }
-        PHOTO_LOCK.lock();
-        FormatedLogUtil logUtil = new FormatedLogUtil();
-        Stopwatch started = Stopwatch.createStarted();
+        log.info("=============start migrateQhJzppPhotos==============");
         try {
-            logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
-            QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
-                    .select("THREAD_NUMBER")
-                    .isNotNull("THREAD_NUMBER")
-                    .isNull("FZZD")
-                    .groupBy("THREAD_NUMBER");
-            List<Jzzp> list = list(wrapper);
-            log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
-            CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(list.size());
-            list.forEach(jzzp -> ThreadUtil.execute(() -> {
-                migrateJzppQhPhotos(jzzp.getThreadNumber());
-                countDownLatch.countDown();
-            }));
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            logUtil.setSucc(false).append(LogUtils.getTrace(e));
-        } finally {
-            PHOTO_LOCK.unlock();
-            logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
-            if (logUtil.isSucc()) {
-                log.info(logUtil.getLogString());
+            if (PHOTO_LOCK.tryLock(1, TimeUnit.SECONDS)) {
+                FormatedLogUtil logUtil = new FormatedLogUtil();
+                Stopwatch started = Stopwatch.createStarted();
+                try {
+                    logUtil.append(StrUtil.format("threadNmae:{} 获取到锁", Thread.currentThread().getName()));
+                    QueryWrapper<Jzzp> wrapper = new QueryWrapper<Jzzp>()
+                            .select("THREAD_NUMBER")
+                            .isNotNull("THREAD_NUMBER")
+                            .isNull("FZZD")
+                            .groupBy("THREAD_NUMBER");
+                    List<Jzzp> list = list(wrapper);
+                    log.info(new FormatedLogUtil(StrUtil.format("thread_number size:{}", list.size())).getLogString());
+                    CountDownLatch countDownLatch = ThreadUtil.newCountDownLatch(list.size());
+                    list.forEach(jzzp -> ThreadUtil.execute(() -> {
+                        migrateJzppQhPhotos(jzzp.getThreadNumber());
+                        countDownLatch.countDown();
+                    }));
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    logUtil.setSucc(false).append(LogUtils.getTrace(e));
+                } finally {
+                    PHOTO_LOCK.unlock();
+                    logUtil.append(StrUtil.format("释放锁,cost.time={}", started.elapsed(TimeUnit.MILLISECONDS)));
+                    if (logUtil.isSucc()) {
+                        log.info(logUtil.getLogString());
+                    } else {
+                        log.error(logUtil.getLogString());
+                    }
+                }
             } else {
-                log.error(logUtil.getLogString());
+                log.info("migrateQhJzppPhotos Lock not acquired;exit the current thread");
+                return;
             }
+        } catch (InterruptedException e) {
+            log.error(LogUtils.getTrace(e));
         }
     }
 
@@ -908,7 +932,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 .isNull("ZPLJ")
                 .isNull("FZZD");
         List<Jzzp> list = list(wrapper);
-        log.info(new FormatedLogUtil(StrUtil.format("thread_number:{} list_size:{}", num, list.size())).getLogString());
+        log.info(StrUtil.format("thread_number:{} list_size:{}", num, list.size()));
         for (Jzzp jzzp : list) {
             FormatedLogUtil logUtil = new FormatedLogUtil();
             logUtil.append(StrUtil.format("sfzh={} xm={}", jzzp.getSfzh(), jzzp.getXm()));

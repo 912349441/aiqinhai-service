@@ -30,17 +30,17 @@
         <result column="DISEASE_DIAGNOSIS" property="diseaseDiagnosis" />
         <result column="NATURE_PERSONNEL" property="naturePersonnel" />
         <result column="INSURED_UNIT" property="insuredUnit" />
-        <result column="INSURED_AREA_CODE" property="insuredAreaCode" />
+        <result column="BRQXDM" property="brqxdm" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ZYBRID, XM, SFZH, SBKH, ZPID, RZSJ, CH, SFCY, CYSJ, KSID, YLDWID, PINYIN, LASTPATROLTIME, SECONDTEMPLATEPATH, SECONDTEMPLATESCORE, PATROLDAILYTOTAL, PATROLDAILYFAILED, PATROLTASKTOTAL, PATROLTASKFAILED, ADDFLAG, COMPAREFLAG, PHOTOEXISTS, HOSPITALCATEGORY, DISEASE_DIAGNOSIS, NATURE_PERSONNEL, INSURED_UNIT,INSURED_AREA_CODE
+        ZYBRID, XM, SFZH, SBKH, ZPID, RZSJ, CH, SFCY, CYSJ, KSID, YLDWID, PINYIN, LASTPATROLTIME, SECONDTEMPLATEPATH, SECONDTEMPLATESCORE, PATROLDAILYTOTAL, PATROLDAILYFAILED, PATROLTASKTOTAL, PATROLTASKFAILED, ADDFLAG, COMPAREFLAG, PHOTOEXISTS, HOSPITALCATEGORY, DISEASE_DIAGNOSIS, NATURE_PERSONNEL, INSURED_UNIT,brqxdm
     </sql>
 
     <insert id="saveZybr">
-        INSERT INTO YW_ZYBR  ( xm, sfzh,  zpid, rzsj, yldwid, hospitalcategory, disease_diagnosis, nature_personnel, insured_unit, insured_area_code )
-        VALUES  ( #{xm}, #{sfzh},  #{zpid}, #{rzsj}, #{yldwid}, #{hospitalcategory}, #{diseaseDiagnosis}, #{naturePersonnel}, #{insuredUnit}, #{insuredAreaCode} )
+        INSERT INTO YW_ZYBR  ( xm, sfzh,  zpid, rzsj, yldwid, hospitalcategory, disease_diagnosis, nature_personnel, insured_unit, brqxdm,pinyin )
+        VALUES  ( #{xm}, #{sfzh},  #{zpid}, #{rzsj}, #{yldwid}, #{hospitalcategory}, #{diseaseDiagnosis}, #{naturePersonnel}, #{insuredUnit}, #{brqxdm},#{pinyin} )
     </insert>
 
     <update id="updateZybr">
