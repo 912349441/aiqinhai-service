@@ -5,25 +5,34 @@ spring:
       # （主）医保监管数据源
       primary:
         driver-class-name: oracle.jdbc.OracleDriver
-        jdbc-url: jdbc:oracle:thin:@192.168.1.2:1521:RLSBDB
-        username: spzpjkdba_jinhua
-        password: spzpjkdba_jinhua
-      # （从）如果不需要配置双数据源,配置跟主数据源一致即可
+        jdbc-url: jdbc:oracle:thin:@10.130.131.236:1521:ORCL
+        username: spzpjkdb
+        password: hzhl#zjut5607
       second:
         driver-class-name: com.mysql.jdbc.Driver
-        jdbc-url: jdbc:mysql://47.103.194.192:3306/ifast-new2?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
-        username: root
-        password: root
+        jdbc-url: jdbc:mysql://10.130.131.236:3306/yhbiology?useUnicode=true&useSSL=false&characterEncoding=utf8&autoReconnect=true
+        username: yhbiology
+        password: hzhl#zjut5607
+# 海量
+hl:
+  hldfs:
+    acc-code: qh.xn001
+    access-key: =y7ADOHvLA/eZGFLAi2IjNg==
 
 # 定时任务
-# 0 0 1 * * ?
-# 0 */5 * * * ?
-# 0/60 * * * * ?
+# # 0 0 1 * * ?
+# # 0 0 0/2 * * ?
+# # 0 */5 * * * ?
+# # 0/60 * * * * ?
 JyJob:
-  MigrateJyZybrInfo: 0 */5 * * * ?
-  MigrateJzppJyPhotosJob: 0 0 1 * * ?
+  JyInfoJob: 0 0 0/2 * * ?
+  JyPhotosJob: 0 0 1 * * ?
 HyJob:
-  MigrateJzppHyInfoAndPhotosJob: 0 0 1 * * ?
-
+  HyInfoAndPhotosJob: 0 0 1 * * ?
+QhJob:
+  QhInfoJob: 0 0 0/2 * * ?
+  QhPhotosJob: 0 0 1 * * ?
+#单次处理最大数量
+handle_max_size: 10000
 # 金华照片物理地址根目录
-migrate_jzpp_photo_path: /home/jinhua/photos/
+migrate_jzpp_photo_path: C:\Users\Administrator\Pictures\

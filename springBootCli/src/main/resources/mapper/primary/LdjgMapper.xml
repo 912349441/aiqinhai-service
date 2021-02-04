@@ -43,8 +43,8 @@
     </sql>
 
     <insert id="saveLdjg">
-        INSERT INTO JC_LDJG  ( jgdm, jgmc, qxdm, jglx, jglbdm,  qxdm,  lxr,addtime,institution_no,inpatient )
-        VALUES  ( #{jgdm}, #{jgmc}, #{qxdm},#{jglx}, #{jglbdm},  #{qxdm},  #{lxr},  #{addtime}, #{institutionNo},#{inpatient})
+        INSERT INTO JC_LDJG  ( jgdm, jgmc, qxdm, jglx, jglbdm,  lxr,addtime,institution_no,inpatient )
+        VALUES  ( #{jgdm}, #{jgmc}, #{qxdm},#{jglx}, #{jglbdm},  #{lxr},  #{addtime}, #{institutionNo},#{inpatient})
     </insert>
 
     <insert id="updateLdjg">

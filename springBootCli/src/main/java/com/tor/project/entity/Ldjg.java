@@ -3,8 +3,11 @@ package com.tor.project.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+
 import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -46,9 +49,8 @@ public class Ldjg extends Model<Ldjg> {
 
     /**
      * 两定机构类型
-1其他医疗机构
-2零售药店3三级医疗机构
-
+     * 1其他医疗机构
+     * 2零售药店3三级医疗机构
      */
     private Integer jglx;
 
@@ -94,8 +96,8 @@ public class Ldjg extends Model<Ldjg> {
 
     /**
      * 药店是否开通医保监管
-0未开通
-1已开通
+     * 0未开通
+     * 1已开通
      */
     private Integer supervise;
 
@@ -106,19 +108,19 @@ public class Ldjg extends Model<Ldjg> {
 
     /**
      * 是否监管购药0未开通
-1已开通
+     * 1已开通
      */
     private Integer buyingMedicine;
 
     /**
      * 是否监管理疗0未开通
-1已开通
+     * 1已开通
      */
     private Integer physiotherapy;
 
     /**
      * 是否监管考勤(医师药师)0未开通
-1已开通
+     * 1已开通
      */
     private Integer attendance;
 
@@ -154,7 +156,7 @@ public class Ldjg extends Model<Ldjg> {
 
     /**
      * 是否监管住院病人0未开通
-1已开通
+     * 1已开通
      */
     private Integer inpatient;
 

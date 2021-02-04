@@ -154,5 +154,6 @@ public class Jzzp extends Model<Jzzp> {
     /**
      * 参保人员参保统筹区域代码
      */
-    private String insuredAreaCode;
+    private String brqxdm;
+
 }

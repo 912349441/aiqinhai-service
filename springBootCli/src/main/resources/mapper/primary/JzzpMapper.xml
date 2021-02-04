@@ -29,12 +29,12 @@
         <result column="LSZP_UPDATE_TIME" property="lszpUpdateTime"/>
         <result column="MODELING_STATE" property="modelingState"/>
         <result column="THREAD_NUMBER" property="threadNumber"/>
-        <result column="INSURED_AREA_CODE" property="insuredAreaCode"/>
+        <result column="BRQXDM" property="brqxdm"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE,INSURED_AREA_CODE
+        ZPID, SFZH, XM, SBKH, ZPLJ, TJSJ, SFYX, SFYGXR, BZ, GXZPLJ, GXSJ, TZZZT, CBDQ, LSZPLJ, LSZPSCORE, REASONOFPHOTOMISSING, PHOTOSOURCETYPE, FZZD, TZZZT_TEMP, MSG, PERSONALNUMBER, NOTONESELF, LSZP_UPDATE_TIME, MODELING_STATE,BRQXDM
     </sql>
 
     <select id="migrateJzppHyInfoJob" resultType="com.tor.project.entity.HyJzzpPhoto">
@@ -111,7 +111,7 @@
             for i in (
                 select replace(substr(v.AKF002,16,50),' ','') ksmc,l.ID yldwid
                 from jysi.jgxt_zyryjbxx@to_dr v,JC_LDJG l
-                where v.BKC194 is null and l.jgdm = v.AKB020
+                where l.jgdm = v.AKB020
                       group by replace(substr(v.AKF002,16,50),' ',''),v.AKB020,l.ID
                         having replace(substr(v.AKF002,16,50),' ','') is not null
                                and not exists(select 1 from JC_YLDWKS where KSMC = replace(substr(v.AKF002,16,50),' ',''))
@@ -139,7 +139,6 @@
                               and z.YLDWID = l.ID
                               AND z.ZPID = j.ZPID
                               and v.AKB020 IS NOT NULL
-                              AND v.BKC194 IS NULL
                               AND ZYBRID IS NOT NULL
                               AND l.ID IS NOT NULL
                               AND v.AKE020 IS NOT NULL
@@ -159,8 +158,8 @@
                         from jysi.jgxt_zyryjbxx@to_dr v
                         left join JC_LDJG l on v.AKB020 = JGDM
                         left join YW_JZZP j on v.AAC001 = j.PERSONALNUMBER
-                        left join YW_ZYBR z on z.YLDWID = l.ID AND z.ZPID = j.ZPID
-                        where v.AKB020 IS NOT NULL AND v.BKC194 IS NULL AND ZYBRID IS NULL AND l.ID IS NOT NULL)
+                        left join YW_ZYBR z on z.YLDWID = l.ID AND z.ZPID = j.ZPID AND z.RZSJ == v.BKC192
+                        where v.AKB020 IS NOT NULL AND ZYBRID IS NULL AND l.ID IS NOT NULL)
                 loop
                     insert into YW_ZYBR(ZYBRID, YLDWID,ZPID,SBKH,SFZH,XM,RZSJ,KSID,HOSPITALCATEGORY,DISEASE_DIAGNOSIS,NATURE_PERSONNEL,INSURED_UNIT)
                     VALUES (SYS_GUID(), i.ID,i.ZPID,i.SFZH, i.SFZH,i.XM,i.RZSJ,
@@ -199,8 +198,14 @@
         from AC01_YYJG@QHDR
         where 1=1
         and  #{maxSize} >= ROWNUM
-        and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
         and 个人编号 is not null
+        and not exists(select 1 from YW_JZZP where PERSONALNUMBER = 个人编号
+                                       and PERSONALNUMBER = 个人编号
+                                       and XM = 姓名
+                                       and SBKH = 社保卡号
+                                       and SFZH = 身份证号码
+                                       and BRQXDM = 统筹区
+        )
         order by 更新时间 asc
     </select>
 
@@ -209,12 +214,20 @@
         from kb01_yyjg@QHDR
         where 1=1
         and  #{maxSize} >= ROWNUM
-        and 更新时间 > to_date(#{gxsj},'yyyy-MM-dd hh24:mi:ss')
+          and not exists(select 1 from JC_LDJG where JGDM = 两定机构代码
+                                               and JGMC = 机构名称
+                                               and LXDZ = 机构地址
+                                               and LXR = 联系人
+                                               and LXDH = 联系电话
+                                               and JGLX = 类型
+                                               and QXDM = 统筹区
+                )
         order by 更新时间 asc
     </select>
 
     <select id="getQhZybrInfo" resultType="com.tor.project.entity.QhZybrInfo">
-        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw , 统筹区 tcq
+        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,
+               人员性质 rysz,参保单位 cbdw , 统筹区 tcq
         from kc21_yyjg@QHDR
         where 1=1
         and 出院时间 is null
@@ -224,7 +237,8 @@
     </select>
 
     <select id="getQhZybrCyInfo" resultType="com.tor.project.entity.QhZybrInfo">
-        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,人员性质 rysz,参保单位 cbdw , 统筹区 tcq
+        select 机构编号 jgdm,个人编号 grbh,姓名 xm,身份证号 sfzh,科室 ks,入院时间 rysj,出院时间 cysj,床位 ch,住院类别 zylb,BKC231 jbzd,
+               人员性质 rysz,参保单位 cbdw , 统筹区 tcq
         from kc21_yyjg@QHDR
         where 1=1
         and 出院时间 is not null
@@ -235,13 +249,13 @@
 
     <insert id="saveJzzp">
         INSERT INTO YW_JZZP (sfzh, xm, sbkh, personalnumber, thread_number
-        <if test="insuredAreaCode != null and insuredAreaCode != ''">
-            ,INSURED_AREA_CODE
+        <if test="brqxdm != null and brqxdm != ''">
+            ,brqxdm
         </if>
         )
         VALUES (#{sfzh}, #{xm}, #{sbkh}, #{personalnumber}, #{threadNumber}
-        <if test="insuredAreaCode != null and insuredAreaCode != ''">
-            ,#{insuredAreaCode}
+        <if test="brqxdm != null and brqxdm != ''">
+            ,#{brqxdm}
         </if>
         )
     </insert>

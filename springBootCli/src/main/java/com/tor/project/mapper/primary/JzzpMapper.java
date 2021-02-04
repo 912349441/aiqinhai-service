@@ -55,7 +55,7 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
      * @param maxSize
      * @return
      */
-    List<QhJzzpInfo> getQhJzzpInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
+    List<QhJzzpInfo> getQhJzzpInfoByGxsj(@Param("maxSize") Integer maxSize);
 
     /**
      * 青海两定机构信息
@@ -63,7 +63,7 @@ public interface JzzpMapper extends BaseMapper<Jzzp> {
      * @param maxSize
      * @return
      */
-    List<Ldjg> getQhLdjgInfoByGxsj(@Param("gxsj") String gxsj, @Param("maxSize") Integer maxSize);
+    List<Ldjg> getQhLdjgInfoByGxsj(@Param("maxSize") Integer maxSize);
 
     /**
      * 入院

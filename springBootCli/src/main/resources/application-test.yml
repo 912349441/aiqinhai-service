@@ -24,8 +24,8 @@ spring:
 # 海量
 hl:
   hldfs:
-    acc-code: hltest002
-    access-key: 4fKEOHfnohOBlwcz3o0PyA==
+    acc-code: qh.xn001
+    access-key: =y7ADOHvLA/eZGFLAi2IjNg==
 
 # 定时任务
 # 0 0 1 * * ?

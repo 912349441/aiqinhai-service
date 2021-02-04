@@ -16,9 +16,8 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <hl-face.version>1.2</hl-face.version>
-        <hl-dfs.version>1.0.0</hl-dfs.version>
         <hutool.version>5.0.0</hutool.version>
+        <hl.dfs.version>2.1.0</hl.dfs.version>
         <swagger.version>2.9.2</swagger.version>
         <ojdbc8.version>12.2.0.1</ojdbc8.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
@@ -34,61 +33,20 @@
     <dependencies>
         <!-- hl dependency start -->
         <dependency>
-            <groupId>cn.com.itsea.huzhou</groupId>
-            <artifactId>hl-huzhou-unit-sync</artifactId>
-            <version>${unit-sync.version}</version>
+            <groupId>cn.com.itsea</groupId>
+            <artifactId>HLFaceServerSDKImpl</artifactId>
+            <version>${hl.dfs.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-je</artifactId>
-            <version>7.5.11</version>
+            <artifactId>HldfsFrameworkClientSide</artifactId>
+            <version>${hl.dfs.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-face</artifactId>
-            <version>${hl-face.version}</version>
+            <artifactId>HldfsFrameworkServerSide</artifactId>
+            <version>${hl.dfs.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-berkeleyDBLib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ServerOfHlDfsV2</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-HLFaceServerSDKImpl</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ClientAPIOfHLDFS2</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-ClientSocketCommonAPI</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-FaceAPIV2Common</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-HldfsApacheMinia</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.itsea</groupId>
-            <artifactId>hl-dfs-SocketServerCommonLib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
         <!-- hl dependency end -->
 
         <dependency>
@@ -180,19 +138,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.19</version>
-        </dependency>
-        <!--CXF WS-->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-            <version>3.2.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>

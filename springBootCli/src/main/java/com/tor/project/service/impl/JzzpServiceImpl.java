@@ -553,10 +553,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 Stopwatch startStarted = Stopwatch.createStarted();
                 try {
                     while (true) {
-                        Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 1)).get(0);
-                        String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
-                        log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                        List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(tasktimeString, HANDLE_MAX_SIZE);
+                        List<QhJzzpInfo> jzzpInfoList = jzzpMapper.getQhJzzpInfoByGxsj(HANDLE_MAX_SIZE);
                         log.info(new FormatedLogUtil(StrUtil.format("jzzpInfoList.size={}", jzzpInfoList.size())).getLogString());
                         if (jzzpInfoList.size() < 1) {
                             break;
@@ -594,10 +591,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                                     log.error(logUtil.getLogString());
                                 }
                             }
-                            tasktime.setTasktime(jzzpInfo.getGxsj());
                         }
-                        tasktimeService.updateById(tasktime);
-                        log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
                     }
                 } catch (Exception e) {
                     startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
@@ -633,10 +627,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                 Stopwatch startStarted = Stopwatch.createStarted();
                 try {
                     while (true) {
-                        Tasktime tasktime = tasktimeService.list(new LambdaQueryWrapper<Tasktime>().eq(Tasktime::getBj, 2)).get(0);
-                        String tasktimeString = DateUtil.format(tasktime.getTasktime(), DatePattern.NORM_DATETIME_FORMAT);
-                        log.info(StrUtil.format("=============start tasktimeString:{}============", tasktimeString));
-                        List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(tasktimeString, 10000);
+                        List<Ldjg> LdjgList = jzzpMapper.getQhLdjgInfoByGxsj(HANDLE_MAX_SIZE);
                         log.info(new FormatedLogUtil(StrUtil.format("LdjgList.size={}", LdjgList.size())).getLogString());
                         if (LdjgList.size() < 1) {
                             break;
@@ -679,10 +670,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                                     log.error(logUtil.getLogString());
                                 }
                             }
-                            tasktime.setTasktime(ldjgNow.getAddtime());
                         }
-                        tasktimeService.updateById(tasktime);
-                        log.info(StrUtil.format("=============end tasktimeString:{}============", tasktime.getTasktime()));
                     }
                 } catch (Exception e) {
                     startLogUtil.setSucc(false).append(LogUtils.getTrace(e));
@@ -947,7 +935,7 @@ public class JzzpServiceImpl extends ServiceImpl<JzzpMapper, Jzzp> implements Jz
                     continue;
                 }
                 FeatrueDTO fn36 = ServiceUtils.getInstance().getFn36(jzzp.getSfzh(), jzzp.getXm(), fn35.latest().getImgIdx());
-                logUtil.append(StrUtil.format("fn36.isSucc:{}", fn35.isSucc()));
+                logUtil.append(StrUtil.format("fn36.isSucc:{}", fn36.isSucc()));
                 if (!fn36.isSucc()) {
                     continue;
                 }

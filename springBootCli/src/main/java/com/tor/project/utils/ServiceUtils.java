@@ -56,6 +56,7 @@ public class ServiceUtils {
     private final static Lock initLock = new ReentrantLock();
 
     private static HlFaceWebserviceApiService apiService = SpringContextHolder.getBean(HlFaceWebserviceApiService.class);
+    private static PermissionAccessParamOfFaceService permissionAccessParamOfFaceService = SpringContextHolder.getBean(PermissionAccessParamOfFaceService.class);
 
     /**
      * 省卡管获取照片
@@ -226,7 +227,8 @@ public class ServiceUtils {
                 FactoryOfTrackerServerClientSide.getInstance().getPublicKeyLocalStore(),
                 FactoryOfTrackerServerClientSide.getInstance().getMachineId(),
                 FactoryOfTrackerServerClientSide.getInstance().getTrackerListPreConfiged(),
-                FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null);
+                FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null,
+                permissionAccessParamOfFaceService);
         AtomicReference<FaceAndFeatureStringExtracted[]> listResultFacesExtract = new AtomicReference<>();
         FormatedLogUtil logUtil = new FormatedLogUtil();
         FeatrueDTO featrueDTO = new FeatrueDTO();
@@ -301,7 +303,7 @@ public class ServiceUtils {
      * @param xm
      * @return
      */
-    public FeatrueDTO getFn36(String sfzh, String xm,int mykey) {
+    public FeatrueDTO getFn36(String sfzh, String xm, int mykey) {
         FeatrueDTO featrueDTO = new FeatrueDTO();
         FormatedLogUtil logUtil = new FormatedLogUtil();
         FaceApiBusiCommonParam busiCommonParam = new FaceApiBusiCommonParam();
@@ -407,7 +409,8 @@ public class ServiceUtils {
         HldfsFaceApiService hldfsFaceApiService = new HldfsFaceApiServiceImpl(false, FactoryOfTrackerServerClientSide.getInstance().getPublicKeyLocalStore(),
                 FactoryOfTrackerServerClientSide.getInstance().getMachineId(),
                 FactoryOfTrackerServerClientSide.getInstance().getTrackerListPreConfiged(),
-                FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null);
+                FactoryOfTrackerServerClientSide.getInstance().createConfigOfServerAccess(), null,
+                null);
         ImageVerifyParam image1 = createParamUseImage(obj1);
         ImageVerifyParam image2 = createParamUseImage(obj2);
         AtomicReference<Float> refScore = new AtomicReference<>();
@@ -486,6 +489,8 @@ public class ServiceUtils {
                     logUtil.append("ServiceUtils initialContext Success");
                 }
             }
+        } catch (Exception e) {
+
         } finally {
             initLock.unlock();
             if (logUtil.isSucc()) {
