@@ -23,7 +23,7 @@
         <pinyin4j.version>2.5.0</pinyin4j.version>
         <fastjson.version>1.2.45</fastjson.version>
         <unit-sync.version>1.0.0</unit-sync.version>
-        <commons-io.version>2.2</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-codec.version>1.9</commons-codec.version>
         <mybatis.plus.version>3.0.5</mybatis.plus.version>
         <mybatis.mapper.version>2.0.4</mybatis.mapper.version>
